@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Manage Promotions</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+--green:#2f7d62;
+--green2:#256a52;
+--bg:#f4fbf7;
+--card:#ffffff;
+--text:#0f172a;
+--muted:#64748b;
+--line:rgba(15,23,42,.08);
+--shadow:0 14px 40px rgba(2,6,23,.08);
+--radius:16px;
+--greenSoft:rgba(47,125,98,.12);
+}
+
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+font-family:Poppins;
+background:var(--bg);
+display:flex;
+color:var(--text);
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:260px;
+background:linear-gradient(180deg,var(--green),var(--green2));
+color:white;
+padding:28px 22px;
+min-height:100vh;
+}
+
+.logo{
+font-weight:800;
+font-size:18px;
+margin-bottom:35px;
+}
+
+.nav{
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.nav a{
+display:block;
+color:white;
+text-decoration:none;
+padding:12px 14px;
+border-radius:12px;
+font-size:13px;
+font-weight:600;
+}
+
+.nav a:hover{
+background:rgba(255,255,255,.15);
+}
+
+.nav a.active{
+background:rgba(255,255,255,.25);
+}
+
+/* MAIN */
+
+.main{
+flex:1;
+padding:30px;
+max-width:1200px;
+}
+
+.header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-bottom:25px;
+}
+
+.header h1{
+margin:0;
+font-size:28px;
+}
+
+/* TABLE CARD */
+
+.tableCard{
+background:var(--card);
+padding:22px;
+border-radius:var(--radius);
+box-shadow:var(--shadow);
+border:1px solid var(--line);
+}
+
+/* HEADER BAR */
+
+.tableHeader{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:15px;
+}
+
+.tableHeader h3{
+margin:0;
+font-size:16px;
+}
+
+.addBtn{
+background:var(--green);
+color:white;
+border:none;
+padding:8px 14px;
+border-radius:10px;
+font-size:13px;
+font-weight:600;
+cursor:pointer;
+}
+
+.addBtn:hover{
+background:var(--green2);
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+font-size:14px;
+}
+
+thead{
+background:var(--greenSoft);
+}
+
+th{
+text-align:left;
+font-size:12px;
+color:var(--muted);
+padding:12px;
+font-weight:700;
+}
+
+td{
+padding:12px;
+border-bottom:1px solid var(--line);
+}
+
+.actionBtn{
+border:none;
+padding:6px 10px;
+border-radius:8px;
+font-size:12px;
+font-weight:600;
+cursor:pointer;
+margin-right:5px;
+}
+
+.edit{
+background:#e7f7ef;
+color:var(--green2);
+}
+
+.delete{
+background:#fdeaea;
+color:#c53030;
+}
+
+/* MODAL */
+
+.modal{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:white;
+padding:25px;
+border-radius:14px;
+box-shadow:0 20px 50px rgba(0,0,0,.2);
+display:none;
+width:320px;
+}
+
+.modal input{
+width:100%;
+padding:10px;
+margin-bottom:10px;
+border:1px solid #ccc;
+border-radius:8px;
+}
+
+.saveBtn{
+background:var(--green);
+color:white;
+border:none;
+padding:10px;
+border-radius:10px;
+cursor:pointer;
+width:100%;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<div class="logo">🌿 BASIT Admin</div>
+
+<div class="nav">
+<a href="admin_dashboard.html">Dashboard</a>
+<a href="admin_gallery.html">Manage Gallery</a>
+<a href="admin_bookings.html">Manage Bookings</a>
+<a class="active">Manage Promo</a>
+<a href="admin_services.html">Manage Services</a>
+<a href="admin_specialist.html">Manage Specialist</a>
+<a href="admin_manageaccount.html">Manage Account</a>
+<a href="admin_account.html">Account Settings</a>
+<a href="logout.html">Log Out</a>
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="header">
+<h1>Manage Promotions & Packages</h1>
+</div>
+
+<div class="tableCard">
+
+<div class="tableHeader">
+<h3>Promotions / Packages</h3>
+<button class="addBtn" onclick="openModal()">+ Add Promo</button>
+</div>
+
+<table>
+
+<thead>
+<tr>
+<th>Title</th>
+<th>Type</th>
+<th>Deal Price</th>
+<th>Original Price</th>
+<th>Status</th>
+<th>Validity</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="promoTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- MODAL -->
+
+<div class="modal" id="promoModal">
+
+<h3>Add Promo / Package</h3>
+
+<input type="text" id="promoName" placeholder="Promo Title">
+
+<select id="promoType">
+<option value="Promo">Promo</option>
+<option value="Package">Package</option>
+</select>
+
+<input type="text" id="promoHighlight" placeholder="Highlight (ex: -20% / Bundle / Combo)">
+
+<input type="number" id="promoPrice" placeholder="Deal Price">
+
+<input type="number" id="promoOldPrice" placeholder="Original Price">
+
+<input type="text" id="promoDate" placeholder="Validity (ex: Feb 1 – Mar 31)">
+
+<select id="promoStatus">
+<option value="Active">Active</option>
+<option value="Ending Soon">Ending Soon</option>
+</select>
+
+<textarea id="promoDesc" placeholder="Promo Description"></textarea>
+
+<input type="text" id="promoRules" placeholder="Rules (separate by comma)">
+
+<button class="saveBtn" onclick="savePromo()">Save Promo</button>
+
+</div>
+
+<script>
+
+let promos = JSON.parse(localStorage.getItem("promos")) || []
+
+let editIndex = null
+
+function renderPromos(){
+
+const table = document.getElementById("promoTable")
+table.innerHTML = ""
+
+promos.forEach((promo,index)=>{
+
+table.innerHTML += `
+<tr>
+<td>${promo.title}</td>
+<td>${promo.type}</td>
+<td>${promo.highlight}</td>
+<td>${promo.validity}</td>
+<td>
+<button class="actionBtn edit" onclick="editPromo(${index})">Edit</button>
+<button class="actionBtn delete" onclick="deletePromo(${index})">Delete</button>
+</td>
+</tr>
+`
+
+})
+
+}
+
+function openModal(){
+
+document.getElementById("promoModal").style.display="block"
+
+}
+
+function savePromo(){
+
+const title = document.getElementById("promoName").value
+const type = document.getElementById("promoType").value
+const highlight = document.getElementById("promoHighlight").value
+const dealPrice = document.getElementById("promoPrice").value
+const oldPrice = document.getElementById("promoOldPrice").value
+const validity = document.getElementById("promoDate").value
+const status = document.getElementById("promoStatus").value
+const desc = document.getElementById("promoDesc").value
+const rules = document.getElementById("promoRules").value.split(",")
+
+const id = "PR"+Math.floor(Math.random()*10000)
+
+const data = {
+id,
+title,
+type,
+highlight,
+dealPrice,
+oldPrice,
+validity,
+status,
+desc,
+rules
+}
+
+if(editIndex===null){
+
+promos.push(data)
+
+}else{
+
+data.id = promos[editIndex].id
+promos[editIndex]=data
+editIndex=null
+
+}
+
+localStorage.setItem("promos",JSON.stringify(promos))
+
+location.reload()
+
+}
+
+function editPromo(index){
+
+const p = promos[index]
+
+document.getElementById("promoName").value=p.title
+document.getElementById("promoType").value=p.type
+document.getElementById("promoHighlight").value=p.highlight
+document.getElementById("promoPrice").value=p.dealPrice
+document.getElementById("promoOldPrice").value=p.oldPrice
+document.getElementById("promoDate").value=p.validity
+document.getElementById("promoStatus").value=p.status
+document.getElementById("promoDesc").value=p.desc
+document.getElementById("promoRules").value=p.rules.join(",")
+
+editIndex=index
+
+openModal()
+
+}
+
+function deletePromo(index){
+
+promos.splice(index,1)
+
+localStorage.setItem("promos",JSON.stringify(promos))
+
+renderPromos()
+
+}
+
+renderPromos()
+
+</script>
+
+</body>
+</html>

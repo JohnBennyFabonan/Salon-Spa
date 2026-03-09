@@ -1,0 +1,70 @@
+/* Mobile Responsive Fixes */
+
+@media (max-width: 900px){
+
+/* hide topbar */
+.topbar{
+display:none;
+}
+
+/* navbar layout */
+.navbar{
+flex-wrap:wrap;
+}
+
+.menu{
+width:100%;
+margin-top:10px;
+flex-wrap:wrap;
+justify-content:center;
+}
+
+/* services grid */
+.grid{
+grid-template-columns: repeat(2,1fr);
+}
+
+/* specialist cards */
+.cardTop{
+flex-direction:column;
+align-items:flex-start;
+}
+
+}
+
+/* Phone size */
+
+@media (max-width: 600px){
+
+.container{
+padding:16px;
+}
+
+/* grids become 1 column */
+.grid{
+grid-template-columns:1fr;
+}
+
+/* page header */
+.pageHead{
+flex-direction:column;
+align-items:flex-start;
+gap:10px;
+}
+
+/* controls stack */
+.controls{
+flex-direction:column;
+}
+
+/* modal fix */
+.modalBody{
+grid-template-columns:1fr;
+}
+
+.bigAvatar{
+width:120px;
+height:120px;
+}
+
+}

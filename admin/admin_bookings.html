@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Manage Bookings</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+--green:#2f7d62;
+--green2:#256a52;
+--bg:#f4fbf7;
+--card:#ffffff;
+--text:#0f172a;
+--muted:#64748b;
+--line:rgba(15,23,42,.08);
+--shadow:0 14px 40px rgba(2,6,23,.08);
+--radius:16px;
+--greenSoft:rgba(47,125,98,.12);
+}
+
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+font-family:Poppins;
+background:var(--bg);
+display:flex;
+color:var(--text);
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:260px;
+background:linear-gradient(180deg,var(--green),var(--green2));
+color:white;
+padding:28px 22px;
+min-height:100vh;
+}
+
+.logo{
+font-weight:800;
+font-size:18px;
+letter-spacing:.5px;
+margin-bottom:35px;
+}
+
+.nav{
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.nav a{
+display:block;
+color:white;
+text-decoration:none;
+padding:12px 14px;
+border-radius:12px;
+font-size:13px;
+font-weight:600;
+transition:.15s;
+}
+
+.nav a:hover{
+background:rgba(255,255,255,.15);
+}
+
+.nav a.active{
+background:rgba(255,255,255,.25);
+}
+
+/* MAIN */
+
+.main{
+flex:1;
+padding:30px;
+max-width:1400px;
+}
+
+/* HEADER */
+
+.header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-bottom:25px;
+}
+
+.header h1{
+margin:0;
+font-size:28px;
+}
+
+/* TABLE CARD */
+
+.tableCard{
+background:var(--card);
+padding:22px;
+border-radius:var(--radius);
+box-shadow:var(--shadow);
+border:1px solid var(--line);
+}
+
+/* TABLE */
+
+table{
+width:100%;
+border-collapse:collapse;
+font-size:14px;
+}
+
+thead{
+background:var(--greenSoft);
+}
+
+th{
+text-align:left;
+font-size:12px;
+color:var(--muted);
+padding:12px;
+font-weight:700;
+}
+
+td{
+padding:12px;
+border-bottom:1px solid var(--line);
+}
+
+tr:hover{
+background:#f9fdfb;
+}
+
+/* STATUS */
+
+.status{
+background:#e7f7ef;
+color:var(--green2);
+padding:5px 10px;
+border-radius:20px;
+font-size:12px;
+font-weight:600;
+}
+
+/* ACTION BUTTONS */
+
+.actionBtn{
+border:none;
+padding:6px 10px;
+border-radius:8px;
+font-size:12px;
+font-weight:600;
+cursor:pointer;
+margin-right:5px;
+}
+
+.approve{
+background:#e7f7ef;
+color:var(--green2);
+}
+
+.cancel{
+background:#fdeaea;
+color:#c53030;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+.sidebar{
+display:none;
+}
+
+body{
+flex-direction:column;
+}
+
+.main{
+padding:20px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<div class="logo">🌿 BASIT Admin</div>
+
+<div class="nav">
+
+<a href="admin_dashboard.html">Dashboard</a>
+<a href="admin_gallery.html">Manage Gallery</a>
+<a class="active">Manage Bookings</a>
+<a href="admin_promo.html">Manage Promo</a>
+<a href="admin_services.html">Manage Services</a>
+<a href="admin_specialist.html">Manage Specialist</a>
+<a href="admin_manageaccount.html">Manage Account</a>
+<a href="admin_account.html">Account Settings</a>
+<a href="logout.html">Log Out</a>
+
+</div>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="header">
+<h1>Manage Bookings</h1>
+</div>
+
+<div class="tableCard">
+
+<table>
+
+<thead>
+<tr>
+<th>Booking ID</th>
+<th>Customer</th>
+<th>Service</th>
+<th>Date</th>
+<th>Time</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td>#B001</td>
+<td>Maria Santos</td>
+<td>Haircut</td>
+<td>May 12</td>
+<td>10:00 AM</td>
+<td><span class="status">Pending</span></td>
+<td>
+<button class="actionBtn approve">Approve</button>
+<button class="actionBtn cancel">Cancel</button>
+</td>
+</tr>
+
+<tr>
+<td>#B002</td>
+<td>John Cruz</td>
+<td>Hair Color</td>
+<td>May 13</td>
+<td>1:30 PM</td>
+<td><span class="status">Pending</span></td>
+<td>
+<button class="actionBtn approve">Approve</button>
+<button class="actionBtn cancel">Cancel</button>
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Booking Confirmed | Salon & Spa</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+--green:#2f7d62;
+--green2:#256a52;
+--bg:#f4fbf7;
+--card:#ffffff;
+--text:#0f172a;
+--muted:#64748b;
+}
+
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:Poppins,sans-serif;
+background:var(--bg);
+color:var(--text);
+}
+
+.navbar{
+background:linear-gradient(180deg,var(--green),var(--green2));
+padding:16px 20px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:10px;
+color:white;
+font-weight:800;
+}
+
+.logo{
+width:40px;
+height:40px;
+border-radius:12px;
+background:rgba(255,255,255,.15);
+display:grid;
+place-items:center;
+}
+
+.menu{
+display:flex;
+gap:12px;
+}
+
+.menu a{
+color:white;
+text-decoration:none;
+font-weight:700;
+font-size:13px;
+padding:8px 10px;
+border-radius:20px;
+}
+
+.menu a:hover{
+background:rgba(255,255,255,.15);
+}
+
+.container{
+max-width:900px;
+margin:auto;
+padding:40px 20px;
+}
+
+.card{
+background:var(--card);
+border-radius:18px;
+padding:30px;
+box-shadow:0 10px 35px rgba(0,0,0,.08);
+}
+
+.successIcon{
+font-size:60px;
+text-align:center;
+}
+
+h1{
+text-align:center;
+margin:10px 0;
+}
+
+.subtitle{
+text-align:center;
+color:var(--muted);
+margin-bottom:30px;
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+padding:12px 0;
+border-bottom:1px solid #eee;
+font-size:14px;
+}
+
+.row:last-child{
+border:none;
+}
+
+.label{
+color:var(--muted);
+font-weight:600;
+}
+
+.value{
+font-weight:800;
+}
+
+.total{
+margin-top:20px;
+padding:15px;
+background:rgba(47,125,98,.12);
+border-radius:12px;
+display:flex;
+justify-content:space-between;
+font-weight:800;
+}
+
+.actions{
+margin-top:25px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.btn{
+flex:1;
+padding:12px;
+border:none;
+border-radius:12px;
+font-weight:800;
+cursor:pointer;
+}
+
+.primary{
+background:var(--green);
+color:white;
+}
+
+.primary:hover{
+background:var(--green2);
+}
+
+.outline{
+background:white;
+border:2px solid var(--green);
+color:var(--green);
+}
+
+@media(max-width:600px){
+
+.row{
+flex-direction:column;
+gap:4px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="navbar">
+<div class="brand">
+<div class="logo">🌿</div>
+<span>BASIT</span>
+</div>
+
+<nav class="menu">
+<a href="index.html">Home</a>
+<a href="services.html">Service</a>
+<a href="booking.html">Book Now</a>
+<a href="log_in.html">Log in</a>
+</nav>
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<div class="successIcon">✅</div>
+
+<h1>Booking Confirmed</h1>
+
+<p class="subtitle">
+Your appointment has been successfully scheduled.
+</p>
+
+<div class="row">
+<div class="label">Booking ID</div>
+<div class="value" id="bookingID"></div>
+</div>
+
+<div class="row">
+<div class="label">Service</div>
+<div class="value" id="service"></div>
+</div>
+
+<div class="row">
+<div class="label">Duration</div>
+<div class="value" id="duration"></div>
+</div>
+
+<div class="row">
+<div class="label">Date</div>
+<div class="value" id="date"></div>
+</div>
+
+<div class="row">
+<div class="label">Time</div>
+<div class="value" id="time"></div>
+</div>
+
+<div class="row">
+<div class="label">Specialist</div>
+<div class="value" id="staff"></div>
+</div>
+
+<div class="total">
+<span>Total</span>
+<span id="price"></span>
+</div>
+
+<div class="actions">
+
+<button class="btn primary" onclick="window.location='index.html'">
+Back to Home
+</button>
+
+<button class="btn outline" onclick="window.location='booking.html'">
+Book Another
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const bookings = JSON.parse(localStorage.getItem("salonBookings") || "[]");
+
+const latest = bookings[0];
+
+if(latest){
+
+document.getElementById("bookingID").innerText = latest.id;
+document.getElementById("service").innerText = latest.service;
+document.getElementById("duration").innerText = latest.duration + " minutes";
+document.getElementById("date").innerText = latest.date;
+document.getElementById("time").innerText = latest.time;
+document.getElementById("staff").innerText = latest.staff;
+document.getElementById("price").innerText = "₱"+latest.price;
+
+}
+
+</script>
+
+</body>
+</html>

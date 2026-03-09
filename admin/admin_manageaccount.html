@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Manage Accounts</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+--green:#2f7d62;
+--green2:#256a52;
+--bg:#f4fbf7;
+--card:#ffffff;
+--text:#0f172a;
+--muted:#64748b;
+--line:rgba(15,23,42,.08);
+--shadow:0 14px 40px rgba(2,6,23,.08);
+--radius:16px;
+--greenSoft:rgba(47,125,98,.12);
+}
+
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+font-family:Poppins;
+background:var(--bg);
+display:flex;
+color:var(--text);
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:260px;
+background:linear-gradient(180deg,var(--green),var(--green2));
+color:white;
+padding:28px 22px;
+min-height:100vh;
+}
+
+.logo{
+font-weight:800;
+font-size:18px;
+margin-bottom:35px;
+}
+
+.nav{
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.nav a{
+display:block;
+color:white;
+text-decoration:none;
+padding:12px 14px;
+border-radius:12px;
+font-size:13px;
+font-weight:600;
+transition:.15s;
+}
+
+.nav a:hover{
+background:rgba(255,255,255,.15);
+}
+
+.nav a.active{
+background:rgba(255,255,255,.25);
+}
+
+/* MAIN */
+
+.main{
+flex:1;
+padding:30px;
+max-width:1200px;
+}
+
+.header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-bottom:25px;
+}
+
+.header h1{
+margin:0;
+font-size:28px;
+}
+
+/* CARD */
+
+.tableCard{
+background:var(--card);
+padding:22px;
+border-radius:var(--radius);
+box-shadow:var(--shadow);
+border:1px solid var(--line);
+}
+
+/* TABLE */
+
+table{
+width:100%;
+border-collapse:collapse;
+font-size:14px;
+}
+
+thead{
+background:var(--greenSoft);
+}
+
+th{
+text-align:left;
+font-size:12px;
+color:var(--muted);
+padding:12px;
+font-weight:700;
+}
+
+td{
+padding:12px;
+border-bottom:1px solid var(--line);
+}
+
+tr:hover{
+background:#f9fdfb;
+}
+
+/* BUTTONS */
+
+.addBtn{
+background:var(--green);
+color:white;
+border:none;
+padding:9px 16px;
+border-radius:10px;
+font-size:13px;
+font-weight:600;
+cursor:pointer;
+}
+
+.addBtn:hover{
+background:var(--green2);
+}
+
+.actionBtn{
+border:none;
+padding:6px 10px;
+border-radius:8px;
+font-size:12px;
+font-weight:600;
+cursor:pointer;
+margin-right:5px;
+}
+
+.edit{
+background:#e7f7ef;
+color:var(--green2);
+}
+
+.delete{
+background:#fdeaea;
+color:#c53030;
+}
+
+/* MODAL */
+
+.modal{
+position:fixed;
+top:0;
+left:0;
+right:0;
+bottom:0;
+background:rgba(0,0,0,.4);
+display:none;
+align-items:center;
+justify-content:center;
+}
+
+.modalBox{
+background:white;
+padding:25px;
+border-radius:var(--radius);
+width:420px;
+box-shadow:var(--shadow);
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin-bottom:12px;
+border-radius:8px;
+border:1px solid var(--line);
+font-family:Poppins;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+.sidebar{
+display:none;
+}
+
+body{
+flex-direction:column;
+}
+
+.main{
+padding:20px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<div class="logo">🌿 BASIT Admin</div>
+
+<div class="nav">
+
+<a href="admin_dashboard.html">Dashboard</a>
+<a href="admin_gallery.html">Manage Gallery</a>
+<a href="admin_bookings.html">Manage Bookings</a>
+<a href="admin_promo.html">Manage Promo</a>
+<a href="admin_services.html">Manage Services</a>
+<a href="admin_specialist.html">Manage Specialist</a>
+<a href="admin_manageaccount.html">Manage Account</a>
+<a href="admin_account.html">Account Settings</a>
+<a href="logout.html">Log Out</a>
+
+</div>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="header">
+
+<h1>Manage Accounts</h1>
+
+<button class="addBtn" onclick="openAdd()">+ Add Account</button>
+
+</div>
+
+<div class="tableCard">
+
+<table>
+
+<thead>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Role</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="tableBody"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<!-- MODAL -->
+
+<div class="modal" id="modal">
+
+<div class="modalBox">
+
+<h3>Add / Edit Account</h3>
+
+<input id="name" placeholder="Full Name">
+<input id="email" placeholder="Email">
+<select id="role">
+<option>Admin</option>
+<option>Staff</option>
+</select>
+
+<input id="password" placeholder="Password">
+
+<button class="addBtn" onclick="saveAccount()">Save Account</button>
+
+</div>
+
+</div>
+
+<script>
+
+let accounts = JSON.parse(localStorage.getItem("accounts")) || []
+
+let editIndex = null
+
+function render(){
+
+let body = document.getElementById("tableBody")
+
+body.innerHTML=""
+
+accounts.forEach((a,i)=>{
+
+body.innerHTML+=`
+
+<tr>
+
+<td>${a.name}</td>
+<td>${a.email}</td>
+<td>${a.role}</td>
+
+<td>
+
+<button class="actionBtn edit" onclick="edit(${i})">Edit</button>
+<button class="actionBtn delete" onclick="remove(${i})">Delete</button>
+
+</td>
+
+</tr>
+
+`
+
+})
+
+}
+
+function openAdd(){
+
+editIndex=null
+
+document.getElementById("modal").style.display="flex"
+
+}
+
+function saveAccount(){
+
+let data={
+
+name:document.getElementById("name").value,
+email:document.getElementById("email").value,
+role:document.getElementById("role").value,
+password:document.getElementById("password").value
+
+}
+
+if(editIndex!==null){
+
+accounts[editIndex]=data
+
+}else{
+
+accounts.push(data)
+
+}
+
+localStorage.setItem("accounts",JSON.stringify(accounts))
+
+document.getElementById("modal").style.display="none"
+
+render()
+
+}
+
+function edit(i){
+
+editIndex=i
+
+let a=accounts[i]
+
+document.getElementById("name").value=a.name
+document.getElementById("email").value=a.email
+document.getElementById("role").value=a.role
+document.getElementById("password").value=a.password
+
+document.getElementById("modal").style.display="flex"
+
+}
+
+function remove(i){
+
+if(confirm("Delete account?")){
+
+accounts.splice(i,1)
+
+localStorage.setItem("accounts",JSON.stringify(accounts))
+
+render()
+
+}
+
+}
+
+render()
+
+</script>
+
+</body>
+</html>

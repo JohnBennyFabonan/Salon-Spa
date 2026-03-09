@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beauty Salon & Spa - Landing</title>
+
+  <link rel="stylesheet" href="mobile.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #2f7d62;
+      --bg-2: #256a52;
+      --text: #ffffff;
+      --muted: rgba(255,255,255,.85);
+      --btn: #e6f5ef;
+      --btnText: #184d3a;
+      --btnOutline: rgba(255,255,255,.85);
+      --card: rgba(255,255,255,.08);
+      --line: rgba(255,255,255,.16);
+      --shadow: 0 18px 60px rgba(0,0,0,.18);
+      --radius: 16px;
+    }
+
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(900px 420px at 10% 30%, rgba(255,255,255,.10), transparent 60%),
+                  radial-gradient(800px 380px at 85% 75%, rgba(255,255,255,.08), transparent 60%),
+                  linear-gradient(0deg, var(--bg-2), var(--bg));
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* top utility bar */
+    .topbar{
+      min-height: 38px;
+      display:flex;
+      align-items:center;
+      gap: 18px;
+      padding: 8px 28px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      font-size: 12px;
+      color: var(--muted);
+      flex-wrap: wrap;
+    }
+    .topbar .left, .topbar .right{
+      display:flex; align-items:center; gap:14px;
+      flex-wrap: wrap;
+    }
+    .topbar .right{ margin-left:auto; gap: 12px; }
+    .pill{
+      display:flex; align-items:center; gap:8px;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px;
+      background: rgba(0,0,0,.06);
+      white-space: nowrap;
+    }
+    .icon{
+      width: 14px; height: 14px; display:inline-block;
+      fill: currentColor;
+      opacity: .95;
+    }
+    .social{ display:flex; gap:10px; align-items:center; }
+    .social a{
+      width: 28px; height: 28px;
+      display:grid; place-items:center;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      color: var(--muted);
+      text-decoration:none;
+      transition: .2s;
+    }
+    .social a:hover{ transform: translateY(-1px); color:#fff; border-color: rgba(255,255,255,.28); }
+
+    /* navbar */
+    .nav{
+      display:flex;
+      align-items:center;
+      padding: 18px 28px;
+      gap: 22px;
+      position: relative;
+    }
+    .brand{
+      display:flex; align-items:center; gap: 10px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+    .brand .logo{
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display:grid; place-items:center;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.20);
+      box-shadow: 0 10px 28px rgba(0,0,0,.12);
+    }
+    .brand span{ font-size: 18px; }
+
+    .menu{
+      margin-left:auto;
+      display:flex;
+      gap: 20px;
+      align-items:center;
+      flex-wrap: wrap;
+    }
+    .menu a{
+      color: rgba(255,255,255,.88);
+      text-decoration:none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 10px;
+      border-radius: 999px;
+      transition: .2s;
+    }
+    .menu a:hover{ background: rgba(255,255,255,.10); }
+    .menu .hasDrop{ display:flex; align-items:center; gap:6px; }
+    .chev{ width: 12px; height: 12px; opacity: .85; }
+
+    /* hamburger */
+    .menuBtn{
+      margin-left:auto;
+      display:none;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.10);
+      color:#fff;
+      width:44px;
+      height:44px;
+      border-radius: 14px;
+      font-size: 22px;
+      cursor:pointer;
+    }
+    .menuBtn:hover{ background: rgba(255,255,255,.16); }
+
+    /* mobile menu drawer */
+    .mobileMenuBack{
+      position: fixed;
+      inset: 0;
+      background: rgba(2,6,23,.55);
+      display:none;
+      z-index: 70;
+      padding: 10px;
+    }
+    .mobileMenu{
+      position:absolute;
+      top: 10px;
+      right: 10px;
+      width: min(340px, calc(100% - 20px));
+      background: #fff;
+      border-radius: 18px;
+      overflow:hidden;
+      box-shadow: 0 28px 90px rgba(0,0,0,.30);
+      color:#0f172a;
+    }
+    .mobileMenuHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 14px 14px;
+      border-bottom: 1px solid rgba(15,23,42,.10);
+    }
+    .mobileTitle{ font-weight: 800; color:#0f172a; }
+    .menuClose{
+      border:none;
+      background: rgba(15,23,42,.06);
+      cursor:pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      font-size: 18px;
+      color:#0f172a;
+    }
+    .mobileLinks{
+      display:flex;
+      flex-direction:column;
+      padding: 12px;
+      gap: 8px;
+    }
+    .mobileLinks a{
+      text-decoration:none;
+      color: #0f172a;
+      font-weight: 700;
+      padding: 12px 12px;
+      border-radius: 12px;
+      background: rgba(15,23,42,.03);
+    }
+
+    /* hero layout */
+    .hero{
+      position: relative;
+      padding: 28px 28px 70px;
+    }
+    .heroInner{
+      max-width: 1180px;
+      margin: 0 auto;
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      align-items:center;
+      gap: 30px;
+    }
+
+    .kicker{
+      display:flex; align-items:center; gap:10px;
+      color: rgba(255,255,255,.86);
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .spark{
+      width: 34px; height: 34px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.22);
+      display:grid; place-items:center;
+      box-shadow: 0 12px 26px rgba(0,0,0,.14);
+      flex: 0 0 auto;
+    }
+
+    h1{
+      margin: 0 0 12px;
+      font-size: clamp(30px, 4.2vw, 56px);
+      line-height: 1.05;
+      letter-spacing: .02em;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .sub{
+      max-width: 520px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 0 0 22px;
+    }
+
+    .ctaRow{
+      display:flex;
+      gap: 12px;
+      align-items:center;
+      flex-wrap: wrap;
+    }
+    .btn{
+      border: none;
+      cursor:pointer;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 13px;
+      transition: .2s;
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+    }
+    .btn.primary{
+      background: var(--btn);
+      color: var(--btnText);
+      box-shadow: 0 14px 34px rgba(0,0,0,.16);
+    }
+    .btn.primary:hover{ transform: translateY(-1px); }
+    .btn.ghost{
+      background: transparent;
+      color: #fff;
+      border: 1px solid var(--btnOutline);
+    }
+    .btn.ghost:hover{
+      background: rgba(255,255,255,.10);
+      transform: translateY(-1px);
+    }
+
+    /* right image circle */
+    .heroArt{
+      position: relative;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height: 420px;
+    }
+    .circleWrap{
+      width: min(420px, 86vw);
+      aspect-ratio: 1 / 1;
+      border-radius: 999px;
+      padding: 14px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: 0 22px 60px rgba(0,0,0,.22);
+    }
+    .circle{
+      width: 100%;
+      height: 100%;
+      border-radius: 999px;
+      overflow:hidden;
+      position: relative;
+      border: 1px solid rgba(255,255,255,.18);
+    }
+    .circle img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      transform: scale(1.03);
+      filter: contrast(1.03) saturate(1.05);
+      display:block;
+    }
+
+    /* decorative shapes */
+    .shape{
+      position:absolute;
+      pointer-events:none;
+      opacity: .55;
+    }
+    .shape.bottomLeft{
+      left: -120px;
+      bottom: -140px;
+      width: 300px;
+      height: 300px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      filter: blur(0.2px);
+    }
+    .shape.hash{
+      left: 46%;
+      bottom: 30px;
+      width: 90px;
+      height: 90px;
+      opacity: .35;
+      transform: rotate(15deg);
+    }
+    .shape.hash::before{
+      content:"";
+      position:absolute; inset: 0;
+      background:
+        repeating-linear-gradient(90deg, rgba(255,255,255,.55) 0 4px, transparent 4px 10px);
+      border-radius: 14px;
+      mask: radial-gradient(circle at 50% 50%, #000 56%, transparent 57%);
+    }
+
+    /* ABOUT SECTION */
+    .about{
+      background: #ffffff;
+      padding: 80px 10%;
+      color:#0f172a;
+    }
+    .about-container{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+    .about-image img{
+      width: 100%;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      display:block;
+    }
+    .about-content h2{
+      font-size: clamp(24px, 3.2vw, 36px);
+      color: #1e5e49;
+      margin: 0 0 16px;
+    }
+    .about-content p{
+      color: #555;
+      line-height: 1.7;
+      margin: 0 0 16px;
+      font-size: 14px;
+    }
+    .about-btn{
+      padding: 12px 25px;
+      background: #2f7d62;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .about-btn:hover{ background: #256a52; }
+
+    /* ===== Responsive ===== */
+
+    /* Tablet */
+    @media (max-width: 920px){
+      .heroInner{ grid-template-columns: 1fr; }
+      .heroArt{ min-height: 340px; }
+      .shape.hash{ left: 65%; }
+      .menu{ display:none; }
+      .menuBtn{ display:inline-grid; place-items:center; }
+      .topbar{ padding: 8px 16px; }
+      .nav{ padding: 14px 16px; }
+      .hero{ padding: 22px 16px 60px; }
+    }
+
+    /* Mobile */
+    @media (max-width: 720px){
+      .topbar{ display:none; } /* clean mobile header */
+      .nav{ padding: 12px 12px; }
+      .brand span{ font-size: 16px; }
+      .brand .logo{ width: 40px; height: 40px; border-radius: 14px; }
+
+      .hero{ padding: 18px 12px 50px; }
+      .heroArt{ min-height: 300px; }
+      .circleWrap{ padding: 10px; }
+      .shape.bottomLeft{ left:-160px; bottom:-180px; }
+
+      .sub{ font-size: 13px; }
+      .btn{ width: 100%; justify-content:center; }
+
+      .about{ padding: 54px 12px; }
+      .about-container{ grid-template-columns: 1fr; gap: 26px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="left">
+      <div class="pill">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6.6 10.8c1.2 2.3 3.1 4.2 5.4 5.4l1.8-1.8c.3-.3.8-.4 1.2-.2 1.3.4 2.7.6 4.1.6.7 0 1.3.6 1.3 1.3V20c0 .7-.6 1.3-1.3 1.3C10.6 21.3 2.7 13.4 2.7 3.3 2.7 2.6 3.3 2 4 2h3.1c.7 0 1.3.6 1.3 1.3 0 1.4.2 2.8.6 4.1.1.4 0 .9-.3 1.2l-1.8 1.8z"/>
+        </svg>
+        <span>+451236981</span>
+      </div>
+
+      <div class="pill">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5L4 8V6l8 5 8-5v2z"/>
+        </svg>
+        <span>example@gmail.com</span>
+      </div>
+
+      <div class="pill">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 1.9A10.1 10.1 0 1 0 22.1 12 10.1 10.1 0 0 0 12 1.9zm.8 5.1h-1.6v6l5.2 3.1.8-1.3-4.4-2.6z"/>
+        </svg>
+        <span>Mon–Fri: 8:00am–5:00pm</span>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="social" aria-label="social links">
+        <a href="#" aria-label="Facebook">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M13.5 22v-8h2.7l.4-3h-3.1V9.1c0-.9.3-1.6 1.6-1.6H16.7V4.9c-.3 0-1.5-.1-2.8-.1-2.8 0-4.7 1.7-4.7 4.9V11H6.7v3h2.5v8h4.3z"/></svg>
+        </a>
+        <a href="#" aria-label="Twitter">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M22 5.8c-.7.3-1.5.6-2.3.7.8-.5 1.4-1.2 1.7-2.1-.8.5-1.7.9-2.6 1.1A4.1 4.1 0 0 0 12 8.3c0 .3 0 .6.1.9-3.4-.2-6.4-1.8-8.4-4.4-.4.6-.6 1.2-.6 2 0 1.4.7 2.6 1.8 3.3-.6 0-1.2-.2-1.8-.5v.1c0 2 1.4 3.6 3.3 4-.3.1-.7.1-1.1.1-.3 0-.5 0-.7-.1.5 1.7 2 2.9 3.8 2.9A8.3 8.3 0 0 1 2 18.1 11.7 11.7 0 0 0 8.3 20c7.6 0 11.8-6.3 11.8-11.8v-.5c.8-.6 1.4-1.2 1.9-1.9z"/></svg>
+        </a>
+        <a href="#" aria-label="Instagram">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm-5 4.2A3.8 3.8 0 1 1 8.2 12 3.8 3.8 0 0 1 12 8.2zm0 2A1.8 1.8 0 1 0 13.8 12 1.8 1.8 0 0 0 12 10.2zM18 6.6a.9.9 0 1 1-.9.9.9.9 0 0 1 .9-.9z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <header class="nav">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 3c2.6 2.2 4 4.9 4 8.2 0 1.1-.2 2.1-.6 3 2.2-1.2 4.2-3.6 4.6-6.2.1 6-3.2 10-8 10s-8.1-4-8-10c.4 2.6 2.4 5 4.6 6.2-.4-.9-.6-1.9-.6-3C8 7.9 9.4 5.2 12 3z"
+                fill="rgba(255,255,255,.92)"/>
+        </svg>
+      </div>
+      <span>BASIT</span>
+    </div>
+
+    <nav class="menu" aria-label="Primary">
+      <a class="hasDrop" href="#"><span>Home</span>
+        <svg class="chev" viewBox="0 0 24 24"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>
+      </a>
+      <a href="services.html">Services</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="specialist.html">Specialist</a>
+      <a href="promo.html">Promos</a>
+      <a href="log_in.html">Log in</a>
+      <a href="sign_up.html">Sign up</a>
+    </nav>
+
+    <!-- Mobile button -->
+    <button class="menuBtn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+      ☰
+    </button>
+  </header>
+
+  <!-- Mobile Menu Drawer -->
+  <div class="mobileMenuBack" id="mobileMenuBack" aria-hidden="true">
+    <div class="mobileMenu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Mobile Menu">
+      <div class="mobileMenuHead">
+        <span class="mobileTitle">Menu</span>
+        <button class="menuClose" id="menuClose" aria-label="Close menu">✕</button>
+      </div>
+      <nav class="mobileLinks" aria-label="Mobile Primary">
+        <a href="#">Home</a>
+        <a href="services.html">Services</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="specialist.html">Specialist</a>
+        <a href="promo.html">Promos</a>
+        <a href="log_in.html">Log in</a>
+        <a href="sign_up.html">Sign up</a>
+      </nav>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <main class="hero">
+    <div class="shape bottomLeft"></div>
+    <div class="shape hash"></div>
+
+    <section class="heroInner">
+      <div class="heroCopy">
+        <div class="kicker">
+          <div class="spark" aria-hidden="true">
+            <svg class="icon" viewBox="0 0 24 24">
+              <path d="M12 2l1.2 3.6L17 7l-3.8 1.3L12 12l-1.2-3.7L7 7l3.8-1.4L12 2zm7 8l.8 2.4L22 13l-2.2.7L19 16l-.8-2.3L16 13l2.2-.6L19 10zM5 12l.8 2.4L8 15l-2.2.7L5 18l-.8-2.3L2 15l2.2-.6L5 12z" fill="currentColor"/>
+            </svg>
+          </div>
+          <span>We teach you how to make up</span>
+        </div>
+
+        <h1>
+          We increase your<br />
+          beauty salon &amp; spa
+        </h1>
+
+        <p class="sub">
+          A theme for Beauty, Beauty Salon &amp; Spa etc.
+        </p>
+
+        <div class="ctaRow">
+          <button class="btn primary" type="button">Book Now</button>
+        </div>
+      </div>
+
+      <div class="heroArt">
+        <div class="circleWrap">
+          <div class="circle">
+            <img
+              src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1200&q=80"
+              alt="Makeup application"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ABOUT SECTION -->
+  <section class="about">
+    <div class="about-container">
+      <div class="about-image">
+        <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=1200" alt="Salon Interior">
+      </div>
+
+      <div class="about-content">
+        <h2>About Our Salon & Spa</h2>
+
+        <p>
+          Our beauty salon and spa is dedicated to providing high-quality beauty
+          services that enhance confidence and relaxation. With professional
+          stylists and specialists, we offer a wide range of treatments including
+          hair styling, skincare, spa therapy, and beauty packages designed to
+          meet every client's needs.
+        </p>
+
+        <p>
+          We combine modern beauty techniques with a relaxing atmosphere to
+          ensure every visit becomes a refreshing and luxurious experience.
+          Customer satisfaction and comfort remain our top priority.
+        </p>
+
+        <button class="about-btn" type="button">Learn More</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Mobile menu toggle
+    const menuBtn = document.getElementById("menuBtn");
+    const mobileMenuBack = document.getElementById("mobileMenuBack");
+    const menuClose = document.getElementById("menuClose");
+
+    function openMenu(){
+      mobileMenuBack.style.display = "block";
+      menuBtn.setAttribute("aria-expanded", "true");
+      mobileMenuBack.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+    function closeMenu(){
+      mobileMenuBack.style.display = "none";
+      menuBtn.setAttribute("aria-expanded", "false");
+      mobileMenuBack.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+
+    menuBtn?.addEventListener("click", openMenu);
+    menuClose?.addEventListener("click", closeMenu);
+    mobileMenuBack?.addEventListener("click", (e) => {
+      if(e.target === mobileMenuBack) closeMenu();
+    });
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "Escape") closeMenu();
+    });
+  </script>
+</body>
+</html>

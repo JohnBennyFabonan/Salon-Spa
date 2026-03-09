@@ -1,0 +1,1102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Book Appointment | Salon & Spa</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --green:#2f7d62;
+      --green-2:#256a52;
+      --bg:#f4fbf7;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(15,23,42,.10);
+      --shadow:0 14px 40px rgba(2,6,23,.08);
+      --radius:18px;
+      --soft: rgba(47,125,98,.12);
+      --danger:#b91c1c;
+      --ok:#15803d;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background: radial-gradient(900px 500px at 20% 0%, rgba(47,125,98,.10), transparent 55%),
+                  radial-gradient(800px 450px at 90% 10%, rgba(47,125,98,.08), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      overflow-x:hidden;
+    }
+
+    /* ===== Topbar + Navbar ===== */
+    .topbar{
+      background: var(--green);
+      min-height: 40px;
+      display:flex;
+      align-items:center;
+      gap: 14px;
+      padding: 8px 22px;
+      color: rgba(255,255,255,.92);
+      font-size: 12px;
+      flex-wrap: wrap;
+    }
+    .topbar .left, .topbar .right{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+    .topbar .right{ margin-left:auto; }
+    .pill{
+      display:flex; align-items:center; gap:8px;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      white-space: nowrap;
+    }
+
+    .navbar{
+      background: linear-gradient(180deg, var(--green), var(--green-2));
+      padding: 16px 22px;
+      display:flex;
+      align-items:center;
+      gap:18px;
+      position:sticky;
+      top:0;
+      z-index: 30;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      color:#fff; font-weight:900; letter-spacing:.6px; text-transform:uppercase;
+      user-select:none;
+    }
+    .brand .logo{
+      width:44px; height:44px; border-radius:14px;
+      display:grid; place-items:center;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+    }
+    .menu{
+      margin-left:auto;
+      display:flex;
+      gap:14px;
+      align-items:center;
+      flex-wrap: wrap;
+    }
+    .menu a{
+      color: rgba(255,255,255,.92);
+      text-decoration:none;
+      font-size:13px;
+      font-weight:700;
+      padding: 8px 10px;
+      border-radius:999px;
+      transition:.15s;
+    }
+    .menu a:hover{ background: rgba(255,255,255,.12); }
+    .menu a.active{ background: rgba(255,255,255,.18); }
+
+    .menuBtn{
+      margin-left:auto;
+      display:none;
+      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(255,255,255,.10);
+      color:#fff;
+      width:44px;
+      height:44px;
+      border-radius:14px;
+      font-size:22px;
+      cursor:pointer;
+    }
+    .menuBtn:hover{ background: rgba(255,255,255,.16); }
+
+    .mobileMenuBack{
+      position: fixed;
+      inset: 0;
+      background: rgba(2,6,23,.55);
+      display:none;
+      z-index: 70;
+      padding: 10px;
+    }
+    .mobileMenu{
+      position:absolute;
+      top: 10px;
+      right: 10px;
+      width: min(360px, calc(100% - 20px));
+      background: #fff;
+      border-radius: 18px;
+      overflow:hidden;
+      box-shadow: 0 28px 90px rgba(0,0,0,.30);
+    }
+    .mobileMenuHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 14px 14px;
+      border-bottom: 1px solid rgba(15,23,42,.10);
+    }
+    .mobileTitle{ font-weight: 950; color: var(--text); }
+    .menuClose{
+      border:none;
+      background: rgba(15,23,42,.06);
+      cursor:pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      font-size: 18px;
+    }
+    .mobileLinks{
+      display:flex;
+      flex-direction:column;
+      padding: 12px;
+      gap: 8px;
+    }
+    .mobileLinks a{
+      text-decoration:none;
+      color: var(--text);
+      font-weight: 800;
+      padding: 12px 12px;
+      border-radius: 12px;
+      background: rgba(15,23,42,.03);
+    }
+    .mobileLinks a.active{
+      background: rgba(47,125,98,.12);
+      color: var(--green-2);
+      border: 1px solid rgba(47,125,98,.18);
+    }
+
+    /* ===== Page ===== */
+    .container{
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 22px 18px 90px;
+    }
+
+    .pageHead{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .titleWrap h1{
+      margin:0;
+      font-size: clamp(20px, 3vw, 30px);
+      font-weight: 950;
+      letter-spacing:.2px;
+    }
+    .titleWrap p{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-weight: 650;
+      font-size: 12.5px;
+      line-height: 1.7;
+      max-width: 760px;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      background: rgba(47,125,98,.12);
+      color: var(--green-2);
+      border: 1px solid rgba(47,125,98,.18);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .wrap{
+      display:grid;
+      grid-template-columns: 1.08fr .92fr;
+      gap: 14px;
+      align-items:start;
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .cardPad{ padding: 16px; }
+
+    .sectionTitle{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 10px;
+    }
+    .sectionTitle h2{
+      margin:0;
+      font-size: 14px;
+      font-weight: 950;
+      letter-spacing:.2px;
+    }
+    .sectionTitle .muted{
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    /* Service grid */
+    .serviceGrid{
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .service{
+      border: 1px solid rgba(15,23,42,.10);
+      border-radius: 14px;
+      padding: 12px;
+      display:flex;
+      gap: 10px;
+      align-items:flex-start;
+      cursor:pointer;
+      transition: .15s;
+      background: linear-gradient(180deg, rgba(47,125,98,.06), #fff);
+      position:relative;
+      min-height: 86px;
+    }
+    .service:hover{ transform: translateY(-1px); box-shadow: 0 10px 24px rgba(2,6,23,.06); }
+    .service.active{
+      border-color: rgba(47,125,98,.45);
+      box-shadow: 0 0 0 4px rgba(47,125,98,.12);
+    }
+    .sIcon{
+      width: 40px; height: 40px; border-radius: 14px;
+      display:grid; place-items:center;
+      background: rgba(47,125,98,.12);
+      border: 1px solid rgba(47,125,98,.18);
+      flex:0 0 auto;
+      font-size: 18px;
+    }
+    .sMeta b{ display:block; font-size: 12.5px; font-weight: 950; }
+    .sMeta small{ display:block; color: var(--muted); font-weight: 700; font-size: 12px; margin-top: 2px; }
+    .sPrice{
+      margin-left:auto;
+      font-weight: 950;
+      font-size: 12.5px;
+      color: var(--green-2);
+      white-space: nowrap;
+    }
+    .sChip{
+      position:absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 10px;
+      font-weight: 950;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(47,125,98,.12);
+      border: 1px solid rgba(47,125,98,.18);
+      color: var(--green-2);
+      display:none;
+    }
+    .service.active .sChip{ display:inline-flex; }
+
+    /* Form controls */
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .field{ display:flex; flex-direction:column; gap: 7px; }
+    label{
+      font-size: 12px;
+      font-weight: 900;
+      color:#334155;
+    }
+    .input, select, textarea{
+      width:100%;
+      border: 1px solid rgba(15,23,42,.12);
+      background:#fff;
+      border-radius: 12px;
+      padding: 12px 12px;
+      font-size: 14px;
+      outline:none;
+      transition:.15s;
+      font-family: inherit;
+    }
+    .input:focus, select:focus, textarea:focus{
+      border-color: rgba(47,125,98,.55);
+      box-shadow: 0 0 0 4px rgba(47,125,98,.12);
+    }
+    textarea{ min-height: 96px; resize: vertical; }
+
+    /* Time slots */
+    .slots{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .slot{
+      border: 1px solid rgba(15,23,42,.10);
+      border-radius: 12px;
+      padding: 10px 8px;
+      text-align:center;
+      font-weight: 900;
+      font-size: 12px;
+      color:#0f172a;
+      background:#fff;
+      cursor:pointer;
+      transition:.15s;
+      user-select:none;
+    }
+    .slot:hover{ background: rgba(47,125,98,.08); }
+    .slot.active{
+      background: rgba(47,125,98,.14);
+      border-color: rgba(47,125,98,.45);
+      color: var(--green-2);
+      box-shadow: 0 0 0 3px rgba(47,125,98,.10);
+    }
+    .slot.disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      text-decoration: line-through;
+      background: rgba(15,23,42,.03);
+    }
+
+    /* Summary card */
+    .summaryRow{
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(15,23,42,.08);
+    }
+    .summaryRow:last-child{ border-bottom:none; padding-bottom: 0; }
+    .k{
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 12px;
+    }
+    .v{
+      font-weight: 950;
+      font-size: 12.5px;
+      text-align:right;
+    }
+    .total{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(47,125,98,.20);
+      background: rgba(47,125,98,.10);
+    }
+    .total b{ font-weight: 950; }
+    .total span{ font-weight: 950; color: var(--green-2); }
+
+    .msg{
+      display:none;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 850;
+      font-size: 12px;
+      line-height: 1.5;
+      border: 1px solid rgba(15,23,42,.10);
+      background: rgba(15,23,42,.04);
+      color:#0f172a;
+    }
+    .msg.err{
+      border-color: rgba(185,28,28,.20);
+      background: rgba(185,28,28,.08);
+      color: var(--danger);
+    }
+    .msg.ok{
+      border-color: rgba(21,128,61,.20);
+      background: rgba(21,128,61,.10);
+      color: var(--ok);
+    }
+
+    .actions{
+      display:flex;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .btn{
+      border:none;
+      cursor:pointer;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-weight: 950;
+      font-size: 13px;
+      background: var(--green);
+      color:#fff;
+      transition: .15s;
+      flex: 1;
+      min-width: 170px;
+    }
+    .btn:hover{ background: var(--green-2); transform: translateY(-1px); }
+    .btnOutline{
+      background: transparent;
+      border: 1px solid rgba(47,125,98,.45);
+      color: var(--green-2);
+    }
+    .btnOutline:hover{ background: rgba(47,125,98,.08); }
+
+    .footNote{
+      margin-top: 10px;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .wrap{ grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px){
+      .topbar{ display:none !important; }
+      .menu{ display:none !important; }
+      .menuBtn{ display:inline-grid; place-items:center; }
+      .navbar{ padding: 12px 12px; gap: 10px; }
+      .brand .logo{ width: 40px; height: 40px; border-radius: 14px; }
+      .serviceGrid{ grid-template-columns: 1fr; }
+      .grid2{ grid-template-columns: 1fr; }
+      .slots{ grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 380px){
+      .slots{ grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* GCash Popup */
+
+.gcashModal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:1000;
+}
+
+.gcashCard{
+background:white;
+padding:25px;
+border-radius:16px;
+text-align:center;
+max-width:320px;
+width:90%;
+}
+
+.gcashCard img{
+width:220px;
+margin:15px 0;
+}
+
+.gcashCard button{
+background:#2f7d62;
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:8px;
+cursor:pointer;
+}
+
+#receiptUpload{
+font-size:12px;
+}
+
+#receiptPreview{
+border:1px solid rgba(0,0,0,0.1);
+padding:5px;
+background:white;
+}
+  </style>
+</head>
+
+<body>
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="left">
+      <div class="pill">📞 +451236981</div>
+      <div class="pill">✉️ example@gmail.com</div>
+      <div class="pill">🕘 Mon–Fri: 8:00am–5:00pm</div>
+    </div>
+    <div class="right">
+      <div class="pill">💚 Booking</div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">🌿</div>
+      <span>BASIT</span>
+    </div>
+
+    <nav class="menu" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="services.html">Service</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="specialist.html">Specialist</a>
+      <a href="promo.html">Promos</a>
+      <a href="contact.html">Contact</a>
+      <a href="log_in.html">Log in</a>
+    </nav>
+
+    <button class="menuBtn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">☰</button>
+  </header>
+
+  <!-- Mobile Menu -->
+  <div class="mobileMenuBack" id="mobileMenuBack" aria-hidden="true">
+    <div class="mobileMenu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Mobile Menu">
+      <div class="mobileMenuHead">
+        <span class="mobileTitle">Menu</span>
+        <button class="menuClose" id="menuClose" aria-label="Close menu">✕</button>
+      </div>
+      <nav class="mobileLinks" aria-label="Mobile Primary">
+        <a href="index.html">Home</a>
+        <a href="services.html">Service</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="specialist.html">Specialist</a>
+        <a href="promo.html">Promos</a>
+        <a href="contact.html">Contact</a>
+        <a href="log_in.html">Log in</a>
+      </nav>
+    </div>
+  </div>
+
+  <main class="container">
+    <div class="pageHead">
+      <div class="titleWrap">
+        <h1>Book an Appointment</h1>
+        <p>Select a service, choose your schedule, and confirm your booking. (Demo UI — saves booking locally for now.)</p>
+      </div>
+      <div class="badge">✨ Fast booking • Green theme</div>
+    </div>
+
+    <div class="wrap">
+      <!-- LEFT: Booking Form -->
+      <section class="card">
+        <div class="cardPad">
+          <div class="sectionTitle">
+            <h2>1) Choose a service</h2>
+            <div class="muted">Tap a card</div>
+          </div>
+
+          <div class="serviceGrid" id="serviceGrid"></div>
+        </div>
+
+        <div class="cardPad" style="border-top:1px solid rgba(15,23,42,.08);">
+          <div class="sectionTitle">
+            <h2>2) Schedule details</h2>
+            <div class="muted">Pick date + time</div>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <label for="date">Appointment Date</label>
+              <input class="input" id="date" type="date" />
+            </div>
+
+            <div class="field">
+              <label for="staff">Preferred Specialist (optional)</label>
+              <select id="staff">
+                <option value="">No preference</option>
+                <option>Maria • Hair Stylist</option>
+                <option>Anne • Nail Technician</option>
+                <option>Jessa • Massage Therapist</option>
+                <option>Kevin • Barber</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field" style="margin-top: 10px;">
+            <label>Available Time Slots</label>
+            <div class="slots" id="slots"></div>
+            <div class="footNote">Tip: some slots can be marked unavailable (demo).</div>
+          </div>
+
+          <div class="field" style="margin-top: 10px;">
+            <label for="notes">Notes / Requests (optional)</label>
+            <textarea id="notes" placeholder="Example: Prefer a quiet room, sensitive skin, etc."></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Summary + Confirm -->
+      <aside class="card">
+        <div class="cardPad">
+          <div class="sectionTitle">
+            <h2>Booking Summary</h2>
+            <div class="muted">Live preview</div>
+          </div>
+
+          <div class="summaryRow">
+            <div class="k">Service</div>
+            <div class="v" id="sumService">—</div>
+          </div>
+          <div class="summaryRow">
+            <div class="k">Duration</div>
+            <div class="v" id="sumDuration">—</div>
+          </div>
+          <div class="summaryRow">
+            <div class="k">Specialist</div>
+            <div class="v" id="sumStaff">—</div>
+          </div>
+          <div class="summaryRow">
+            <div class="k">Date</div>
+            <div class="v" id="sumDate">—</div>
+          </div>
+          <div class="summaryRow">
+            <div class="k">Time</div>
+            <div class="v" id="sumTime">—</div>
+          </div>
+
+          <div class="summaryRow">
+          <div class="k">Total Price</div>
+          <div class="v" id="sumTotal">—</div>
+      </div>
+
+      <div class="summaryRow">
+          <div class="k">Downpayment (10%)</div>
+          <div class="v" id="sumDownpayment">—</div>
+      </div>
+
+<div class="total">
+  <b>Remaining Balance</b>
+  <span id="sumRemaining">—</span>
+</div>
+
+<div class="summaryRow">
+  <div class="k">GCash Number</div>
+  <div class="v">0912-345-6789</div>
+</div>
+
+<div class="summaryRow">
+  <div class="k">Upload Proof of Payment</div>
+  <div class="v">
+    <input type="file" id="receiptUpload" accept="image/*">
+  </div>
+</div>
+
+<div id="receiptPreviewBox" style="margin-top:10px; display:none;">
+  <img id="receiptPreview" style="width:100%; border-radius:10px;">
+</div>
+
+          <div class="msg err" id="errBox"></div>
+          <div class="msg ok" id="okBox"></div>
+
+          <div class="actions">
+            <button class="btn" id="confirmBtn">Confirm Booking</button>
+            <button class="btn btnOutline" id="clearBtn" type="button">Clear</button>
+            <button class="btn btnOutline" id="gcashBtn" type="button">GCash QR Code</button>
+          </div>
+
+          <div class="footNote">
+            After confirming, your booking will be saved to <b>localStorage</b> as demo data.
+            Later we can connect this to your database.
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- GCash QR Popup -->
+<div id="gcashModal" class="gcashModal">
+
+  <div class="gcashCard">
+
+    <h3>Scan to Pay (GCash)</h3>
+
+    <img src="gcash_qr.png" alt="GCash QR Code">
+
+    <p>Send the required 10% downpayment using GCash.</p>
+
+    <button id="closeQR">Close</button>
+
+  </div>
+
+</div>
+
+  <script>
+
+// ===== Mobile menu toggle =====
+const menuBtn = document.getElementById("menuBtn");
+const mobileMenuBack = document.getElementById("mobileMenuBack");
+const menuClose = document.getElementById("menuClose");
+
+function openMenu(){
+  mobileMenuBack.style.display = "block";
+  document.body.style.overflow = "hidden";
+}
+
+function closeMenu(){
+  mobileMenuBack.style.display = "none";
+  document.body.style.overflow = "";
+}
+
+menuBtn?.addEventListener("click", openMenu);
+menuClose?.addEventListener("click", closeMenu);
+
+mobileMenuBack?.addEventListener("click",(e)=>{
+  if(e.target === mobileMenuBack) closeMenu();
+});
+
+// ===== Services Data =====
+let SERVICES = JSON.parse(localStorage.getItem("services")) || [];
+SERVICES = SERVICES.map(s => ({
+  id: s.id,
+  icon: "💇",
+  name: s.name,
+  duration: s.duration + " mins",
+  price: s.amount
+}));
+
+const TIME_SLOTS = [
+"9:00 AM","10:00 AM","11:00 AM","12:00 PM",
+"1:00 PM","2:00 PM","3:00 PM","4:00 PM"
+];
+
+const UNAVAILABLE = new Set(["12:00 PM","3:00 PM"]);
+
+// ===== STATE =====
+let selectedServices = [];
+let selectedTime = "";
+
+// ===== Elements =====
+const serviceGrid = document.getElementById("serviceGrid");
+const dateEl = document.getElementById("date");
+const staffEl = document.getElementById("staff");
+const notesEl = document.getElementById("notes");
+const slotsEl = document.getElementById("slots");
+
+const sumService = document.getElementById("sumService");
+const sumDuration = document.getElementById("sumDuration");
+const sumStaff = document.getElementById("sumStaff");
+const sumDate = document.getElementById("sumDate");
+const sumTime = document.getElementById("sumTime");
+const sumTotal = document.getElementById("sumTotal");
+const sumDownpayment = document.getElementById("sumDownpayment");
+const sumRemaining = document.getElementById("sumRemaining");
+
+const errBox = document.getElementById("errBox");
+const okBox = document.getElementById("okBox");
+
+const confirmBtn = document.getElementById("confirmBtn");
+const clearBtn = document.getElementById("clearBtn");
+
+// ===== Helpers =====
+function peso(n){
+ return new Intl.NumberFormat("en-PH",{
+  style:"currency",
+  currency:"PHP",
+  minimumFractionDigits:0
+ }).format(n);
+}
+
+function showErr(msg){
+ okBox.style.display="none";
+ errBox.textContent=msg;
+ errBox.style.display="block";
+}
+
+function showOk(msg){
+ errBox.style.display="none";
+ okBox.textContent=msg;
+ okBox.style.display="block";
+}
+
+function clearMsg(){
+ errBox.style.display="none";
+ okBox.style.display="none";
+}
+
+// ===== Date =====
+function setMinDateToday(){
+ const today=new Date();
+ const y=today.getFullYear();
+ const m=String(today.getMonth()+1).padStart(2,"0");
+ const d=String(today.getDate()).padStart(2,"0");
+ dateEl.min=`${y}-${m}-${d}`;
+ dateEl.value=dateEl.min;
+}
+
+// ===== Render Services =====
+function renderServices(){
+
+ serviceGrid.innerHTML="";
+
+ SERVICES.forEach(s=>{
+
+   const div=document.createElement("div");
+   div.className="service";
+
+   div.innerHTML=`
+   <span class="sChip">Selected</span>
+   <div class="sIcon">${s.icon}</div>
+   <div class="sMeta">
+   <b>${s.name}</b>
+   <small>${s.duration}</small>
+   </div>
+   <div class="sPrice">${peso(s.price)}</div>
+   `;
+
+   div.addEventListener("click",()=>{
+
+     const index=selectedServices.findIndex(x=>x.id===s.id);
+
+     if(index>-1){
+       selectedServices.splice(index,1);
+       div.classList.remove("active");
+     }else{
+       selectedServices.push(s);
+       div.classList.add("active");
+     }
+
+     updateSummary();
+     clearMsg();
+
+   });
+
+   serviceGrid.appendChild(div);
+
+ });
+
+}
+
+// ===== Render Time Slots =====
+function renderSlots(){
+
+ slotsEl.innerHTML="";
+
+ TIME_SLOTS.forEach(t=>{
+
+   const btn=document.createElement("div");
+   btn.className="slot";
+   btn.textContent=t;
+
+   if(UNAVAILABLE.has(t)){
+     btn.classList.add("disabled");
+   }
+
+   btn.addEventListener("click",()=>{
+
+     if(UNAVAILABLE.has(t)) return;
+
+     selectedTime=t;
+
+     document.querySelectorAll(".slot").forEach(s=>s.classList.remove("active"));
+     btn.classList.add("active");
+
+     updateSummary();
+   });
+
+   slotsEl.appendChild(btn);
+
+ });
+
+}
+
+// ===== Update Summary =====
+function updateSummary(){
+
+ if(selectedServices.length===0){
+
+   sumService.textContent="—";
+   sumDuration.textContent="—";
+   sumTotal.textContent="—";
+   sumDownpayment.textContent="—";
+   sumRemaining.textContent="—";
+   return;
+
+ }
+
+ const names=selectedServices.map(s=>s.name).join(", ");
+ const durations=selectedServices.map(s=>s.duration).join(", ");
+
+ const total = selectedServices.reduce((sum,s)=>sum+Number(s.price),0);
+
+const down = Math.round(total * 0.10);
+const remain = total - down;
+
+ sumService.textContent=names;
+ sumDuration.textContent=durations;
+ sumStaff.textContent=staffEl.value || "No preference";
+ sumDate.textContent=dateEl.value || "—";
+ sumTime.textContent=selectedTime || "—";
+
+ sumTotal.textContent=peso(total);
+ sumDownpayment.textContent=peso(down);
+ sumRemaining.textContent=peso(remain);
+
+}
+
+// ===== Clear Booking =====
+function clearAll(){
+
+ selectedServices=[];
+ selectedTime="";
+
+ notesEl.value="";
+ staffEl.value="";
+
+ document.querySelectorAll(".service").forEach(s=>s.classList.remove("active"));
+ document.querySelectorAll(".slot").forEach(s=>s.classList.remove("active"));
+
+ updateSummary();
+ clearMsg();
+
+}
+
+clearBtn.addEventListener("click",clearAll);
+
+staffEl.addEventListener("change",updateSummary);
+dateEl.addEventListener("change",updateSummary);
+
+// ===== Confirm Booking =====
+confirmBtn.addEventListener("click",()=>{
+
+ clearMsg();
+
+ if(selectedServices.length===0)
+ return showErr("Please select at least one service.");
+
+ if(!selectedTime)
+ return showErr("Please choose a time slot.");
+
+ // Calculate prices properly
+ const total = selectedServices.reduce((sum,s)=>sum + Number(s.price),0);
+
+ const down = Math.round(total * 0.10);
+
+ const remain = total - down;
+
+ const booking = {
+ id:"BK-"+Math.random().toString(16).slice(2,10).toUpperCase(),
+
+ services:selectedServices,
+
+ totalPrice:total,
+
+ downpayment:down,
+
+ remaining:remain,
+
+ date:dateEl.value,
+
+ time:selectedTime,
+
+ staff:staffEl.value || "No preference",
+
+ notes:notesEl.value.trim(),
+
+ receipt:receiptImage,
+
+ createdAt:Date.now()
+ };
+
+ const existing = JSON.parse(localStorage.getItem("salonBookings") || "[]");
+
+ existing.unshift(booking);
+
+ localStorage.setItem("salonBookings",JSON.stringify(existing));
+
+ showOk("Booking confirmed! 10% downpayment required.");
+
+});
+
+// ===== GCash QR Popup =====
+
+const gcashBtn = document.getElementById("gcashBtn");
+const gcashModal = document.getElementById("gcashModal");
+const closeQR = document.getElementById("closeQR");
+
+gcashBtn.addEventListener("click", () => {
+  gcashModal.style.display = "flex";
+});
+
+closeQR.addEventListener("click", () => {
+  gcashModal.style.display = "none";
+});
+
+gcashModal.addEventListener("click",(e)=>{
+  if(e.target === gcashModal){
+    gcashModal.style.display="none";
+  }
+});
+
+// ===== Receipt Upload =====
+
+let receiptImage = "";
+
+const receiptUpload = document.getElementById("receiptUpload");
+const receiptPreview = document.getElementById("receiptPreview");
+const receiptPreviewBox = document.getElementById("receiptPreviewBox");
+
+receiptUpload.addEventListener("change", function(){
+
+const file = this.files[0];
+
+if(!file) return;
+
+const reader = new FileReader();
+
+reader.onload = function(e){
+
+receiptImage = e.target.result;
+
+receiptPreview.src = receiptImage;
+
+receiptPreviewBox.style.display = "block";
+
+}
+
+reader.readAsDataURL(file);
+
+});
+
+// ===== Load service from Services page =====
+
+const savedService = localStorage.getItem("selectedService");
+
+if(savedService){
+
+  const svc = JSON.parse(savedService);
+
+  const found = SERVICES.find(s => s.name === svc.name);
+
+  if(found){
+    selectedServices.push(found);
+  }
+
+  localStorage.removeItem("selectedService");
+}
+
+// ===== Init =====
+setMinDateToday();
+renderServices();
+renderSlots();
+updateSummary();
+
+// highlight selected service automatically
+document.querySelectorAll(".service").forEach(div => {
+  const name = div.querySelector("b").textContent;
+
+  if(selectedServices.some(s => s.name === name)){
+    div.classList.add("active");
+  }
+});
+
+</script>
+</body>
+</html>

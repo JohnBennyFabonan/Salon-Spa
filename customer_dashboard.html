@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Customer Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+--green:#2f7d62;
+--green2:#256a52;
+--bg:#f4fbf7;
+--card:#ffffff;
+--text:#0f172a;
+--muted:#64748b;
+--line:rgba(15,23,42,.08);
+--shadow:0 14px 40px rgba(2,6,23,.08);
+--radius:16px;
+--greenSoft:rgba(47,125,98,.12);
+}
+
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+font-family:Poppins;
+background:var(--bg);
+display:flex;
+color:var(--text);
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:260px;
+background:linear-gradient(180deg,var(--green),var(--green2));
+color:white;
+padding:28px 22px;
+min-height:100vh;
+}
+
+.logo{
+font-weight:800;
+font-size:18px;
+margin-bottom:35px;
+}
+
+.nav{
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.nav a{
+color:white;
+text-decoration:none;
+padding:12px 14px;
+border-radius:12px;
+font-size:13px;
+font-weight:600;
+}
+
+.nav a:hover{
+background:rgba(255,255,255,.15);
+}
+
+.nav a.active{
+background:rgba(255,255,255,.25);
+}
+
+/* MAIN */
+
+.main{
+flex:1;
+padding:30px;
+max-width:1400px;
+}
+
+/* HEADER */
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:28px;
+}
+
+.header h1{
+margin:0;
+font-size:28px;
+}
+
+/* CARDS */
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:18px;
+margin-bottom:28px;
+}
+
+.card{
+background:var(--card);
+padding:22px;
+border-radius:var(--radius);
+box-shadow:var(--shadow);
+border:1px solid var(--line);
+}
+
+.card h4{
+margin:0;
+font-size:13px;
+color:var(--muted);
+}
+
+.card p{
+margin-top:10px;
+font-size:30px;
+font-weight:800;
+color:var(--green2);
+}
+
+/* TABLE */
+
+.tableCard{
+background:var(--card);
+padding:22px;
+border-radius:var(--radius);
+box-shadow:var(--shadow);
+border:1px solid var(--line);
+margin-bottom:22px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+font-size:14px;
+}
+
+thead{
+background:var(--greenSoft);
+}
+
+th{
+text-align:left;
+font-size:12px;
+color:var(--muted);
+padding:12px;
+}
+
+td{
+padding:12px;
+border-bottom:1px solid var(--line);
+}
+
+tr:hover{
+background:#f9fdfb;
+}
+
+.status{
+background:#e7f7ef;
+color:var(--green2);
+padding:5px 10px;
+border-radius:20px;
+font-size:12px;
+font-weight:600;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+.sidebar{
+display:none;
+}
+
+body{
+flex-direction:column;
+}
+
+.main{
+padding:20px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<div class="logo">🌿 BASIT Customer</div>
+
+<div class="nav">
+
+<a class="active">Dashboard</a>
+<a href="services.html">Book Service</a>
+<a href="promo.html">View Promos</a>
+<a href="gallery.html">Gallery</a>
+<a href="logout.html">Log Out</a>
+
+</div>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="header">
+<h1>My Bookings</h1>
+</div>
+
+<!-- CARDS -->
+
+<div class="cards">
+
+<div class="card">
+<h4>Total Bookings</h4>
+<p id="totalBookings">0</p>
+</div>
+
+<div class="card">
+<h4>Upcoming Bookings</h4>
+<p id="upcomingBookings">0</p>
+</div>
+
+<div class="card">
+<h4>Completed Bookings</h4>
+<p id="completedBookings">0</p>
+</div>
+
+<div class="card">
+<h4>Total Paid</h4>
+<p id="totalPaid">₱0</p>
+</div>
+
+</div>
+
+<!-- UPCOMING BOOKINGS -->
+
+<div class="tableCard">
+
+<h3>Upcoming Appointments</h3>
+
+<table>
+
+<thead>
+
+<tr>
+<th>Booking ID</th>
+<th>Service / Promo</th>
+<th>Date</th>
+<th>Time</th>
+<th>Downpayment</th>
+<th>Status</th>
+</tr>
+
+</thead>
+
+<tbody id="upcomingTable"></tbody>
+
+</table>
+
+</div>
+
+<!-- BOOKING HISTORY -->
+
+<div class="tableCard">
+
+<h3>Booking History</h3>
+
+<table>
+
+<thead>
+
+<tr>
+<th>Booking ID</th>
+<th>Service / Promo</th>
+<th>Date</th>
+<th>Time</th>
+<th>Remaining</th>
+<th>Status</th>
+</tr>
+
+</thead>
+
+<tbody id="historyTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<script>
+
+const bookings = JSON.parse(localStorage.getItem("salonBookings") || []);
+
+const totalBookings = bookings.length;
+
+document.getElementById("totalBookings").textContent = totalBookings;
+
+let today = new Date().toISOString().split("T")[0];
+
+let upcoming = 0;
+let completed = 0;
+let totalPaid = 0;
+
+const upcomingTable = document.getElementById("upcomingTable");
+const historyTable = document.getElementById("historyTable");
+
+bookings.forEach(b=>{
+
+let serviceName = "";
+
+if(b.services){
+serviceName = b.services.map(s=>s.name).join(", ");
+}
+
+if(b.promo){
+serviceName = b.promo.name;
+}
+
+totalPaid += b.downpayment || 0;
+
+if(b.date >= today){
+
+upcoming++;
+
+let row = `
+<tr>
+<td>${b.id}</td>
+<td>${serviceName}</td>
+<td>${b.date}</td>
+<td>${b.time}</td>
+<td>₱${(b.downpayment || 0).toLocaleString()}</td>
+<td><span class="status">Pending</span></td>
+</tr>
+`;
+
+upcomingTable.innerHTML += row;
+
+}else{
+
+completed++;
+
+let row = `
+<tr>
+<td>${b.id}</td>
+<td>${serviceName}</td>
+<td>${b.date}</td>
+<td>${b.time}</td>
+<td>₱${(b.remaining || 0).toLocaleString()}</td>
+<td><span class="status">Completed</span></td>
+</tr>
+`;
+
+historyTable.innerHTML += row;
+
+}
+
+});
+
+document.getElementById("upcomingBookings").textContent = upcoming;
+document.getElementById("completedBookings").textContent = completed;
+document.getElementById("totalPaid").textContent = "₱"+totalPaid.toLocaleString();
+
+</script>
+
+</body>
+</html>

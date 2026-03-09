@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Promo Booking</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+--green:#2f7d62;
+--green2:#256a52;
+--bg:#f4fbf7;
+--card:#ffffff;
+--line:rgba(15,23,42,.10);
+--shadow:0 14px 40px rgba(2,6,23,.08);
+--radius:18px;
+}
+
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+font-family:Poppins;
+background:var(--bg);
+}
+
+/* TOPBAR */
+
+.topbar{
+background:var(--green);
+color:white;
+display:flex;
+gap:12px;
+padding:8px 20px;
+font-size:12px;
+}
+
+.pill{
+padding:6px 10px;
+background:rgba(255,255,255,0.15);
+border-radius:20px;
+}
+
+/* NAVBAR */
+
+.navbar{
+background:linear-gradient(180deg,var(--green),var(--green2));
+padding:14px 20px;
+display:flex;
+align-items:center;
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:10px;
+color:white;
+font-weight:800;
+}
+
+.logo{
+width:40px;
+height:40px;
+border-radius:12px;
+background:rgba(255,255,255,0.15);
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.menu{
+margin-left:auto;
+display:flex;
+gap:14px;
+}
+
+.menu a{
+color:white;
+text-decoration:none;
+font-size:13px;
+font-weight:600;
+padding:8px 10px;
+border-radius:20px;
+}
+
+.menu a:hover{
+background:rgba(255,255,255,0.15);
+}
+
+/* PAGE */
+
+.container{
+max-width:900px;
+margin:auto;
+padding:30px 20px;
+}
+
+.card{
+background:white;
+border-radius:var(--radius);
+border:1px solid var(--line);
+box-shadow:var(--shadow);
+padding:20px;
+margin-bottom:20px;
+}
+
+h2{
+margin-top:0;
+font-size:18px;
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+padding:10px 0;
+border-bottom:1px solid rgba(0,0,0,0.05);
+}
+
+.row:last-child{
+border-bottom:none;
+}
+
+label{
+font-size:13px;
+font-weight:600;
+margin-top:12px;
+display:block;
+}
+
+input,select{
+width:100%;
+padding:12px;
+border-radius:12px;
+border:1px solid #ccc;
+margin-top:5px;
+}
+
+.totalBox{
+margin-top:12px;
+padding:12px;
+border-radius:14px;
+background:rgba(47,125,98,.10);
+border:1px solid rgba(47,125,98,.25);
+display:flex;
+justify-content:space-between;
+font-weight:700;
+}
+
+button{
+background:var(--green);
+color:white;
+border:none;
+padding:14px;
+width:100%;
+border-radius:12px;
+cursor:pointer;
+font-weight:700;
+margin-top:15px;
+}
+
+button:hover{
+background:var(--green2);
+}
+
+.preview{
+margin-top:10px;
+display:none;
+border-radius:12px;
+}
+
+/* QR POPUP */
+
+.qrModal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:1000;
+}
+
+.qrCard{
+background:white;
+padding:25px;
+border-radius:16px;
+text-align:center;
+max-width:320px;
+width:90%;
+}
+
+.qrCard img{
+width:220px;
+margin:15px 0;
+}
+
+.qrCard button{
+width:auto;
+padding:10px 16px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- TOPBAR -->
+
+<div class="topbar">
+<div class="pill">📞 +451236981</div>
+<div class="pill">✉️ example@gmail.com</div>
+<div class="pill">🕘 Mon–Fri: 8:00am–5:00pm</div>
+</div>
+
+<!-- NAVBAR -->
+
+<div class="navbar">
+
+<div class="brand">
+<div class="logo">🌿</div>
+<span>BASIT</span>
+</div>
+
+<div class="menu">
+<a href="index.html">Home</a>
+<a href="services.html">Service</a>
+<a href="gallery.html">Gallery</a>
+<a href="specialist.html">Specialist</a>
+<a href="promo.html">Promos</a>
+<a href="contact.html">Contact</a>
+<a href="log_in.html">Log in</a>
+</div>
+
+</div>
+
+<div class="container">
+
+<!-- PROMO DETAILS -->
+
+<div class="card">
+
+<h2>Promo Details</h2>
+
+<div class="row">
+<span>Promo Deal</span>
+<strong id="promoName"></strong>
+</div>
+
+<div class="row">
+<span>Promo Price</span>
+<strong id="promoPrice"></strong>
+</div>
+
+</div>
+
+
+<!-- SCHEDULE -->
+
+<div class="card">
+
+<h2>Schedule</h2>
+
+<label>Date</label>
+<input type="date" id="date">
+
+<label>Time</label>
+<select id="time">
+<option>9:00 AM</option>
+<option>10:00 AM</option>
+<option>11:00 AM</option>
+<option>1:00 PM</option>
+<option>2:00 PM</option>
+<option>4:00 PM</option>
+</select>
+
+</div>
+
+
+<!-- PAYMENT -->
+
+<div class="card">
+
+<h2>Payment Summary</h2>
+
+<div class="row">
+<span>Total Price</span>
+<strong id="total"></strong>
+</div>
+
+<div class="row">
+<span>10% Downpayment</span>
+<strong id="down"></strong>
+</div>
+
+<div class="totalBox">
+<span>Remaining Balance</span>
+<span id="remain"></span>
+</div>
+
+<div class="row">
+<span>GCash Number</span>
+<strong>0912-345-6789</strong>
+</div>
+
+<button id="showQR">View GCash QR Code</button>
+
+<label>Upload Proof of Payment</label>
+<input type="file" id="receipt">
+
+<img id="preview" class="preview" width="100%">
+
+<button id="confirm">Confirm Booking</button>
+
+</div>
+
+</div>
+
+
+<!-- QR MODAL -->
+
+<div id="qrModal" class="qrModal">
+
+<div class="qrCard">
+
+<h3>Scan to Pay (GCash)</h3>
+
+<img src="gcash_qr.png">
+
+<p>Send the required 10% downpayment.</p>
+
+<button id="closeQR">Close</button>
+
+</div>
+
+</div>
+
+
+<script>
+
+const promo = JSON.parse(localStorage.getItem("selectedPromo"));
+
+if(!promo){
+
+alert("No promo selected");
+
+window.location.href="promo.html";
+
+}
+
+document.getElementById("promoName").textContent = promo.name;
+document.getElementById("promoPrice").textContent = "₱"+promo.price;
+
+const down = promo.price * 0.10;
+const remain = promo.price - down;
+
+document.getElementById("total").textContent = "₱"+promo.price;
+document.getElementById("down").textContent = "₱"+down;
+document.getElementById("remain").textContent = "₱"+remain;
+
+let receiptImage="";
+
+document.getElementById("receipt").addEventListener("change",function(){
+
+const file=this.files[0];
+
+const reader=new FileReader();
+
+reader.onload=function(e){
+
+receiptImage=e.target.result;
+
+document.getElementById("preview").src=receiptImage;
+document.getElementById("preview").style.display="block";
+
+}
+
+reader.readAsDataURL(file);
+
+});
+
+/* QR POPUP */
+
+const qrModal=document.getElementById("qrModal");
+
+document.getElementById("showQR").onclick=function(){
+qrModal.style.display="flex";
+}
+
+document.getElementById("closeQR").onclick=function(){
+qrModal.style.display="none";
+}
+
+qrModal.onclick=function(e){
+if(e.target===qrModal){
+qrModal.style.display="none";
+}
+}
+
+document.getElementById("confirm").onclick=function(){
+
+const booking={
+
+promo:promo,
+date:document.getElementById("date").value,
+time:document.getElementById("time").value,
+downpayment:down,
+remaining:remain,
+receipt:receiptImage,
+id:"PR-"+Math.random().toString(16).slice(2,8)
+
+};
+
+const bookings=JSON.parse(localStorage.getItem("salonBookings")||"[]");
+
+bookings.push(booking);
+
+localStorage.setItem("salonBookings",JSON.stringify(bookings));
+
+alert("Promo booking confirmed!");
+
+window.location.href="index.html";
+
+};
+
+</script>
+
+</body>
+</html>

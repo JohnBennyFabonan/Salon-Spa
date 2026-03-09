@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Logout</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+--green:#2f7d62;
+--green2:#256a52;
+--bg:#f4fbf7;
+--card:#ffffff;
+--text:#0f172a;
+--muted:#64748b;
+--line:rgba(15,23,42,.08);
+--shadow:0 14px 40px rgba(2,6,23,.08);
+--radius:16px;
+}
+
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+font-family:Poppins;
+background:var(--bg);
+display:flex;
+color:var(--text);
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:260px;
+background:linear-gradient(180deg,var(--green),var(--green2));
+color:white;
+padding:28px 22px;
+min-height:100vh;
+}
+
+.logo{
+font-weight:800;
+font-size:18px;
+margin-bottom:35px;
+}
+
+.nav{
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.nav a{
+display:block;
+color:white;
+text-decoration:none;
+padding:12px 14px;
+border-radius:12px;
+font-size:13px;
+font-weight:600;
+transition:.15s;
+}
+
+.nav a:hover{
+background:rgba(255,255,255,.15);
+}
+
+.nav a.active{
+background:rgba(255,255,255,.25);
+}
+
+/* MAIN */
+
+.main{
+flex:1;
+padding:30px;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+/* CARD */
+
+.tableCard{
+background:var(--card);
+padding:40px;
+border-radius:var(--radius);
+box-shadow:var(--shadow);
+border:1px solid var(--line);
+text-align:center;
+max-width:400px;
+}
+
+/* TEXT */
+
+.tableCard h2{
+margin-top:0;
+font-size:20px;
+margin-bottom:25px;
+}
+
+/* BUTTONS */
+
+.button{
+background:var(--green);
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:10px;
+font-size:13px;
+font-weight:600;
+cursor:pointer;
+transition:.15s;
+margin:5px;
+}
+
+.button:hover{
+background:var(--green2);
+}
+
+.cancel{
+background:#e2e8f0;
+color:#0f172a;
+}
+
+.cancel:hover{
+background:#cbd5e1;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+.sidebar{
+display:none;
+}
+
+body{
+flex-direction:column;
+}
+
+.main{
+padding:20px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<div class="logo">🌿 BASIT Admin</div>
+
+<div class="nav">
+
+<a href="admin_dashboard.html">Dashboard</a>
+<a href="admin_gallery.html">Manage Gallery</a>
+<a href="admin_bookings.html">Manage Bookings</a>
+<a href="admin_promo.html">Manage Promo</a>
+<a href="admin_services.html">Manage Services</a>
+<a href="admin_specialist.html">Manage Specialist</a>
+<a href="admin_account.html">Account Settings</a>
+<a class="active">Log Out</a>
+
+</div>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="tableCard">
+
+<h2>Are you sure you want to log out?</h2>
+
+<button class="button">Yes, Log Out</button>
+<button class="button cancel" onclick="history.back()">Cancel</button>
+
+</div>
+
+</div>
+
+</body>
+</html>

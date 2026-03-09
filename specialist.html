@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Specialists | Salon & Spa</title>
+
+  <!-- If you have a shared responsive file, keep it -->
+  <link rel="stylesheet" href="mobile.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --green:#2f7d62;
+      --green-2:#256a52;
+      --bg:#f4fbf7;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(15,23,42,.10);
+      --shadow:0 14px 40px rgba(2,6,23,.08);
+      --radius:16px;
+      --green-soft: rgba(47, 125, 98, .12);
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    /* ===== TOPBAR + NAVBAR ===== */
+    .topbar{
+      background: var(--green);
+      min-height: 40px;
+      display:flex;
+      align-items:center;
+      gap: 14px;
+      padding: 8px 22px;
+      color: rgba(255,255,255,.92);
+      font-size: 12px;
+    }
+    .topbar .left, .topbar .right{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+    .topbar .right{ margin-left:auto; }
+    .pill{
+      display:flex; align-items:center; gap:8px;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      white-space: nowrap;
+    }
+    .social{ display:flex; gap:10px; align-items:center; }
+    .social a{
+      width:28px; height:28px; display:grid; place-items:center;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.08);
+      color:rgba(255,255,255,.95);
+      text-decoration:none;
+      transition:.15s;
+      font-size:13px;
+    }
+    .social a:hover{ transform: translateY(-1px); background: rgba(255,255,255,.14); }
+
+    .navbar{
+      background: linear-gradient(180deg, var(--green), var(--green-2));
+      padding: 16px 22px;
+      display:flex;
+      align-items:center;
+      gap:18px;
+      position: relative;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      color:#fff; font-weight:800; letter-spacing:.6px; text-transform:uppercase;
+    }
+    .brand .logo{
+      width:44px; height:44px; border-radius:14px;
+      display:grid; place-items:center;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+    }
+
+    /* Desktop menu */
+    .menu{
+      margin-left:auto;
+      display:flex;
+      gap:18px;
+      align-items:center;
+      flex-wrap: wrap;
+    }
+    .menu a{
+      color: rgba(255,255,255,.92);
+      text-decoration:none;
+      font-size:13px;
+      font-weight:600;
+      padding: 8px 10px;
+      border-radius:999px;
+      transition:.15s;
+    }
+    .menu a:hover{ background: rgba(255,255,255,.12); }
+    .menu a.active{ background: rgba(255,255,255,.18); }
+
+    /* Mobile menu button */
+    .menuBtn{
+      margin-left:auto;
+      display:none;
+      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(255,255,255,.10);
+      color:#fff;
+      width:44px;
+      height:44px;
+      border-radius:14px;
+      font-size:22px;
+      cursor:pointer;
+    }
+    .menuBtn:hover{ background: rgba(255,255,255,.16); }
+
+    /* Mobile menu drawer */
+    .mobileMenuBack{
+      position: fixed;
+      inset: 0;
+      background: rgba(2,6,23,.55);
+      display:none;
+      z-index: 70;
+      padding: 10px;
+    }
+    .mobileMenu{
+      position:absolute;
+      top: 10px;
+      right: 10px;
+      width: min(340px, calc(100% - 20px));
+      background: #fff;
+      border-radius: 18px;
+      overflow:hidden;
+      box-shadow: 0 28px 90px rgba(0,0,0,.30);
+    }
+    .mobileMenuHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 14px 14px;
+      border-bottom: 1px solid rgba(15,23,42,.10);
+    }
+    .mobileTitle{
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: .2px;
+    }
+    .menuClose{
+      border:none;
+      background: rgba(15,23,42,.06);
+      cursor:pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      font-size: 18px;
+    }
+    .mobileLinks{
+      display:flex;
+      flex-direction:column;
+      padding: 12px;
+      gap: 8px;
+    }
+    .mobileLinks a{
+      text-decoration:none;
+      color: var(--text);
+      font-weight: 700;
+      padding: 12px 12px;
+      border-radius: 12px;
+      background: rgba(15,23,42,.03);
+    }
+    .mobileLinks a.active{
+      background: rgba(47,125,98,.12);
+      color: var(--green-2);
+      border: 1px solid rgba(47,125,98,.18);
+    }
+
+    /* ===== PAGE ===== */
+    .container{
+      max-width:1180px;
+      margin:0 auto;
+      padding:22px 18px 70px;
+    }
+
+    .pageHead{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom:16px;
+    }
+    .titleWrap h1{
+      margin:0;
+      font-size: clamp(22px, 3.2vw, 34px);
+      letter-spacing:.2px;
+    }
+    .titleWrap p{
+      margin:8px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      background: var(--green-soft);
+      color: var(--green-2);
+      border: 1px solid rgba(47,125,98,.18);
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    /* Controls (FILTER ONLY) */
+    .controls{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      display:flex;
+      justify-content:flex-end;
+      margin-bottom: 18px;
+    }
+    .select{
+      width: min(360px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 12px;
+      background: #fff;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .cardTop{
+      display:flex;
+      gap: 12px;
+      padding: 14px;
+      align-items:center;
+    }
+    .avatar{
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      overflow:hidden;
+      border: 1px solid rgba(15,23,42,.10);
+      flex: 0 0 auto;
+      background:#fff;
+    }
+    .avatar img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+    }
+    .name{
+      margin:0;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+    .role{
+      margin:4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .chips{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 14px 12px;
+    }
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(15,23,42,.02);
+      font-size: 12px;
+      color: #334155;
+      font-weight: 600;
+    }
+
+    .bio{
+      padding: 0 14px 12px;
+      margin:0;
+      color:#334155;
+      font-size: 13px;
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .cardBottom{
+      padding: 12px 14px 14px;
+      border-top: 1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .days{
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .btnRow{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+    }
+    .btn{
+      border:none;
+      cursor:pointer;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 13px;
+      background: var(--green);
+      color: #fff;
+      transition: .15s;
+      white-space: nowrap;
+    }
+    .btn:hover{ background: var(--green-2); transform: translateY(-1px); }
+    .btnOutline{
+      background: transparent;
+      border: 1px solid rgba(47,125,98,.45);
+      color: var(--green-2);
+    }
+    .btnOutline:hover{
+      background: rgba(47,125,98,.08);
+      transform: translateY(-1px);
+    }
+
+    /* Modal */
+    .modalBack{
+      position: fixed;
+      inset: 0;
+      background: rgba(2,6,23,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      z-index: 60;
+    }
+    .modal{
+      width: min(760px, 100%);
+      background:#fff;
+      border-radius: 18px;
+      overflow:hidden;
+      box-shadow: 0 28px 90px rgba(0,0,0,.35);
+    }
+    .modalHead{
+      padding: 14px 16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      border-bottom: 1px solid rgba(15,23,42,.10);
+    }
+    .modalHead h3{ margin:0; font-size: 16px; }
+    .xbtn{
+      border:none;
+      background: rgba(15,23,42,.06);
+      cursor:pointer;
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      font-size: 18px;
+    }
+
+    .modalBody{
+      padding: 16px;
+      display:grid;
+      grid-template-columns: 140px 1fr;
+      gap: 14px;
+      align-items:start;
+    }
+    .bigAvatar{
+      width: 140px;
+      height: 140px;
+      border-radius: 18px;
+      overflow:hidden;
+      border: 1px solid rgba(15,23,42,.10);
+      background:#fff;
+    }
+    .bigAvatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    .kvRow{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .kv{
+      border: 1px solid rgba(15,23,42,.10);
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(15,23,42,.02);
+      font-size: 13px;
+    }
+
+    .modalFoot{
+      padding: 14px 16px;
+      border-top: 1px solid rgba(15,23,42,.10);
+      display:flex;
+      justify-content:flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ✅ MOBILE: hide topbar details + show hamburger */
+    @media (max-width: 720px){
+      .topbar{ display:none !important; } /* <— removes details above logo */
+
+      .grid{ grid-template-columns: 1fr; }
+
+      /* Navbar: hide desktop links, show hamburger */
+      .menu{ display:none !important; }
+      .menuBtn{ display:inline-grid; place-items:center; }
+
+      .navbar{
+        padding: 12px 12px;
+        gap: 10px;
+      }
+      .brand .logo{
+        width: 40px;
+        height: 40px;
+        border-radius: 14px;
+      }
+
+      .pageHead{
+        flex-direction: column;
+        align-items:flex-start;
+      }
+
+      .modalBody{ grid-template-columns: 1fr; }
+      .bigAvatar{ width: 120px; height: 120px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- TOPBAR (hidden on mobile) -->
+  <div class="topbar">
+    <div class="left">
+      <div class="pill">📞 +451236981</div>
+      <div class="pill">✉️ example@gmail.com</div>
+      <div class="pill">🕘 Mon–Fri: 8:00am–5:00pm</div>
+    </div>
+    <div class="right">
+      <div class="social">
+        <a href="#" title="Facebook">f</a>
+        <a href="#" title="Twitter">t</a>
+        <a href="#" title="Instagram">⌁</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">🌿</div>
+      <span>BASIT</span>
+    </div>
+
+    <nav class="menu" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="gallery.html">Gallery</a>
+      <a class="active" href="specialist.html">Specialist</a>
+      <a href="promo.html">Promos</a>
+      <a href="log_in.html">Log in</a>
+      <a href="Sign_up.html">Sign up</a>
+    </nav>
+
+    <!-- Mobile button -->
+    <button class="menuBtn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+      ☰
+    </button>
+  </header>
+
+  <!-- Mobile Menu Drawer -->
+  <div class="mobileMenuBack" id="mobileMenuBack" aria-hidden="true">
+    <div class="mobileMenu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Mobile Menu">
+      <div class="mobileMenuHead">
+        <span class="mobileTitle">Menu</span>
+        <button class="menuClose" id="menuClose" aria-label="Close menu">✕</button>
+      </div>
+      <nav class="mobileLinks" aria-label="Mobile Primary">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="gallery.html">Gallery</a>
+        <a class="active" href="specialist.html">Specialist</a>
+        <a href="promo.html">Promos</a>
+        <a href="log_in.html">Log in</a>
+        <a href="Sign_up.html">Sign up</a>
+      </nav>
+    </div>
+  </div>
+
+  <!-- PAGE -->
+  <div class="container">
+    <div class="pageHead">
+      <div class="titleWrap">
+        <h1>Specialists</h1>
+        <p>Meet our talented team. Choose a specialist based on skills and schedule.</p>
+      </div>
+      <div class="badge">
+        <span>●</span>
+        <span id="countText">0 specialists</span>
+      </div>
+    </div>
+
+    <!-- Controls (FILTER ONLY) -->
+    <div class="controls">
+      <select id="filterSelect" class="select">
+        <option value="All">Filter: All specialties</option>
+        <option value="Hair">Hair</option>
+        <option value="Nails">Nails</option>
+        <option value="Spa">Spa</option>
+        <option value="Makeup">Makeup</option>
+      </select>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <!-- PROFILE MODAL -->
+  <div class="modalBack" id="modalBack">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modalHead">
+        <h3 id="modalTitle">Specialist Profile</h3>
+        <button class="xbtn" id="closeModal" aria-label="Close">✕</button>
+      </div>
+
+      <div class="modalBody">
+        <div class="bigAvatar"><img id="modalImg" alt="Specialist"></div>
+
+        <div>
+          <h3 style="margin:0 0 4px;" id="modalName"></h3>
+          <div style="color:#64748b;font-weight:700;font-size:12px;" id="modalRole"></div>
+
+          <p style="margin:10px 0 0; color:#334155; line-height:1.6;" id="modalBio"></p>
+
+          <div class="kvRow" id="modalKVs"></div>
+        </div>
+      </div>
+
+      <div class="modalFoot">
+        <button class="btn btnOutline" id="closeModal2" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Mobile menu toggle =====
+    const menuBtn = document.getElementById("menuBtn");
+    const mobileMenuBack = document.getElementById("mobileMenuBack");
+    const menuClose = document.getElementById("menuClose");
+
+    function openMenu(){
+      mobileMenuBack.style.display = "block";
+      menuBtn.setAttribute("aria-expanded", "true");
+      mobileMenuBack.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+    function closeMenu(){
+      mobileMenuBack.style.display = "none";
+      menuBtn.setAttribute("aria-expanded", "false");
+      mobileMenuBack.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+
+    menuBtn?.addEventListener("click", openMenu);
+    menuClose?.addEventListener("click", closeMenu);
+    mobileMenuBack?.addEventListener("click", (e) => {
+      if(e.target === mobileMenuBack) closeMenu();
+    });
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "Escape") closeMenu();
+    });
+
+    // ===== Specialists page logic =====
+
+// Load specialists from admin panel
+let specialists = JSON.parse(localStorage.getItem("specialists")) || [];
+
+// Convert admin data to public page format
+specialists = specialists.map((s,i)=>({
+ id:"SP"+(i+1),
+ name:s.name,
+ role:s.role,
+ specialties:[s.specialty],
+ days:"Mon–Sat",
+ bio:s.bio,
+ img:s.img || "https://via.placeholder.com/150"
+}));
+
+    const grid = document.getElementById("grid");
+    const countText = document.getElementById("countText");
+    const filterSelect = document.getElementById("filterSelect");
+
+    // modal
+    const modalBack = document.getElementById("modalBack");
+    const closeModal = document.getElementById("closeModal");
+    const closeModal2 = document.getElementById("closeModal2");
+    const bookWith = document.getElementById("bookWith");
+    const modalImg = document.getElementById("modalImg");
+    const modalName = document.getElementById("modalName");
+    const modalRole = document.getElementById("modalRole");
+    const modalBio = document.getElementById("modalBio");
+    const modalKVs = document.getElementById("modalKVs");
+
+    let selected = null;
+
+        function cardHTML(s){
+      const chips = s.specialties.map(x => `<span class="chip">✅ ${x}</span>`).join("");
+
+      return `
+        <article class="card">
+          <div class="cardTop">
+            <div class="avatar"><img src="${s.img}" alt="${s.name}"></div>
+            <div>
+              <h3 class="name">${s.name}</h3>
+              <div class="role">${s.role}</div>
+            </div>
+          </div>
+
+          <div class="chips">${chips}</div>
+
+          <p class="bio">${s.bio}</p>
+
+          <div class="cardBottom">
+            <div class="btnRow">
+              <button class="btn btnOutline" type="button" data-view="${s.id}">
+                View Profile
+              </button>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function filterList(){
+      const f = filterSelect.value;
+      return specialists.filter(s => (f === "All") ? true : s.specialties.includes(f));
+    }
+
+    function render(){
+      const list = filterList();
+      countText.textContent = `${list.length} specialist${list.length!==1 ? "s" : ""}`;
+      grid.innerHTML = list.map(cardHTML).join("");
+
+      document.querySelectorAll("[data-view],[data-book]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const id = btn.getAttribute("data-view") || btn.getAttribute("data-book");
+          openModal(specialists.find(x => x.id === id));
+        });
+      });
+    }
+
+    function openModal(s){
+      selected = s;
+      modalImg.src = s.img;
+      modalName.textContent = s.name;
+      modalRole.textContent = s.role;
+      modalBio.textContent = s.bio;
+
+      modalKVs.innerHTML = `
+        <div class="kv"><strong>ID:</strong> ${s.id}</div>
+        <div class="kv"><strong>Specialties:</strong> ${s.specialties.join(", ")}</div>
+      `;
+
+      modalBack.style.display = "flex";
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeIt(){
+      modalBack.style.display = "none";
+      selected = null;
+      document.body.style.overflow = "";
+    }
+
+    closeModal.onclick = closeIt;
+    closeModal2.onclick = closeIt;
+    modalBack.addEventListener("click",(e)=>{ if(e.target === modalBack) closeIt(); });
+
+    filterSelect.addEventListener("change", render);
+    render();
+  </script>
+</body>
+</html>
