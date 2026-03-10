@@ -498,143 +498,311 @@
 </head>
 
 <body>
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div class="left">
-      <div class="pill">📞 +451236981</div>
-      <div class="pill">✉️ example@gmail.com</div>
-      <div class="pill">🕘 Mon–Fri: 8:00am–5:00pm</div>
-    </div>
-    <div class="right">
-      <div class="social">
-        <a href="#" title="Facebook">f</a>
-        <a href="#" title="Twitter">t</a>
-        <a href="#" title="Instagram">⌁</a>
-      </div>
-    </div>
-  </div>
 
-  <!-- NAVBAR -->
-  <header class="navbar">
-    <div class="brand">
-      <div class="logo" aria-hidden="true">🌿</div>
-      <span>BASIT</span>
-    </div>
+<!-- TOPBAR -->
+<div class="topbar">
+<div class="left">
+<div class="pill">📞 +451236981</div>
+<div class="pill">✉️ example@gmail.com</div>
+<div class="pill">🕘 Mon–Fri: 8:00am–5:00pm</div>
+</div>
 
-    <nav class="menu" aria-label="Primary">
-      <a href="index.html">Home</a>
-      <a href="services.html">Services</a>
-      <a href="gallery.html">Gallery</a>
-      <a href="specialist.html">Specialist</a>
-      <a class="active" href="promo.html">Promos</a>
-      <a href="log_in.html">Log in</a>
-      <a href="Sign_up.html">Sign up</a>
-    </nav>
+<div class="right">
+<div class="social">
+<a href="#" title="Facebook">f</a>
+<a href="#" title="Twitter">t</a>
+<a href="#" title="Instagram">⌁</a>
+</div>
+</div>
+</div>
 
-    <button class="menuBtn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">☰</button>
-  </header>
 
-  <!-- Mobile Menu Drawer -->
-  <div class="mobileMenuBack" id="mobileMenuBack" aria-hidden="true">
-    <div class="mobileMenu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Mobile Menu">
-      <div class="mobileMenuHead">
-        <span class="mobileTitle">Menu</span>
-        <button class="menuClose" id="menuClose" aria-label="Close menu">✕</button>
-      </div>
-      <nav class="mobileLinks" aria-label="Mobile Primary">
-        <a href="index.html">Home</a>
-        <a href="services.html">Services</a>
-        <a href="gallery.html">Gallery</a>
-        <a href="specialist.html">Specialist</a>
-        <a class="active" href="promo.html">Promos</a>
-        <a href="log_in.html">Log in</a>
-        <a href="Sign_up.html">Sign up</a>
-      </nav>
-    </div>
-  </div>
+<!-- NAVBAR -->
+<header class="navbar">
 
-  <!-- PAGE -->
-  <main class="container">
-    <div class="pageHead">
-      <div class="titleWrap">
-        <h1>Promos & Packages</h1>
-        <p>
-          Check out our current deals and bundles. Filter by type and status,
-          view promo rules, then book anytime.
-        </p>
-      </div>
-      <div class="badge" id="countText">0 promos</div>
-    </div>
+<div class="brand">
+<div class="logo" aria-hidden="true">🌿</div>
+<span>BASIT</span>
+</div>
 
-    <!-- CONTROLS (NO SEARCH) -->
-    <div class="controls">
-      <select id="type" class="select">
-        <option value="All">Type: All</option>
-        <option value="Promo">Promo</option>
-        <option value="Package">Package</option>
-      </select>
-      <select id="status" class="select">
-        <option value="All">Status: All</option>
-        <option value="Active">Active</option>
-        <option value="Ending Soon">Ending Soon</option>
-      </select>
-    </div>
+<nav class="menu" aria-label="Primary">
 
-    <section class="grid" id="grid"></section>
-    <div class="empty" id="empty">No promos found. Try another filter.</div>
-  </main>
+<a href="index.html">Home</a>
+<a href="services.html">Services</a>
+<a href="gallery.html">Gallery</a>
+<a href="specialist.html">Specialist</a>
+<a class="active" href="promo.html">Promos</a>
 
-  <!-- MODAL -->
-  <div class="modalBack" id="modalBack">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
-      <div class="modalHead">
-        <h3 id="mTitle">Promo</h3>
-        <button class="xbtn" id="mClose" aria-label="Close">✕</button>
-      </div>
-      <div class="modalBody">
-        <p id="mDesc" style="margin:0;"></p>
+<!-- LOGIN STATE -->
+<a id="loginLink" href="log_in.html">Log in</a>
+<a id="signupLink" href="Sign_up.html">Sign up</a>
 
-        <div class="kvRow" id="mKVs"></div>
+<a id="dashboardLink" href="customer_dashboard.html" style="display:none;">Dashboard</a>
+<a id="logoutLink" href="#" style="display:none;">Log out</a>
 
-        <div>
-          <div style="font-weight:900; margin: 8px 0 6px; color:#0f172a;">Rules / Inclusions</div>
-          <ul id="mRules" style="margin:0; padding-left:18px;"></ul>
-        </div>
-      </div>
-      <div class="modalFoot">
-        <button class="btn btnOutline" id="mClose2" type="button">Close</button>
-        <button class="btn" id="mBook" type="button">Book this Deal</button>
-      </div>
-    </div>
-  </div>
+</nav>
+
+<!-- MOBILE BUTTON -->
+<button class="menuBtn" id="menuBtn" aria-label="Open menu">☰</button>
+
+</header>
+
+
+
+<!-- MOBILE MENU -->
+<div class="mobileMenuBack" id="mobileMenuBack">
+
+<div class="mobileMenu">
+
+<div class="mobileMenuHead">
+<span class="mobileTitle">Menu</span>
+<button class="menuClose" id="menuClose">✕</button>
+</div>
+
+<nav class="mobileLinks">
+
+<a href="index.html">Home</a>
+<a href="services.html">Services</a>
+<a href="gallery.html">Gallery</a>
+<a href="specialist.html">Specialist</a>
+<a class="active" href="promo.html">Promos</a>
+
+<!-- MOBILE LOGIN STATE -->
+<a id="mLogin" href="log_in.html">Log in</a>
+<a id="mSignup" href="Sign_up.html">Sign up</a>
+
+<a id="mDashboard" href="customer_dashboard.html" style="display:none;">Dashboard</a>
+<a id="mLogout" href="#" style="display:none;">Log out</a>
+
+</nav>
+
+</div>
+</div>
+
+
+
+<!-- PAGE -->
+<main class="container">
+
+<div class="pageHead">
+
+<div class="titleWrap">
+<h1>Promos & Packages</h1>
+
+<p>
+Check out our current deals and bundles. Filter by type and status,
+view promo rules, then book anytime.
+</p>
+
+</div>
+
+<div class="badge" id="countText">0 promos</div>
+
+</div>
+
+
+<!-- CONTROLS -->
+<div class="controls">
+
+<select id="type" class="select">
+
+<option value="All">Type: All</option>
+<option value="Promo">Promo</option>
+<option value="Package">Package</option>
+
+</select>
+
+
+<select id="status" class="select">
+
+<option value="All">Status: All</option>
+<option value="Active">Active</option>
+<option value="Ending Soon">Ending Soon</option>
+
+</select>
+
+</div>
+
+
+<section class="grid" id="grid"></section>
+
+<div class="empty" id="empty">
+No promos found. Try another filter.
+</div>
+
+</main>
+
+
+
+<!-- MODAL -->
+<div class="modalBack" id="modalBack">
+
+<div class="modal">
+
+<div class="modalHead">
+
+<h3 id="mTitle">Promo</h3>
+
+<button class="xbtn" id="mClose">✕</button>
+
+</div>
+
+<div class="modalBody">
+
+<p id="mDesc"></p>
+
+<div class="kvRow" id="mKVs"></div>
+
+<div>
+
+<div style="font-weight:900;margin:8px 0 6px;color:#0f172a;">
+Rules / Inclusions
+</div>
+
+<ul id="mRules"></ul>
+
+</div>
+
+</div>
+
+<div class="modalFoot">
+
+<button class="btn btnOutline" id="mClose2">Close</button>
+
+<button class="btn" id="mBook">Book this Deal</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- LOGIN REQUIRED MODAL -->
+<div class="modalBack" id="loginModal">
+
+<div class="modal">
+
+<div class="modalHead">
+<h3>Login Required</h3>
+<button class="xbtn" id="closeLoginModal">✕</button>
+</div>
+
+<div class="modalBody">
+<p>You must log in first before booking a promo.</p>
+</div>
+
+<div class="modalFoot">
+<button class="btn btnOutline" id="cancelLogin">Cancel</button>
+<button class="btn" id="goSignup">Log in First</button>
+</div>
+
+</div>
+</div>
 
   <script>
-    // ===== Mobile menu toggle =====
-    const menuBtn = document.getElementById("menuBtn");
-    const mobileMenuBack = document.getElementById("mobileMenuBack");
-    const menuClose = document.getElementById("menuClose");
 
-    function openMenu(){
-      mobileMenuBack.style.display = "block";
-      menuBtn.setAttribute("aria-expanded", "true");
-      mobileMenuBack.setAttribute("aria-hidden", "false");
-      document.body.style.overflow = "hidden";
-    }
-    function closeMenu(){
-      mobileMenuBack.style.display = "none";
-      menuBtn.setAttribute("aria-expanded", "false");
-      mobileMenuBack.setAttribute("aria-hidden", "true");
-      document.body.style.overflow = "";
-    }
-    menuBtn?.addEventListener("click", openMenu);
-    menuClose?.addEventListener("click", closeMenu);
-    mobileMenuBack?.addEventListener("click", (e)=>{ if(e.target === mobileMenuBack) closeMenu(); });
-    document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeMenu(); });
+/* ===============================
+LOGIN NAVBAR SWITCH
+================================ */
 
-    // ===== Promos UI =====
-    const peso = n => new Intl.NumberFormat("en-PH",{style:"currency",currency:"PHP"}).format(n);
+const session =
+JSON.parse(localStorage.getItem("salonSession")) ||
+JSON.parse(sessionStorage.getItem("salonSession"));
 
-    const defaultPromos = [
+if(session){
+
+const loginLink=document.getElementById("loginLink");
+const signupLink=document.getElementById("signupLink");
+const dashboardLink=document.getElementById("dashboardLink");
+const logoutLink=document.getElementById("logoutLink");
+
+const mLogin=document.getElementById("mLogin");
+const mSignup=document.getElementById("mSignup");
+const mDashboard=document.getElementById("mDashboard");
+const mLogout=document.getElementById("mLogout");
+
+if(loginLink) loginLink.style.display="none";
+if(signupLink) signupLink.style.display="none";
+
+if(dashboardLink) dashboardLink.style.display="inline-block";
+if(logoutLink) logoutLink.style.display="inline-block";
+
+if(mLogin) mLogin.style.display="none";
+if(mSignup) mSignup.style.display="none";
+
+if(mDashboard) mDashboard.style.display="block";
+if(mLogout) mLogout.style.display="block";
+
+}
+
+
+/* ===============================
+LOGOUT
+================================ */
+
+function logout(){
+
+localStorage.removeItem("salonSession");
+sessionStorage.removeItem("salonSession");
+
+window.location.href="index.html";
+
+}
+
+document.getElementById("logoutLink")?.addEventListener("click",logout);
+document.getElementById("mLogout")?.addEventListener("click",logout);
+
+
+
+/* ===============================
+MOBILE MENU
+================================ */
+
+const menuBtn=document.getElementById("menuBtn");
+const mobileMenuBack=document.getElementById("mobileMenuBack");
+const menuClose=document.getElementById("menuClose");
+
+function openMenu(){
+
+mobileMenuBack.style.display="block";
+menuBtn.setAttribute("aria-expanded","true");
+mobileMenuBack.setAttribute("aria-hidden","false");
+
+document.body.style.overflow="hidden";
+
+}
+
+function closeMenu(){
+
+mobileMenuBack.style.display="none";
+menuBtn.setAttribute("aria-expanded","false");
+mobileMenuBack.setAttribute("aria-hidden","true");
+
+document.body.style.overflow="";
+
+}
+
+menuBtn?.addEventListener("click",openMenu);
+menuClose?.addEventListener("click",closeMenu);
+
+mobileMenuBack?.addEventListener("click",(e)=>{
+if(e.target===mobileMenuBack) closeMenu();
+});
+
+document.addEventListener("keydown",(e)=>{
+if(e.key==="Escape") closeMenu();
+});
+
+
+/* ===============================
+PROMOS SYSTEM
+================================ */
+
+const peso=n=>new Intl.NumberFormat("en-PH",{style:"currency",currency:"PHP"}).format(n);
+
+
+const defaultPromos=[
+
 {
 id:"PR1",
 title:"New Client Welcome Deal",
@@ -652,6 +820,7 @@ rules:[
 "Cannot be combined with other promos"
 ]
 },
+
 {
 id:"PR2",
 title:"Bridal Beauty Package",
@@ -669,6 +838,7 @@ rules:[
 "Book at least 7 days before event"
 ]
 },
+
 {
 id:"PR3",
 title:"Couple Spa Weekend",
@@ -685,183 +855,229 @@ rules:[
 "Available Fri–Sun only",
 "Limited slots per day"
 ]
-},
-{
-id:"PR4",
-title:"Nail Art Add-on",
-type:"Promo",
-status:"Active",
-highlight:"+Art",
-dealPrice:99,
-oldPrice:150,
-validity:"Feb 10 – Apr 30",
-desc:"Add simple nail art to any manicure/pedicure — clean, cute, and minimalist.",
-rules:[
-"Valid as add-on only",
-"Up to 2 nails included",
-"More nails/design complexity costs extra"
-]
-},
-{
-id:"PR5",
-title:"Hair Color & Treatment Combo",
-type:"Package",
-status:"Active",
-highlight:"Combo",
-dealPrice:1499,
-oldPrice:1799,
-validity:"Feb 15 – Mar 31",
-desc:"Refresh your color and protect your hair with a basic treatment combo.",
-rules:[
-"Includes: full hair color (basic)",
-"Includes: basic treatment",
-"Toner is optional add-on",
-"Hair length may affect final price"
-]
 }
+
 ];
 
-let promos = JSON.parse(localStorage.getItem("promos"));
 
-if(!promos || promos.length === 0){
-promos = defaultPromos;
-localStorage.setItem("promos", JSON.stringify(promos));
+let promos=JSON.parse(localStorage.getItem("promos"));
+
+if(!promos||promos.length===0){
+
+promos=defaultPromos;
+localStorage.setItem("promos",JSON.stringify(promos));
+
 }
 
-    const type = document.getElementById("type");
-    const status = document.getElementById("status");
-    const grid = document.getElementById("grid");
-    const empty = document.getElementById("empty");
-    const countText = document.getElementById("countText");
 
-    // modal refs
-    const modalBack = document.getElementById("modalBack");
-    const mClose = document.getElementById("mClose");
-    const mClose2 = document.getElementById("mClose2");
-    const mBook = document.getElementById("mBook");
-    const mTitle = document.getElementById("mTitle");
-    const mDesc = document.getElementById("mDesc");
-    const mKVs = document.getElementById("mKVs");
-    const mRules = document.getElementById("mRules");
+const type=document.getElementById("type");
+const status=document.getElementById("status");
 
-    let selected = null;
+const grid=document.getElementById("grid");
+const empty=document.getElementById("empty");
+const countText=document.getElementById("countText");
 
-    function chipHTML(p){
-      if(p.status === "Ending Soon") return `<span class="chip soon">⏳ Ending Soon</span>`;
-      return `<span class="chip">✅ Active</span>`;
-    }
+const modalBack=document.getElementById("modalBack");
+const mClose=document.getElementById("mClose");
+const mClose2=document.getElementById("mClose2");
 
-    function card(p){
-      const topChip = chipHTML(p);
-      const flag = p.status === "Ending Soon" ? "soon" : (p.type === "Promo" ? "hot" : "");
-      return `
-        <article class="card">
-          <div class="cardTop">
-            <div>
-              <h3 class="ptitle">${p.title}</h3>
-              <div class="pmeta">${p.type} • Validity: ${p.validity}</div>
-            </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
-              ${topChip}
-              <span class="chip ${flag}">🏷 ${p.highlight}</span>
-            </div>
-          </div>
+const mBook=document.getElementById("mBook");
 
-          <div class="body">
-            <div class="dealRow">
-              <div class="deal">${peso(p.dealPrice)} <small>deal</small></div>
-              <div class="old">${peso(p.oldPrice)}</div>
-            </div>
+const mTitle=document.getElementById("mTitle");
+const mDesc=document.getElementById("mDesc");
+const mKVs=document.getElementById("mKVs");
+const mRules=document.getElementById("mRules");
 
-            <p class="desc">${p.desc}</p>
+let selected=null;
 
-            <div class="rules">
-              <span class="rule">🧾 ID: ${p.id}</span>
-              <span class="rule">📌 ${p.type}</span>
-              <span class="rule">🗓 ${p.validity}</span>
-            </div>
-          </div>
 
-          <div class="cardFoot">
-            <button class="btn btnOutline" type="button" data-view="${p.id}">View Details</button>
-            <button class="btn" type="button" data-book="${p.id}">Book</button>
-          </div>
-        </article>
-      `;
-    }
+/* ===============================
+CARD UI
+================================ */
 
-    function filtered(){
-      return promos.filter(p=>{
-        const matchType = type.value === "All" || p.type === type.value;
-        const matchStatus = status.value === "All" || p.status === status.value;
-        return matchType && matchStatus;
-      });
-    }
+function card(p){
 
-    function render(){
-      const list = filtered();
-      countText.textContent = `${list.length} promo${list.length !== 1 ? "s" : ""}`;
+return `
 
-      grid.innerHTML = list.map(card).join("");
-      empty.style.display = list.length ? "none" : "block";
+<article class="card">
 
-      grid.querySelectorAll("[data-view]").forEach(b=>{
-        b.addEventListener("click", ()=>{
-          openModal(promos.find(x=>x.id===b.getAttribute("data-view")));
-        });
-      });
-      grid.querySelectorAll("[data-book]").forEach(b=>{
-        b.addEventListener("click", ()=>{
-          openModal(promos.find(x=>x.id===b.getAttribute("data-book")));
-        });
-      });
-    }
+<div class="cardTop">
+<div>
+<h3 class="ptitle">${p.title}</h3>
+<div class="pmeta">${p.type} • Validity: ${p.validity}</div>
+</div>
+</div>
 
-    function openModal(p){
-      selected = p;
-      mTitle.textContent = p.title;
-      mDesc.textContent = p.desc;
+<div class="body">
 
-      mKVs.innerHTML = `
-        <div class="kv">🧾 ${p.id}</div>
-        <div class="kv">🏷 ${p.type}</div>
-        <div class="kv">🗓 ${p.validity}</div>
-        <div class="kv">💸 ${peso(p.dealPrice)} deal</div>
-      `;
+<div class="dealRow">
+<div class="deal">${peso(p.dealPrice)}</div>
+<div class="old">${peso(p.oldPrice)}</div>
+</div>
 
-      mRules.innerHTML = p.rules.map(r => `<li>${r}</li>`).join("");
+<p class="desc">${p.desc}</p>
 
-      modalBack.style.display = "flex";
-      document.body.style.overflow = "hidden";
-    }
+</div>
 
-    function closeModal(){
-      modalBack.style.display = "none";
-      selected = null;
-      document.body.style.overflow = "";
-    }
+<div class="cardFoot">
 
-    mClose.onclick = closeModal;
-    mClose2.onclick = closeModal;
-    modalBack.addEventListener("click",(e)=>{ if(e.target === modalBack) closeModal(); });
+<button class="btn btnOutline" data-view="${p.id}">View Details</button>
 
-    mBook.onclick = () => {
+<button class="btn" data-book="${p.id}">Book</button>
 
-  localStorage.setItem("selectedPromo", JSON.stringify({
-    id: selected.id,
-    name: selected.title,
-    price: selected.dealPrice,
-    original: selected.oldPrice
-  }));
+</div>
 
-  window.location.href = "promo_booking.html";
+</article>
 
+`;
+
+}
+
+
+/* ===============================
+RENDER PROMOS
+================================ */
+
+function render(){
+
+const list=promos.filter(p=>{
+
+const matchType=type.value==="All"||p.type===type.value;
+const matchStatus=status.value==="All"||p.status===status.value;
+
+return matchType&&matchStatus;
+
+});
+
+countText.textContent=list.length+" promos";
+
+grid.innerHTML=list.map(card).join("");
+
+empty.style.display=list.length?"none":"block";
+
+
+/* VIEW DETAILS */
+
+grid.querySelectorAll("[data-view]").forEach(btn=>{
+
+btn.addEventListener("click",()=>{
+
+const id=btn.getAttribute("data-view");
+
+selected=promos.find(x=>x.id===id);
+
+openModal(selected);
+
+});
+
+});
+
+
+/* BOOK PROMO */
+
+grid.querySelectorAll("[data-book]").forEach(btn=>{
+
+btn.addEventListener("click",()=>{
+
+const id = btn.getAttribute("data-book");
+const promo = promos.find(x=>x.id===id);
+
+/* CHECK LOGIN */
+const session =
+JSON.parse(localStorage.getItem("salonSession")) ||
+JSON.parse(sessionStorage.getItem("salonSession"));
+
+/* NOT LOGGED IN */
+if(!session){
+
+showLoginModal();
+return;
+
+}
+
+/* LOGGED IN */
+localStorage.setItem("selectedPromo",JSON.stringify(promo));
+
+window.location.href="promo_booking.html";
+
+});
+
+});
+
+}
+
+
+/* ===============================
+MODAL
+================================ */
+
+function openModal(p){
+
+mTitle.textContent=p.title;
+mDesc.textContent=p.desc;
+
+mKVs.innerHTML=`
+<div class="kv">Deal: ${peso(p.dealPrice)}</div>
+<div class="kv">Original: ${peso(p.oldPrice)}</div>
+<div class="kv">Validity: ${p.validity}</div>
+`;
+
+mRules.innerHTML=p.rules.map(r=>`<li>${r}</li>`).join("");
+
+modalBack.style.display="flex";
+document.body.style.overflow="hidden";
+
+}
+
+function closeModal(){
+
+modalBack.style.display="none";
+document.body.style.overflow="";
+
+}
+
+mClose.onclick=closeModal;
+mClose2.onclick=closeModal;
+
+modalBack.addEventListener("click",(e)=>{
+if(e.target===modalBack) closeModal();
+});
+
+/* ===============================
+LOGIN REQUIRED MODAL
+================================ */
+
+const loginModal = document.getElementById("loginModal");
+const closeLoginModal = document.getElementById("closeLoginModal");
+const cancelLogin = document.getElementById("cancelLogin");
+const goSignup = document.getElementById("goSignup");
+
+function showLoginModal(){
+loginModal.style.display="flex";
+document.body.style.overflow="hidden";
+}
+
+function hideLoginModal(){
+loginModal.style.display="none";
+document.body.style.overflow="";
+}
+
+closeLoginModal.onclick = hideLoginModal;
+cancelLogin.onclick = hideLoginModal;
+
+goSignup.onclick = () => {
+window.location.href = "Sign_up.html";
 };
 
-    type.addEventListener("change", render);
-    status.addEventListener("change", render);
+/* ===============================
+FILTER EVENTS
+================================ */
 
-    render();
-  </script>
+type.addEventListener("change",render);
+status.addEventListener("change",render);
+
+render();
+
+</script>
 </body>
-</html>
+</html> 

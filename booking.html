@@ -544,14 +544,21 @@ background:white;
     </div>
 
     <nav class="menu" aria-label="Primary">
-      <a href="index.html">Home</a>
-      <a href="services.html">Service</a>
-      <a href="gallery.html">Gallery</a>
-      <a href="specialist.html">Specialist</a>
-      <a href="promo.html">Promos</a>
-      <a href="contact.html">Contact</a>
-      <a href="log_in.html">Log in</a>
-    </nav>
+
+<a href="index.html">Home</a>
+<a href="services.html">Services</a>
+<a href="gallery.html">Gallery</a>
+<a href="specialist.html">Specialist</a>
+<a href="promo.html">Promos</a>
+
+<!-- Login state buttons -->
+<a id="loginLink" href="log_in.html">Log in</a>
+<a id="signupLink" href="Sign_up.html">Sign up</a>
+
+<a id="dashboardLink" href="customer_dashboard.html" style="display:none;">Dashboard</a>
+<a id="logoutLink" href="#" style="display:none;">Log out</a>
+
+</nav>
 
     <button class="menuBtn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">☰</button>
   </header>
@@ -564,14 +571,21 @@ background:white;
         <button class="menuClose" id="menuClose" aria-label="Close menu">✕</button>
       </div>
       <nav class="mobileLinks" aria-label="Mobile Primary">
-        <a href="index.html">Home</a>
-        <a href="services.html">Service</a>
-        <a href="gallery.html">Gallery</a>
-        <a href="specialist.html">Specialist</a>
-        <a href="promo.html">Promos</a>
-        <a href="contact.html">Contact</a>
-        <a href="log_in.html">Log in</a>
-      </nav>
+
+<a href="index.html">Home</a>
+<a href="services.html">Services</a>
+<a href="gallery.html">Gallery</a>
+<a href="specialist.html">Specialist</a>
+<a href="promo.html">Promos</a>
+
+<!-- LOGIN STATE -->
+<a id="mLogin" href="log_in.html">Log in</a>
+<a id="mSignup" href="Sign_up.html">Sign up</a>
+
+<a id="mDashboard" href="customer_dashboard.html" style="display:none;">Dashboard</a>
+<a id="mLogout" href="#" style="display:none;">Log out</a>
+
+</nav>
     </div>
   </div>
 
@@ -729,6 +743,45 @@ background:white;
 </div>
 
   <script>
+    /* ===============================
+LOGIN NAVBAR SWITCH
+================================ */
+
+const session =
+JSON.parse(localStorage.getItem("salonSession")) ||
+JSON.parse(sessionStorage.getItem("salonSession"));
+
+if(session){
+
+document.getElementById("loginLink").style.display="none";
+document.getElementById("signupLink").style.display="none";
+
+document.getElementById("dashboardLink").style.display="inline-block";
+document.getElementById("logoutLink").style.display="inline-block";
+
+document.getElementById("mLogin").style.display="none";
+document.getElementById("mSignup").style.display="none";
+
+document.getElementById("mDashboard").style.display="block";
+document.getElementById("mLogout").style.display="block";
+
+}
+
+/* ===============================
+LOGOUT FUNCTION
+================================ */
+
+document.getElementById("logoutLink")?.addEventListener("click",logout);
+document.getElementById("mLogout")?.addEventListener("click",logout);
+
+function logout(){
+
+localStorage.removeItem("salonSession");
+sessionStorage.removeItem("salonSession");
+
+window.location.href="index.html";
+
+}
 
 // ===== Mobile menu toggle =====
 const menuBtn = document.getElementById("menuBtn");
