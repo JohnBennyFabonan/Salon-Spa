@@ -448,16 +448,39 @@
     </div>
   </div>
 
-  <!-- NAVBAR -->
-  <header class="navbar">
-    <div class="brand">
-      <div class="logo" aria-hidden="true">🌿</div>
-      <span>BASIT</span>
+<!-- NAVBAR -->
+<header class="navbar">
+  <div class="brand">
+    <div class="logo" aria-hidden="true">🌿</div>
+    <span>BASIT</span>
+  </div>
+
+  <nav class="menu" aria-label="Primary">
+    <a href="index.html">Home</a>
+    <a href="services.html">Services</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="specialist.html">Specialist</a>
+    <a href="promo.html">Promos</a>
+    <a class="active" href="log_in.html">Log In</a>
+    <a href="Sign_up.html">Sign up</a>
+  </nav>
+
+  <button class="menuBtn" id="menuBtn">☰</button>
+</header>
+
+
+<!-- MOBILE MENU -->
+<div class="mobileMenuBack" id="mobileMenuBack">
+  <div class="mobileMenu">
+
+    <div class="mobileMenuHead">
+      <span class="mobileTitle">Menu</span>
+      <button class="menuClose" id="menuClose">✕</button>
     </div>
 
-    <nav class="menu" aria-label="Primary">
+    <nav class="mobileLinks">
       <a href="index.html">Home</a>
-      <a href="services.html">Service</a>
+      <a href="services.html">Services</a>
       <a href="gallery.html">Gallery</a>
       <a href="specialist.html">Specialist</a>
       <a href="promo.html">Promos</a>
@@ -465,27 +488,8 @@
       <a href="Sign_up.html">Sign up</a>
     </nav>
 
-    <button class="menuBtn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">☰</button>
-  </header>
-
-  <!-- Mobile Menu Drawer -->
-  <div class="mobileMenuBack" id="mobileMenuBack" aria-hidden="true">
-    <div class="mobileMenu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Mobile Menu">
-      <div class="mobileMenuHead">
-        <span class="mobileTitle">Menu</span>
-        <button class="menuClose" id="menuClose" aria-label="Close menu">✕</button>
-      </div>
-      <nav class="mobileLinks" aria-label="Mobile Primary">
-        <a href="index.html">Home</a>
-        <a href="services.html">Service</a>
-        <a href="gallery.html">Gallery</a>
-        <a href="specialist.html">Specialist</a>
-        <a href="promo.html">Promos</a>
-        <a class="active" href="log_in.html">Log In</a>
-        <a href="Sign_up.html">Sign up</a>
-      </nav>
-    </div>
   </div>
+</div>
 
   <!-- PAGE -->
   <main class="container">
@@ -575,57 +579,70 @@
   </main>
 
 <script>
-
 // ===== Mobile menu toggle =====
 const menuBtn = document.getElementById("menuBtn");
 const mobileMenuBack = document.getElementById("mobileMenuBack");
 const menuClose = document.getElementById("menuClose");
 
 function openMenu(){
-  mobileMenuBack.style.display="block";
-  menuBtn.setAttribute("aria-expanded","true");
+  if(!mobileMenuBack) return;
+
+  mobileMenuBack.style.display = "block";
+
+  if(menuBtn) menuBtn.setAttribute("aria-expanded","true");
   mobileMenuBack.setAttribute("aria-hidden","false");
-  document.body.style.overflow="hidden";
+
+  document.body.style.overflow = "hidden";
 }
 
 function closeMenu(){
-  mobileMenuBack.style.display="none";
-  menuBtn.setAttribute("aria-expanded","false");
+  if(!mobileMenuBack) return;
+
+  mobileMenuBack.style.display = "none";
+
+  if(menuBtn) menuBtn.setAttribute("aria-expanded","false");
   mobileMenuBack.setAttribute("aria-hidden","true");
-  document.body.style.overflow="";
+
+  document.body.style.overflow = "";
 }
 
-menuBtn?.addEventListener("click",openMenu);
-menuClose?.addEventListener("click",closeMenu);
+menuBtn?.addEventListener("click", openMenu);
+menuClose?.addEventListener("click", closeMenu);
 
 mobileMenuBack?.addEventListener("click",(e)=>{
-  if(e.target===mobileMenuBack) closeMenu();
+  if(e.target === mobileMenuBack){
+    closeMenu();
+  }
 });
 
 document.addEventListener("keydown",(e)=>{
-  if(e.key==="Escape") closeMenu();
+  if(e.key === "Escape"){
+    closeMenu();
+  }
 });
 
 
 // ===== Login behavior =====
-const form=document.getElementById("loginForm");
-const errBox=document.getElementById("errBox");
-const okBox=document.getElementById("okBox");
+const form = document.getElementById("loginForm");
+const errBox = document.getElementById("errBox");
+const okBox = document.getElementById("okBox");
 
-const emailEl=document.getElementById("email");
-const passEl=document.getElementById("password");
-const rememberEl=document.getElementById("remember");
+const emailEl = document.getElementById("email");
+const passEl = document.getElementById("password");
+const rememberEl = document.getElementById("remember");
 
 
 // ===== Toggle Password =====
-const togglePass=document.getElementById("togglePass");
+const togglePass = document.getElementById("togglePass");
 
-togglePass.addEventListener("click",()=>{
-  const isPass=passEl.type==="password";
-  passEl.type=isPass ? "text":"password";
-  togglePass.textContent=isPass ? "Hide":"Show";
-});
+if(togglePass && passEl){
+  togglePass.addEventListener("click",()=>{
+    const isPass = passEl.type === "password";
 
+    passEl.type = isPass ? "text" : "password";
+    togglePass.textContent = isPass ? "Hide" : "Show";
+  });
+}
 
 // ===== Message helpers =====
 function clearMsg(){
@@ -728,14 +745,12 @@ form.addEventListener("submit",(e)=>{
 
   ok("Login successful! Redirecting...");
 
+  // ✅ FIXED REDIRECT
   setTimeout(()=>{
-    window.location.href="index.html";
+    window.location.href="customer_dashboard.html";
   },700);
 
 });
-
-</script>
-
 </script>
 </body>
 </html>

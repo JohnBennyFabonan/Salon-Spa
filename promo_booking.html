@@ -235,8 +235,6 @@ padding:10px 16px;
 <a href="gallery.html">Gallery</a>
 <a href="specialist.html">Specialist</a>
 <a href="promo.html">Promos</a>
-<a href="contact.html">Contact</a>
-<a href="log_in.html">Log in</a>
 </div>
 
 </div>
@@ -288,26 +286,33 @@ padding:10px 16px;
 
 <div class="card">
 
-<h2>Payment Summary</h2>
+<h2>Promo Details</h2>
 
 <div class="row">
-<span>Total Price</span>
-<strong id="total"></strong>
+<span>Promo Deal</span>
+<strong id="promoName"></strong>
 </div>
 
 <div class="row">
-<span>10% Downpayment</span>
-<strong id="down"></strong>
-</div>
-
-<div class="totalBox">
-<span>Remaining Balance</span>
-<span id="remain"></span>
+<span>Promo Type</span>
+<strong id="promoType"></strong>
 </div>
 
 <div class="row">
-<span>GCash Number</span>
-<strong>0912-345-6789</strong>
+<span>Promo Validity</span>
+<strong id="promoValidity"></strong>
+</div>
+
+<div class="row">
+<span>Original Price</span>
+<strong id="promoOld"></strong>
+</div>
+
+<div class="row">
+<span>Promo Price</span>
+<strong id="promoPrice"></strong>
+</div>
+
 </div>
 
 <button id="showQR">View GCash QR Code</button>
@@ -344,6 +349,23 @@ padding:10px 16px;
 
 
 <script>
+    
+/* ===============================
+CHECK LOGIN
+================================ */
+
+const session =
+JSON.parse(localStorage.getItem("salonSession")) ||
+JSON.parse(sessionStorage.getItem("salonSession"));
+
+if(!session){
+alert("Please log in first.");
+window.location.href = "log_in.html";
+}
+
+/* ===============================
+GET PROMO
+================================ */
 
 const promo = JSON.parse(localStorage.getItem("selectedPromo"));
 
@@ -355,15 +377,34 @@ window.location.href="promo.html";
 
 }
 
-document.getElementById("promoName").textContent = promo.name;
-document.getElementById("promoPrice").textContent = "₱"+promo.price;
 
-const down = promo.price * 0.10;
-const remain = promo.price - down;
+/* ===============================
+DISPLAY PROMO DETAILS
+================================ */
 
-document.getElementById("total").textContent = "₱"+promo.price;
-document.getElementById("down").textContent = "₱"+down;
-document.getElementById("remain").textContent = "₱"+remain;
+document.getElementById("promoName").textContent = promo.title;
+document.getElementById("promoType").textContent = promo.type;
+document.getElementById("promoValidity").textContent = promo.validity;
+document.getElementById("promoOld").textContent = "₱"+promo.oldPrice;
+document.getElementById("promoPrice").textContent = "₱"+promo.dealPrice;
+
+
+/* ===============================
+PRICE COMPUTATION
+================================ */
+
+const total = promo.dealPrice;
+const down = total * 0.10;
+const remain = total - down;
+
+document.getElementById("total").textContent = "₱"+total;
+document.getElementById("down").textContent = "₱"+down.toFixed(2);
+document.getElementById("remain").textContent = "₱"+remain.toFixed(2);
+
+
+/* ===============================
+UPLOAD RECEIPT PREVIEW
+================================ */
 
 let receiptImage="";
 
@@ -386,7 +427,10 @@ reader.readAsDataURL(file);
 
 });
 
-/* QR POPUP */
+
+/* ===============================
+QR POPUP
+================================ */
 
 const qrModal=document.getElementById("qrModal");
 
@@ -404,16 +448,49 @@ qrModal.style.display="none";
 }
 }
 
+
+/* ===============================
+CONFIRM BOOKING
+================================ */
+
 document.getElementById("confirm").onclick=function(){
+
+const date=document.getElementById("date").value;
+const time=document.getElementById("time").value;
+
+if(!date){
+
+alert("Please select a date.");
+
+return;
+
+}
+
+if(!receiptImage){
+
+alert("Please upload proof of payment.");
+
+return;
+
+}
 
 const booking={
 
-promo:promo,
-date:document.getElementById("date").value,
-time:document.getElementById("time").value,
+type:"promo",
+
+promo:promo.title,
+price:total,
+
+date:date,
+time:time,
+
 downpayment:down,
 remaining:remain,
+
 receipt:receiptImage,
+
+status:"Pending",
+
 id:"PR-"+Math.random().toString(16).slice(2,8)
 
 };
@@ -426,7 +503,7 @@ localStorage.setItem("salonBookings",JSON.stringify(bookings));
 
 alert("Promo booking confirmed!");
 
-window.location.href="index.html";
+window.location.href="customer_dashboard.html";
 
 };
 

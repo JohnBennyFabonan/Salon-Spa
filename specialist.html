@@ -503,8 +503,11 @@
       <a href="gallery.html">Gallery</a>
       <a class="active" href="specialist.html">Specialist</a>
       <a href="promo.html">Promos</a>
-      <a href="log_in.html">Log in</a>
-      <a href="Sign_up.html">Sign up</a>
+      <a id="loginLink" href="log_in.html">Log in</a>
+      <a id="signupLink" href="Sign_up.html">Sign up</a>
+
+      <a id="dashboardLink" href="customer_dashboard.html" style="display:none;">Dashboard</a>
+      <a id="logoutLink" href="#" style="display:none;">Log out</a>
     </nav>
 
     <!-- Mobile button -->
@@ -526,8 +529,11 @@
         <a href="gallery.html">Gallery</a>
         <a class="active" href="specialist.html">Specialist</a>
         <a href="promo.html">Promos</a>
-        <a href="log_in.html">Log in</a>
-        <a href="Sign_up.html">Sign up</a>
+        <a id="mLogin" href="log_in.html">Log in</a>
+        <a id="mSignup" href="Sign_up.html">Sign up</a>
+
+        <a id="mDashboard" href="customer_dashboard.html" style="display:none;">Dashboard</a>
+        <a id="mLogout" href="#" style="display:none;">Log out</a>
       </nav>
     </div>
   </div>
@@ -587,6 +593,46 @@
   </div>
 
   <script>
+    /* ===============================
+   LOGIN NAVBAR SWITCH
+      ================================ */
+
+      const session =
+      JSON.parse(localStorage.getItem("salonSession")) ||
+      JSON.parse(sessionStorage.getItem("salonSession"));
+
+      if(session){
+
+      document.getElementById("loginLink").style.display="none";
+      document.getElementById("signupLink").style.display="none";
+
+      document.getElementById("dashboardLink").style.display="inline-block";
+      document.getElementById("logoutLink").style.display="inline-block";
+
+      document.getElementById("mLogin").style.display="none";
+      document.getElementById("mSignup").style.display="none";
+
+      document.getElementById("mDashboard").style.display="block";
+      document.getElementById("mLogout").style.display="block";
+
+      }
+
+
+      /* ===============================
+        LOGOUT FUNCTION
+      ================================ */
+
+      document.getElementById("logoutLink")?.addEventListener("click",logout);
+      document.getElementById("mLogout")?.addEventListener("click",logout);
+
+      function logout(){
+
+      localStorage.removeItem("salonSession");
+      sessionStorage.removeItem("salonSession");
+
+      window.location.href="index.html";
+
+      }
     // ===== Mobile menu toggle =====
     const menuBtn = document.getElementById("menuBtn");
     const mobileMenuBack = document.getElementById("mobileMenuBack");

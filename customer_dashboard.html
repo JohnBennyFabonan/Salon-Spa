@@ -305,21 +305,40 @@ padding:20px;
 
 <script>
 
-const bookings = JSON.parse(localStorage.getItem("salonBookings") || []);
+// ===== CHECK LOGIN FIRST =====
+const session =
+JSON.parse(localStorage.getItem("salonSession")) ||
+JSON.parse(sessionStorage.getItem("salonSession"));
 
-const totalBookings = bookings.length;
+if(!session){
+window.location.href="log_in.html";
+}
 
-document.getElementById("totalBookings").textContent = totalBookings;
 
+// ===== LOAD BOOKINGS =====
+const allBookings = JSON.parse(localStorage.getItem("salonBookings") || "[]");
+
+// show only bookings of the logged-in user
+const bookings = allBookings.filter(b => b.email === session.email);
+
+
+// ===== ELEMENTS =====
+const upcomingTable = document.getElementById("upcomingTable");
+const historyTable = document.getElementById("historyTable");
+
+
+// ===== STATS =====
+let totalBookings = bookings.length;
 let today = new Date().toISOString().split("T")[0];
 
 let upcoming = 0;
 let completed = 0;
 let totalPaid = 0;
 
-const upcomingTable = document.getElementById("upcomingTable");
-const historyTable = document.getElementById("historyTable");
+document.getElementById("totalBookings").textContent = totalBookings;
 
+
+// ===== RENDER BOOKINGS =====
 bookings.forEach(b=>{
 
 let serviceName = "";
@@ -334,11 +353,13 @@ serviceName = b.promo.name;
 
 totalPaid += b.downpayment || 0;
 
+
+// ===== UPCOMING =====
 if(b.date >= today){
 
 upcoming++;
 
-let row = `
+upcomingTable.innerHTML += `
 <tr>
 <td>${b.id}</td>
 <td>${serviceName}</td>
@@ -349,13 +370,15 @@ let row = `
 </tr>
 `;
 
-upcomingTable.innerHTML += row;
+}
 
-}else{
+
+// ===== COMPLETED =====
+else{
 
 completed++;
 
-let row = `
+historyTable.innerHTML += `
 <tr>
 <td>${b.id}</td>
 <td>${serviceName}</td>
@@ -366,15 +389,15 @@ let row = `
 </tr>
 `;
 
-historyTable.innerHTML += row;
-
 }
 
 });
 
+
+// ===== UPDATE CARDS =====
 document.getElementById("upcomingBookings").textContent = upcoming;
 document.getElementById("completedBookings").textContent = completed;
-document.getElementById("totalPaid").textContent = "₱"+totalPaid.toLocaleString();
+document.getElementById("totalPaid").textContent = "₱" + totalPaid.toLocaleString();
 
 </script>
 

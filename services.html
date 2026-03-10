@@ -506,143 +506,264 @@
 
 <body>
 
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div class="left">
-      <div class="pill">📞 +451236981</div>
-      <div class="pill">✉️ example@gmail.com</div>
-      <div class="pill">🕘 Mon–Fri: 8:00am–5:00pm</div>
-    </div>
-    <div class="right">
-      <div class="social">
-        <a href="#" title="Facebook">f</a>
-        <a href="#" title="Twitter">t</a>
-        <a href="#" title="Instagram">⌁</a>
-      </div>
-    </div>
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="left">
+    <div class="pill">📞 +451236981</div>
+    <div class="pill">✉️ example@gmail.com</div>
+    <div class="pill">🕘 Mon–Fri: 8:00am–5:00pm</div>
   </div>
 
-  <!-- NAVBAR -->
-  <header class="navbar">
-    <div class="brand">
-      <div class="logo" aria-hidden="true">🌿</div>
-      <span>BASIT</span>
-    </div>
-
-    <nav class="menu" aria-label="Primary">
-      <a href="index.html">Home</a>
-      <a class="active" href="services.html">Services</a>
-      <a href="gallery.html">Gallery</a>
-      <a href="specialist.html">Specialist</a>
-      <a href="promo.html">Promos</a>
-      <a href="log_in.html">Log in</a>
-      <a href="Sign_up.html">Sign up</a>
-    </nav>
-
-    <!-- Mobile button -->
-    <button class="menuBtn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">☰</button>
-  </header>
-
-  <!-- Mobile Menu Drawer -->
-  <div class="mobileMenuBack" id="mobileMenuBack" aria-hidden="true">
-    <div class="mobileMenu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Mobile Menu">
-      <div class="mobileMenuHead">
-        <span class="mobileTitle">Menu</span>
-        <button class="menuClose" id="menuClose" aria-label="Close menu">✕</button>
-      </div>
-      <nav class="mobileLinks" aria-label="Mobile Primary">
-        <a href="index.html">Home</a>
-        <a class="active" href="services.html">Services</a>
-        <a href="gallery.html">Gallery</a>
-        <a href="specialist.html">Specialist</a>
-        <a href="promo.html">Promos</a>
-        <a href="log_in.html">Log in</a>
-        <a href="sign_up.html">Sign up</a>
-      </nav>
+  <div class="right">
+    <div class="social">
+      <a href="#" title="Facebook">f</a>
+      <a href="#" title="Twitter">t</a>
+      <a href="#" title="Instagram">⌁</a>
     </div>
   </div>
+</div>
 
-  <!-- SERVICES CONTENT -->
-  <div class="container">
-    <div class="pageHead">
-      <div class="titleWrap">
-        <h1>Services</h1>
-        <p>Browse and book your preferred salon & spa service.</p>
-      </div>
-      <div class="badge">
-        <span>●</span>
-        <span id="countText">0 services</span>
-      </div>
-    </div>
 
-    <div class="controls">
-      <select id="sortSelect" class="select">
-        <option value="popular">Sort: Popular</option>
-        <option value="priceLow">Price: Low to High</option>
-        <option value="priceHigh">Price: High to Low</option>
-        <option value="durationLow">Duration: Short to Long</option>
-        <option value="durationHigh">Duration: Long to Short</option>
-        <option value="nameAZ">Name: A to Z</option>
-      </select>
+<!-- NAVBAR -->
+<header class="navbar">
 
-      <div class="pills" id="pillRow"></div>
-    </div>
+<div class="brand">
+<div class="logo" aria-hidden="true">🌿</div>
+<span>BASIT</span>
+</div>
 
-    <div class="grid" id="grid"></div>
-    <div class="empty" id="emptyState">No services found. Try another category.</div>
-  </div>
+<nav class="menu" aria-label="Primary">
 
-  <!-- Details / Book Modal -->
-  <div class="modalBack" id="modalBack">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="modalHead">
-        <h3 id="modalTitle">Service Details</h3>
-        <button class="xbtn" id="closeModal" aria-label="Close">✕</button>
-      </div>
-      <div class="modalBody">
-        <p id="modalDesc" style="margin:0 0 10px;"></p>
-        <div class="row" id="modalMeta"></div>
-      </div>
-      <div class="modalFoot">
-        <button class="btn btnOutline" id="modalClose2" type="button">Close</button>
-        <button class="btn" id="confirmBook" type="button">Continue to Booking</button>
-      </div>
-    </div>
-  </div>
+<a href="index.html">Home</a>
+<a class="active" href="services.html">Services</a>
+<a href="gallery.html">Gallery</a>
+<a href="specialist.html">Specialist</a>
+<a href="promo.html">Promos</a>
+
+<!-- Login state -->
+<a id="loginLink" href="log_in.html">Log in</a>
+<a id="signupLink" href="Sign_up.html">Sign up</a>
+
+<a id="dashboardLink" href="customer_dashboard.html" style="display:none;">Dashboard</a>
+<a id="logoutLink" href="#" style="display:none;">Log out</a>
+
+</nav>
+
+<!-- Mobile button -->
+<button class="menuBtn" id="menuBtn" aria-label="Open menu">☰</button>
+
+</header>
+
+
+<!-- ✅ MOBILE MENU DRAWER -->
+<div class="mobileMenuBack" id="mobileMenuBack">
+
+<div class="mobileMenu">
+
+<div class="mobileMenuHead">
+<span class="mobileTitle">Menu</span>
+<button class="menuClose" id="menuClose">✕</button>
+</div>
+
+<nav class="mobileLinks">
+
+<a href="index.html">Home</a>
+<a class="active" href="services.html">Services</a>
+<a href="gallery.html">Gallery</a>
+<a href="specialist.html">Specialist</a>
+<a href="promo.html">Promos</a>
+
+<!-- Login state mobile -->
+<a id="mLogin" href="log_in.html">Log in</a>
+<a id="mSignup" href="Sign_up.html">Sign up</a>
+
+<a id="mDashboard" href="customer_dashboard.html" style="display:none;">Dashboard</a>
+<a id="mLogout" href="#" style="display:none;">Log out</a>
+
+</nav>
+
+</div>
+</div>
+
+
+<!-- SERVICES CONTENT -->
+<div class="container">
+
+<div class="pageHead">
+
+<div class="titleWrap">
+<h1>Services</h1>
+<p>Browse and book your preferred salon & spa service.</p>
+</div>
+
+<div class="badge">
+<span>●</span>
+<span id="countText">0 services</span>
+</div>
+
+</div>
+
+
+<div class="controls">
+
+<select id="sortSelect" class="select">
+
+<option value="popular">Sort: Popular</option>
+<option value="priceLow">Price: Low to High</option>
+<option value="priceHigh">Price: High to Low</option>
+<option value="durationLow">Duration: Short to Long</option>
+<option value="durationHigh">Duration: Long to Short</option>
+<option value="nameAZ">Name: A to Z</option>
+
+</select>
+
+<div class="pills" id="pillRow"></div>
+
+</div>
+
+
+<div class="grid" id="grid"></div>
+
+<div class="empty" id="emptyState">
+No services found. Try another category.
+</div>
+
+</div>
+
+
+<!-- DETAILS / BOOK MODAL -->
+<div class="modalBack" id="modalBack">
+
+<div class="modal">
+
+<div class="modalHead">
+<h3 id="modalTitle">Service Details</h3>
+<button class="xbtn" id="closeModal">✕</button>
+</div>
+
+<div class="modalBody">
+<p id="modalDesc" style="margin:0 0 10px;"></p>
+<div class="row" id="modalMeta"></div>
+</div>
+
+<div class="modalFoot">
+<button class="btn btnOutline" id="modalClose2">Close</button>
+<button class="btn" id="confirmBook">Continue to Booking</button>
+</div>
+
+</div>
+
+</div>
+
+<!-- LOGIN REQUIRED MODAL -->
+<div class="modalBack" id="loginModal">
+
+<div class="modal">
+
+<div class="modalHead">
+<h3>Login Required</h3>
+<button class="xbtn" id="closeLoginModal">✕</button>
+</div>
+
+<div class="modalBody">
+<p>You must log in first before booking a service.</p>
+</div>
+
+<div class="modalFoot">
+<button class="btn btnOutline" id="cancelLogin">Cancel</button>
+<button class="btn" id="goSignup">Log in First</button>
+</div>
+
+</div>
+</div>
 
   <script>
-    // ===== Mobile menu toggle =====
-    const menuBtn = document.getElementById("menuBtn");
-    const mobileMenuBack = document.getElementById("mobileMenuBack");
-    const menuClose = document.getElementById("menuClose");
 
-    function openMenu(){
-      mobileMenuBack.style.display = "block";
-      menuBtn.setAttribute("aria-expanded", "true");
-      mobileMenuBack.setAttribute("aria-hidden", "false");
-      document.body.style.overflow = "hidden";
-    }
-    function closeMenu(){
-      mobileMenuBack.style.display = "none";
-      menuBtn.setAttribute("aria-expanded", "false");
-      mobileMenuBack.setAttribute("aria-hidden", "true");
-      document.body.style.overflow = "";
-    }
+/* ===============================
+LOGIN NAVBAR SWITCH
+================================ */
 
-    menuBtn?.addEventListener("click", openMenu);
-    menuClose?.addEventListener("click", closeMenu);
-    mobileMenuBack?.addEventListener("click", (e) => {
-      if(e.target === mobileMenuBack) closeMenu();
-    });
-    document.addEventListener("keydown", (e) => {
-      if(e.key === "Escape") closeMenu();
-    });
+const session =
+JSON.parse(localStorage.getItem("salonSession")) ||
+JSON.parse(sessionStorage.getItem("salonSession"));
 
-    // ===== Services data + UI =====
-    let services = JSON.parse(localStorage.getItem("services"));
-      if(!services || services.length === 0){
+if(session){
 
-services = [
+document.getElementById("loginLink").style.display="none";
+document.getElementById("signupLink").style.display="none";
+
+document.getElementById("dashboardLink").style.display="inline-block";
+document.getElementById("logoutLink").style.display="inline-block";
+
+document.getElementById("mLogin").style.display="none";
+document.getElementById("mSignup").style.display="none";
+
+document.getElementById("mDashboard").style.display="block";
+document.getElementById("mLogout").style.display="block";
+
+}
+
+
+/* ===============================
+LOGOUT FUNCTION
+================================ */
+
+document.getElementById("logoutLink")?.addEventListener("click",logout);
+document.getElementById("mLogout")?.addEventListener("click",logout);
+
+function logout(){
+
+localStorage.removeItem("salonSession");
+sessionStorage.removeItem("salonSession");
+
+window.location.href="index.html";
+
+}
+
+
+/* ===============================
+MOBILE MENU TOGGLE
+================================ */
+
+const menuBtn = document.getElementById("menuBtn");
+const mobileMenuBack = document.getElementById("mobileMenuBack");
+const menuClose = document.getElementById("menuClose");
+
+function openMenu(){
+mobileMenuBack.style.display="block";
+menuBtn.setAttribute("aria-expanded","true");
+mobileMenuBack.setAttribute("aria-hidden","false");
+document.body.style.overflow="hidden";
+}
+
+function closeMenu(){
+mobileMenuBack.style.display="none";
+menuBtn.setAttribute("aria-expanded","false");
+mobileMenuBack.setAttribute("aria-hidden","true");
+document.body.style.overflow="";
+}
+
+menuBtn?.addEventListener("click",openMenu);
+menuClose?.addEventListener("click",closeMenu);
+
+mobileMenuBack?.addEventListener("click",(e)=>{
+if(e.target===mobileMenuBack) closeMenu();
+});
+
+document.addEventListener("keydown",(e)=>{
+if(e.key==="Escape") closeMenu();
+});
+
+
+/* ===============================
+SERVICES DATA
+================================ */
+
+let services = JSON.parse(localStorage.getItem("services"));
+
+if(!services || services.length===0){
+
+services=[
 
 {
 id:"S1",
@@ -666,156 +787,291 @@ category:"Hair",
 image:"https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1200&q=80"
 }
 
-]
+];
 
-localStorage.setItem("services", JSON.stringify(services))
+localStorage.setItem("services",JSON.stringify(services));
 
 }
 
-    const categories = ["All", "Hair", "Nails", "Spa", "Packages"];
 
-    const grid = document.getElementById("grid");
-    const empty = document.getElementById("emptyState");
-    const countText = document.getElementById("countText");
-    const sortSelect = document.getElementById("sortSelect");
-    const pillRow = document.getElementById("pillRow");
+const categories=["All","Hair","Nails","Spa","Packages"];
 
-    let activeCategory = "All";
-    let selectedService = null;
+const grid=document.getElementById("grid");
+const empty=document.getElementById("emptyState");
+const countText=document.getElementById("countText");
+const sortSelect=document.getElementById("sortSelect");
+const pillRow=document.getElementById("pillRow");
 
-    function peso(n){
-      return new Intl.NumberFormat("en-PH", { style:"currency", currency:"PHP" }).format(n);
-    }
+let activeCategory="All";
+let selectedService=null;
 
-    function buildPills(){
-      pillRow.innerHTML = "";
-      categories.forEach(cat => {
-        const b = document.createElement("button");
-        b.className = "pillBtn" + (cat === activeCategory ? " active" : "");
-        b.textContent = cat;
-        b.type = "button";
-        b.onclick = () => {
-          activeCategory = cat;
-          buildPills();
-          render();
-        };
-        pillRow.appendChild(b);
-      });
-    }
 
-    function sortList(list){
-      const v = sortSelect.value;
-      const arr = [...list];
+/* ===============================
+FORMAT PRICE
+================================ */
 
-      if (v === "popular") return arr;
-      if (v === "priceLow") arr.sort((a,b)=>a.amount-b.amount);
-      if (v === "priceHigh") arr.sort((a,b)=>b.amount-a.amount);
-      if (v === "durationLow") arr.sort((a,b)=>a.duration-b.duration);
-      if (v === "durationHigh") arr.sort((a,b)=>b.duration-a.duration);
-      if (v === "nameAZ") arr.sort((a,b)=>a.name.localeCompare(b.name));
-      return arr;
-    }
+function peso(n){
+return new Intl.NumberFormat("en-PH",{style:"currency",currency:"PHP"}).format(n);
+}
 
-    function filterList(){
-      return services.filter(s => activeCategory === "All" || s.category === activeCategory);
-    }
 
-    function cardHTML(s){
-      return `
-        <article class="card">
-          <div class="cardImage"><img src="${s.image}" alt="${s.name}"></div>
+/* ===============================
+CATEGORY FILTER BUTTONS
+================================ */
 
-          <div class="cardTop">
-            <div>
-              <h3 class="svcTitle">${s.name}</h3>
-              <div class="svcMeta">
-                <span class="chip">⏱️ ${s.duration} min</span>
-                <span class="chip">👥 Max ${s.maxSim}</span>
-                <span class="chip">🆔 ${s.id}</span>
-              </div>
-            </div>
-            <div class="categoryTag">${s.category}</div>
-          </div>
+function buildPills(){
 
-          <p class="desc">${s.desc}</p>
+pillRow.innerHTML="";
 
-          <div class="cardBottom">
-            <div>
-              <span class="price">${peso(s.amount)}</span>
-              <span class="subprice">Duration: ${s.duration} minutes</span>
-            </div>
-            <button class="btn" type="button" data-id="${s.id}">Book</button>
-          </div>
-        </article>
-      `;
-    }
+categories.forEach(cat=>{
 
-    // Modal
-    const modalBack = document.getElementById("modalBack");
-    const closeModal = document.getElementById("closeModal");
-    const modalClose2 = document.getElementById("modalClose2");
-    const confirmBook = document.getElementById("confirmBook");
-    const modalTitle = document.getElementById("modalTitle");
-    const modalDesc = document.getElementById("modalDesc");
-    const modalMeta = document.getElementById("modalMeta");
+const b=document.createElement("button");
 
-    function openModal(svc){
-      selectedService = svc;
-      modalTitle.textContent = svc.name;
-      modalDesc.textContent = svc.desc;
+b.className="pillBtn"+(cat===activeCategory?" active":"");
+b.textContent=cat;
 
-      modalMeta.innerHTML = `
-        <div class="kv"><strong>Price:</strong> ${peso(svc.amount)}</div>
-        <div class="kv"><strong>Duration:</strong> ${svc.duration} min</div>
-        <div class="kv"><strong>Category:</strong> ${svc.category}</div>
-        <div class="kv"><strong>Max simultaneous:</strong> ${svc.maxSim}</div>
-        <div class="kv"><strong>Service ID:</strong> ${svc.id}</div>
-      `;
-      modalBack.style.display = "flex";
-      document.body.style.overflow = "hidden";
-    }
+b.onclick=()=>{
 
-    function hideModal(){
-      modalBack.style.display = "none";
-      selectedService = null;
-      document.body.style.overflow = "";
-    }
+activeCategory=cat;
 
-    function render(){
-      const filtered = sortList(filterList());
-      countText.textContent = `${filtered.length} service${filtered.length!==1 ? "s" : ""}`;
+buildPills();
+render();
 
-      grid.innerHTML = filtered.map(cardHTML).join("");
-      empty.style.display = filtered.length ? "none" : "block";
+};
 
-      grid.querySelectorAll("button[data-id]").forEach(btn=>{
-  btn.addEventListener("click", () => {
+pillRow.appendChild(b);
 
-    const id = btn.getAttribute("data-id");
-
-    const service = services.find(x => x.id === id);
-
-    localStorage.setItem("selectedService", JSON.stringify(service));
-
-    window.location.href = "booking.html";
-
-  });
 });
-    }
 
-    closeModal.onclick = hideModal;
-    modalClose2.onclick = hideModal;
-    modalBack.addEventListener("click", (e)=>{ if(e.target === modalBack) hideModal(); });
+}
 
-    confirmBook.onclick = () => {
-      alert(`Continue booking for: ${selectedService.name} (${selectedService.id})`);
-      hideModal();
-    };
 
-    sortSelect.addEventListener("change", render);
+/* ===============================
+SORT SERVICES
+================================ */
 
-    buildPills();
-    render();
-  </script>
+function sortList(list){
+
+const v=sortSelect.value;
+const arr=[...list];
+
+if(v==="popular") return arr;
+
+if(v==="priceLow") arr.sort((a,b)=>a.amount-b.amount);
+
+if(v==="priceHigh") arr.sort((a,b)=>b.amount-a.amount);
+
+if(v==="durationLow") arr.sort((a,b)=>a.duration-b.duration);
+
+if(v==="durationHigh") arr.sort((a,b)=>b.duration-a.duration);
+
+if(v==="nameAZ") arr.sort((a,b)=>a.name.localeCompare(b.name));
+
+return arr;
+
+}
+
+
+/* ===============================
+FILTER SERVICES
+================================ */
+
+function filterList(){
+
+return services.filter(s=>activeCategory==="All"||s.category===activeCategory);
+
+}
+
+
+/* ===============================
+SERVICE CARD
+================================ */
+
+function cardHTML(s){
+
+return `
+
+<article class="card">
+
+<div class="cardImage">
+<img src="${s.image}" alt="${s.name}">
+</div>
+
+<div class="cardTop">
+
+<div>
+
+<h3 class="svcTitle">${s.name}</h3>
+
+<div class="svcMeta">
+<span class="chip">⏱️ ${s.duration} min</span>
+<span class="chip">👥 Max ${s.maxSim}</span>
+<span class="chip">🆔 ${s.id}</span>
+</div>
+
+</div>
+
+<div class="categoryTag">${s.category}</div>
+
+</div>
+
+<p class="desc">${s.desc}</p>
+
+<div class="cardBottom">
+
+<div>
+<span class="price">${peso(s.amount)}</span>
+<span class="subprice">Duration: ${s.duration} minutes</span>
+</div>
+
+<button class="btn" data-id="${s.id}">Book</button>
+
+</div>
+
+</article>
+
+`;
+
+}
+
+
+/* ===============================
+MODAL
+================================ */
+
+const modalBack=document.getElementById("modalBack");
+const closeModal=document.getElementById("closeModal");
+const modalClose2=document.getElementById("modalClose2");
+const confirmBook=document.getElementById("confirmBook");
+const modalTitle=document.getElementById("modalTitle");
+const modalDesc=document.getElementById("modalDesc");
+const modalMeta=document.getElementById("modalMeta");
+
+
+function openModal(svc){
+
+selectedService=svc;
+
+modalTitle.textContent=svc.name;
+modalDesc.textContent=svc.desc;
+
+modalMeta.innerHTML=`
+
+<div class="kv"><strong>Price:</strong> ${peso(svc.amount)}</div>
+<div class="kv"><strong>Duration:</strong> ${svc.duration} min</div>
+<div class="kv"><strong>Category:</strong> ${svc.category}</div>
+<div class="kv"><strong>Max simultaneous:</strong> ${svc.maxSim}</div>
+<div class="kv"><strong>Service ID:</strong> ${svc.id}</div>
+
+`;
+
+modalBack.style.display="flex";
+document.body.style.overflow="hidden";
+
+}
+
+
+function hideModal(){
+
+modalBack.style.display="none";
+selectedService=null;
+document.body.style.overflow="";
+
+}
+
+
+/* ===============================
+RENDER SERVICES
+================================ */
+
+function render(){
+
+const filtered=sortList(filterList());
+
+countText.textContent=`${filtered.length} service${filtered.length!==1?"s":""}`;
+
+grid.innerHTML=filtered.map(cardHTML).join("");
+
+empty.style.display=filtered.length?"none":"block";
+
+grid.querySelectorAll("button[data-id]").forEach(btn=>{
+
+btn.addEventListener("click",()=>{
+
+const id = btn.getAttribute("data-id");
+const service = services.find(x=>x.id===id);
+
+/* CHECK IF USER IS LOGGED IN */
+const session =
+JSON.parse(localStorage.getItem("salonSession")) ||
+JSON.parse(sessionStorage.getItem("salonSession"));
+
+/* IF NOT LOGGED IN */
+if(!session){
+
+showLoginModal();
+return;
+
+}
+
+/* IF LOGGED IN */
+localStorage.setItem("selectedService",JSON.stringify(service));
+window.location.href="booking.html";
+
+});
+
+});
+
+}
+
+
+/* ===============================
+EVENTS
+================================ */
+
+closeModal.onclick=hideModal;
+modalClose2.onclick=hideModal;
+
+modalBack.addEventListener("click",(e)=>{
+if(e.target===modalBack) hideModal();
+});
+
+confirmBook.onclick=()=>{
+alert(`Continue booking for: ${selectedService.name}`);
+hideModal();
+};
+
+sortSelect.addEventListener("change",render);
+
+buildPills();
+render();
+
+/* ===============================
+LOGIN REQUIRED MODAL
+================================ */
+
+const loginModal = document.getElementById("loginModal");
+const closeLoginModal = document.getElementById("closeLoginModal");
+const cancelLogin = document.getElementById("cancelLogin");
+const goSignup = document.getElementById("goSignup");
+
+function showLoginModal(){
+loginModal.style.display="flex";
+document.body.style.overflow="hidden";
+}
+
+function hideLoginModal(){
+loginModal.style.display="none";
+document.body.style.overflow="";
+}
+
+closeLoginModal.onclick = hideLoginModal;
+cancelLogin.onclick = hideLoginModal;
+
+goSignup.onclick = () => {
+window.location.href = "Sign_up.html";
+};
+
+</script>
 </body>
 </html>
