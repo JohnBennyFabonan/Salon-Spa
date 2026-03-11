@@ -732,7 +732,7 @@ background:white;
 
     <h3>Scan to Pay (GCash)</h3>
 
-    <img src="gcash_qr.png" alt="GCash QR Code">
+    <img id="gcashQRImage" src="" alt="GCash QR Code">
 
     <p>Send the required 10% downpayment using GCash.</p>
 
@@ -744,13 +744,23 @@ background:white;
 
   <script>
     /* ===============================
-LOGIN NAVBAR SWITCH
+PROTECT BOOKING PAGE (LOGIN REQUIRED)
 ================================ */
 
 const session =
 JSON.parse(localStorage.getItem("salonSession")) ||
 JSON.parse(sessionStorage.getItem("salonSession"));
 
+if(!session){
+
+alert("Please log in first before booking.");
+
+window.location.href = "log_in.html";
+
+}
+    /* ===============================
+LOGIN NAVBAR SWITCH
+================================ */
 if(session){
 
 document.getElementById("loginLink").style.display="none";
@@ -1150,6 +1160,17 @@ document.querySelectorAll(".service").forEach(div => {
   }
 });
 
+/* =========================
+LOAD ADMIN GCASH QR
+========================= */
+
+const savedQR = localStorage.getItem("gcashQR");
+
+if(savedQR){
+  document.getElementById("gcashQRImage").src = savedQR;
+}else{
+  document.getElementById("gcashQRImage").src = "gcash_qr.png";
+}
 </script>
 </body>
 </html>

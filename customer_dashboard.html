@@ -30,64 +30,237 @@ body{
 margin:0;
 font-family:Poppins;
 background:var(--bg);
-display:flex;
 color:var(--text);
+overflow-x:hidden;
 }
 
-/* SIDEBAR */
 
-.sidebar{
-width:260px;
-background:linear-gradient(180deg,var(--green),var(--green2));
-color:white;
-padding:28px 22px;
-min-height:100vh;
-}
+/* ===============================
+TOPBAR
+================================ */
 
-.logo{
-font-weight:800;
-font-size:18px;
-margin-bottom:35px;
-}
-
-.nav{
+.topbar{
+background:var(--green);
 display:flex;
-flex-direction:column;
-gap:6px;
+align-items:center;
+gap:14px;
+padding:8px 22px;
+color:white;
+font-size:12px;
+flex-wrap:wrap;
 }
 
-.nav a{
+.topbar .left{
+display:flex;
+align-items:center;
+gap:12px;
+flex-wrap:wrap;
+}
+
+.topbar .right{
+margin-left:auto;
+display:flex;
+align-items:center;
+}
+
+.pill{
+display:flex;
+align-items:center;
+gap:6px;
+padding:6px 12px;
+border-radius:999px;
+border:1px solid rgba(255,255,255,.18);
+background:rgba(255,255,255,.08);
+white-space:nowrap;
+}
+
+/* SOCIAL ICONS */
+
+.social{
+display:flex;
+gap:10px;
+}
+
+.social a{
+width:28px;
+height:28px;
+display:grid;
+place-items:center;
+border-radius:999px;
+border:1px solid rgba(255,255,255,.18);
+background:rgba(255,255,255,.08);
 color:white;
 text-decoration:none;
-padding:12px 14px;
-border-radius:12px;
 font-size:13px;
-font-weight:600;
 }
 
-.nav a:hover{
+.social a:hover{
+background:rgba(255,255,255,.14);
+}
+
+
+/* =========================
+NAVBAR
+========================= */
+
+.navbar{
+background:linear-gradient(180deg,var(--green),var(--green2));
+padding:16px 22px;
+display:flex;
+align-items:center;
+gap:18px;
+position:relative;
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:12px;
+color:white;
+font-weight:800;
+}
+
+.brand .logo{
+width:44px;
+height:44px;
+border-radius:14px;
+display:grid;
+place-items:center;
+background:rgba(255,255,255,.12);
+}
+
+.menu{
+margin-left:auto;
+display:flex;
+gap:16px;
+align-items:center;
+}
+
+.menu a{
+color:white;
+text-decoration:none;
+font-size:13px;
+font-weight:600;
+padding:8px 12px;
+border-radius:999px;
+}
+
+.menu a:hover{
 background:rgba(255,255,255,.15);
 }
 
-.nav a.active{
+.menu a.active{
 background:rgba(255,255,255,.25);
 }
 
-/* MAIN */
 
-.main{
-flex:1;
-padding:30px;
-max-width:1400px;
+/* =========================
+HAMBURGER BUTTON
+========================= */
+
+.menuBtn{
+margin-left:auto;
+display:none;
+border:1px solid rgba(255,255,255,.2);
+background:rgba(255,255,255,.1);
+color:white;
+width:44px;
+height:44px;
+border-radius:12px;
+font-size:22px;
+cursor:pointer;
 }
 
-/* HEADER */
+
+/* =========================
+MOBILE MENU
+========================= */
+
+.mobileMenuBack{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.5);
+display:none;
+z-index:100;
+padding:10px;
+}
+
+.mobileMenu{
+position:absolute;
+top:10px;
+right:10px;
+width:min(340px,calc(100% - 20px));
+background:white;
+border-radius:18px;
+overflow:hidden;
+box-shadow:0 28px 90px rgba(0,0,0,.3);
+}
+
+.mobileMenuHead{
+display:flex;
+justify-content:space-between;
+padding:14px;
+border-bottom:1px solid var(--line);
+}
+
+.mobileTitle{
+font-weight:700;
+}
+
+.menuClose{
+border:none;
+background:#eee;
+width:40px;
+height:40px;
+border-radius:10px;
+font-size:18px;
+cursor:pointer;
+}
+
+.mobileLinks{
+display:flex;
+flex-direction:column;
+padding:12px;
+gap:8px;
+}
+
+.mobileLinks a{
+text-decoration:none;
+color:#111;
+font-weight:600;
+padding:12px;
+border-radius:10px;
+background:#f5f5f5;
+}
+
+.mobileLinks a.active{
+background:var(--greenSoft);
+color:var(--green2);
+}
+
+
+/* =========================
+PAGE CONTAINER
+========================= */
+
+.main{
+max-width:1200px;
+margin:auto;
+padding:30px 20px;
+}
+
+
+/* =========================
+HEADER
+========================= */
 
 .header{
 display:flex;
 justify-content:space-between;
 align-items:center;
 margin-bottom:28px;
+flex-wrap:wrap;
+gap:10px;
 }
 
 .header h1{
@@ -95,7 +268,10 @@ margin:0;
 font-size:28px;
 }
 
-/* CARDS */
+
+/* =========================
+CARDS
+========================= */
 
 .cards{
 display:grid;
@@ -125,7 +301,10 @@ font-weight:800;
 color:var(--green2);
 }
 
-/* TABLE */
+
+/* =========================
+TABLE
+========================= */
 
 .tableCard{
 background:var(--card);
@@ -134,12 +313,14 @@ border-radius:var(--radius);
 box-shadow:var(--shadow);
 border:1px solid var(--line);
 margin-bottom:22px;
+overflow-x:auto;
 }
 
 table{
 width:100%;
 border-collapse:collapse;
 font-size:14px;
+min-width:600px;
 }
 
 thead{
@@ -171,20 +352,83 @@ font-size:12px;
 font-weight:600;
 }
 
-/* MOBILE */
+
+/* =========================
+TABLET
+========================= */
 
 @media(max-width:900px){
 
-.sidebar{
-display:none;
+.main{
+padding:22px 16px;
 }
 
-body{
-flex-direction:column;
+.header h1{
+font-size:24px;
+}
+
+}
+
+
+/* =========================
+MOBILE
+========================= */
+
+@media(max-width:720px){
+
+.topbar{display:none;}
+
+.menu{display:none;}
+
+.menuBtn{
+display:inline-grid;
+place-items:center;
+}
+
+.cards{
+grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+}
+
+.card p{
+font-size:24px;
+}
+
+table{
+font-size:12px;
+}
+
+th,td{
+padding:8px;
+}
+
+}
+
+
+/* =========================
+SMALL PHONES
+========================= */
+
+@media(max-width:480px){
+
+.cards{
+grid-template-columns:1fr;
 }
 
 .main{
-padding:20px;
+padding:16px;
+}
+
+.card{
+padding:18px;
+}
+
+.card p{
+font-size:22px;
+}
+
+.header{
+flex-direction:column;
+align-items:flex-start;
 }
 
 }
@@ -194,31 +438,102 @@ padding:20px;
 
 <body>
 
-<!-- SIDEBAR -->
+<!-- TOPBAR -->
 
-<div class="sidebar">
+<div class="topbar">
 
-<div class="logo">🌿 BASIT Customer</div>
+<div class="left">
 
-<div class="nav">
+<div class="pill">
+📞 +451236981
+</div>
 
-<a class="active">Dashboard</a>
-<a href="services.html">Book Service</a>
-<a href="promo.html">View Promos</a>
+<div class="pill">
+✉️ example@gmail.com
+</div>
+
+<div class="pill">
+🕘 Mon–Fri: 8:00am–5:00pm
+</div>
+
+</div>
+
+<div class="right">
+
+<div class="social">
+<a href="#">f</a>
+<a href="#">t</a>
+<a href="#">⌁</a>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- NAVBAR -->
+
+<header class="navbar">
+
+<div class="brand">
+<div class="logo">🌿</div>
+<span>BASIT</span>
+</div>
+
+<nav class="menu">
+
+<a href="index.html">Home</a>
+<a href="services.html">Services</a>
+<a href="promo.html">Promos</a>
 <a href="gallery.html">Gallery</a>
-<a href="logout.html">Log Out</a>
 
+<a class="active" href="customer_dashboard.html">Dashboard</a>
+
+<a href="#" id="logoutBtn">Log Out</a>
+
+</nav>
+
+<button class="menuBtn" id="menuBtn">☰</button>
+
+</header>
+
+
+<!-- MOBILE MENU -->
+
+<div class="mobileMenuBack" id="mobileMenuBack">
+
+<div class="mobileMenu">
+
+<div class="mobileMenuHead">
+<span class="mobileTitle">Menu</span>
+<button class="menuClose" id="menuClose">✕</button>
 </div>
 
+<nav class="mobileLinks">
+
+<a href="index.html">Home</a>
+<a href="services.html">Services</a>
+<a href="promo.html">Promos</a>
+<a href="gallery.html">Gallery</a>
+
+<a class="active" href="customer_dashboard.html">Dashboard</a>
+
+<a href="#" id="mLogout">Log Out</a>
+
+</nav>
+
+</div>
 </div>
 
-<!-- MAIN -->
+
+<!-- PAGE CONTENT -->
 
 <div class="main">
 
 <div class="header">
 <h1>My Bookings</h1>
 </div>
+
 
 <!-- CARDS -->
 
@@ -246,11 +561,14 @@ padding:20px;
 
 </div>
 
+
 <!-- UPCOMING BOOKINGS -->
 
 <div class="tableCard">
 
 <h3>Upcoming Appointments</h3>
+
+<div class="tableWrapper">
 
 <table>
 
@@ -273,11 +591,16 @@ padding:20px;
 
 </div>
 
+</div>
+
+
 <!-- BOOKING HISTORY -->
 
 <div class="tableCard">
 
 <h3>Booking History</h3>
+
+<div class="tableWrapper">
 
 <table>
 
@@ -302,32 +625,55 @@ padding:20px;
 
 </div>
 
+</div>
+
+</body>
 
 <script>
 
-// ===== CHECK LOGIN FIRST =====
+/* ===============================
+WAIT FOR PAGE LOAD
+================================ */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+/* ===============================
+CHECK LOGIN
+================================ */
+
 const session =
 JSON.parse(localStorage.getItem("salonSession")) ||
 JSON.parse(sessionStorage.getItem("salonSession"));
 
 if(!session){
 window.location.href="log_in.html";
+return;
 }
 
 
-// ===== LOAD BOOKINGS =====
+/* ===============================
+LOAD BOOKINGS
+================================ */
+
 const allBookings = JSON.parse(localStorage.getItem("salonBookings") || "[]");
 
-// show only bookings of the logged-in user
+/* show only bookings of logged user */
+
 const bookings = allBookings.filter(b => b.email === session.email);
 
 
-// ===== ELEMENTS =====
+/* ===============================
+ELEMENTS
+================================ */
+
 const upcomingTable = document.getElementById("upcomingTable");
 const historyTable = document.getElementById("historyTable");
 
 
-// ===== STATS =====
+/* ===============================
+STATS
+================================ */
+
 let totalBookings = bookings.length;
 let today = new Date().toISOString().split("T")[0];
 
@@ -335,26 +681,46 @@ let upcoming = 0;
 let completed = 0;
 let totalPaid = 0;
 
-document.getElementById("totalBookings").textContent = totalBookings;
+setText("totalBookings", totalBookings);
 
 
-// ===== RENDER BOOKINGS =====
-bookings.forEach(b=>{
+/* ===============================
+RENDER BOOKINGS
+================================ */
 
-let serviceName = "";
+if(bookings.length === 0){
 
-if(b.services){
-serviceName = b.services.map(s=>s.name).join(", ");
+upcomingTable.innerHTML =
+`<tr><td colspan="6">No bookings yet.</td></tr>`;
+
+historyTable.innerHTML =
+`<tr><td colspan="6">No booking history.</td></tr>`;
+
 }
 
+bookings.forEach(b => {
+
+let serviceName = "Booking";
+
+/* service booking */
+
+if(b.services){
+serviceName = b.services.map(s => s.name).join(", ");
+}
+
+/* promo booking */
+
 if(b.promo){
-serviceName = b.promo.name;
+serviceName = b.promo;
 }
 
 totalPaid += b.downpayment || 0;
 
 
-// ===== UPCOMING =====
+/* ===============================
+UPCOMING BOOKINGS
+================================ */
+
 if(b.date >= today){
 
 upcoming++;
@@ -372,8 +738,10 @@ upcomingTable.innerHTML += `
 
 }
 
+/* ===============================
+COMPLETED BOOKINGS
+================================ */
 
-// ===== COMPLETED =====
 else{
 
 completed++;
@@ -394,10 +762,100 @@ historyTable.innerHTML += `
 });
 
 
-// ===== UPDATE CARDS =====
-document.getElementById("upcomingBookings").textContent = upcoming;
-document.getElementById("completedBookings").textContent = completed;
-document.getElementById("totalPaid").textContent = "₱" + totalPaid.toLocaleString();
+/* ===============================
+UPDATE DASHBOARD CARDS
+================================ */
+
+setText("upcomingBookings", upcoming);
+setText("completedBookings", completed);
+setText("totalPaid", "₱" + totalPaid.toLocaleString());
+
+
+/* ===============================
+SAFE TEXT FUNCTION
+================================ */
+
+function setText(id,value){
+
+const el = document.getElementById(id);
+
+if(el){
+el.textContent = value;
+}
+
+}
+
+
+/* ===============================
+NAVBAR MOBILE MENU
+================================ */
+
+const menuBtn = document.getElementById("menuBtn");
+const mobileMenuBack = document.getElementById("mobileMenuBack");
+const menuClose = document.getElementById("menuClose");
+
+if(menuBtn){
+
+menuBtn.onclick = () => {
+
+mobileMenuBack.style.display="block";
+document.body.style.overflow="hidden";
+
+};
+
+}
+
+if(menuClose){
+
+menuClose.onclick = closeMenu;
+
+}
+
+if(mobileMenuBack){
+
+mobileMenuBack.onclick = (e)=>{
+
+if(e.target === mobileMenuBack){
+closeMenu();
+}
+
+};
+
+}
+
+function closeMenu(){
+
+mobileMenuBack.style.display="none";
+document.body.style.overflow="";
+
+}
+
+
+/* ===============================
+LOGOUT
+================================ */
+
+const logoutBtn = document.getElementById("logoutBtn");
+const mLogout = document.getElementById("mLogout");
+
+if(logoutBtn){
+logoutBtn.onclick = logout;
+}
+
+if(mLogout){
+mLogout.onclick = logout;
+}
+
+function logout(){
+
+localStorage.removeItem("salonSession");
+sessionStorage.removeItem("salonSession");
+
+window.location.href="index.html";
+
+}
+
+});
 
 </script>
 

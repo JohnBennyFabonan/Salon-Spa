@@ -47,7 +47,6 @@ min-height:100vh;
 .logo{
 font-weight:800;
 font-size:18px;
-letter-spacing:.5px;
 margin-bottom:35px;
 }
 
@@ -65,7 +64,6 @@ padding:12px 14px;
 border-radius:12px;
 font-size:13px;
 font-weight:600;
-transition:.15s;
 }
 
 .nav a:hover{
@@ -98,6 +96,23 @@ margin:0;
 font-size:28px;
 }
 
+/* QR BUTTON */
+
+.qrUploadBtn{
+background:var(--green);
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:10px;
+font-size:13px;
+font-weight:600;
+cursor:pointer;
+}
+
+.qrUploadBtn:hover{
+background:var(--green2);
+}
+
 /* CARDS */
 
 .cards{
@@ -113,18 +128,12 @@ padding:22px;
 border-radius:var(--radius);
 box-shadow:var(--shadow);
 border:1px solid var(--line);
-transition:.15s;
-}
-
-.card:hover{
-transform:translateY(-2px);
 }
 
 .card h4{
 margin:0;
 font-size:13px;
 color:var(--muted);
-font-weight:600;
 }
 
 .card p{
@@ -134,7 +143,7 @@ font-weight:800;
 color:var(--green2);
 }
 
-/* TABLE CARDS */
+/* TABLE CARD */
 
 .tableCard{
 background:var(--card);
@@ -209,7 +218,6 @@ padding:20px;
 }
 
 </style>
-
 </head>
 
 <body>
@@ -221,7 +229,6 @@ padding:20px;
 <div class="logo">🌿 BASIT Admin</div>
 
 <div class="nav">
-
 <a class="active">Dashboard</a>
 <a href="admin_gallery.html">Manage Gallery</a>
 <a href="admin_bookings.html">Manage Bookings</a>
@@ -231,7 +238,6 @@ padding:20px;
 <a href="admin_manageaccount.html">Manage Account</a>
 <a href="admin_account.html">Account Settings</a>
 <a href="logout.html">Log Out</a>
-
 </div>
 
 </div>
@@ -240,8 +246,18 @@ padding:20px;
 
 <div class="main">
 
+<!-- HEADER -->
+
 <div class="header">
+
 <h1>Dashboard Overview</h1>
+
+<button class="qrUploadBtn" id="uploadQRBtn">
+Upload GCash QR
+</button>
+
+<input type="file" id="qrFileInput" accept="image/*" hidden>
+
 </div>
 
 <!-- STAT CARDS -->
@@ -279,13 +295,11 @@ padding:20px;
 <table>
 
 <thead>
-
 <tr>
 <th>Date</th>
 <th>Total Bookings</th>
 <th>Revenue</th>
 </tr>
-
 </thead>
 
 <tbody id="dailyRevenueTable"></tbody>
@@ -346,7 +360,9 @@ padding:20px;
 
 <script>
 
-const bookings = JSON.parse(localStorage.getItem("salonBookings") || "[]");
+/* LOAD BOOKINGS */
+
+const bookings = JSON.parse(localStorage.getItem("salonBookings") || []);
 
 document.getElementById("totalBookings").textContent = bookings.length;
 
@@ -359,28 +375,30 @@ let revenue = 0;
 let revenueByDate = {};
 let serviceCount = {};
 
+/* PROCESS BOOKINGS */
+
 bookings.forEach(b=>{
 
 if(b.date === today) todayCount++;
-
 if(b.date > today) upcoming++;
 
-revenue += b.totalPrice;
+revenue += b.totalPrice || 0;
 
 if(!revenueByDate[b.date]) revenueByDate[b.date] = {count:0,total:0};
 
 revenueByDate[b.date].count++;
-revenueByDate[b.date].total += b.totalPrice;
+revenueByDate[b.date].total += b.totalPrice || 0;
 
+if(b.services){
 b.services.forEach(s=>{
-
 if(!serviceCount[s.name]) serviceCount[s.name]=0;
-
 serviceCount[s.name]++;
+});
+}
 
 });
 
-});
+/* UPDATE CARDS */
 
 document.getElementById("todayBookings").textContent = todayCount;
 document.getElementById("upcomingBookings").textContent = upcoming;
@@ -394,13 +412,13 @@ Object.keys(revenueByDate).forEach(date=>{
 
 let r = revenueByDate[date];
 
-let row = `<tr>
+revenueTable.innerHTML += `
+<tr>
 <td>${date}</td>
 <td>${r.count}</td>
 <td>₱${r.total.toLocaleString()}</td>
-</tr>`;
-
-revenueTable.innerHTML += row;
+</tr>
+`;
 
 });
 
@@ -408,14 +426,16 @@ revenueTable.innerHTML += row;
 
 const serviceTable = document.getElementById("topServiceTable");
 
-Object.keys(serviceCount).sort((a,b)=>serviceCount[b]-serviceCount[a]).forEach(service=>{
+Object.keys(serviceCount)
+.sort((a,b)=>serviceCount[b]-serviceCount[a])
+.forEach(service=>{
 
-let row = `<tr>
+serviceTable.innerHTML += `
+<tr>
 <td>${service}</td>
 <td>${serviceCount[service]}</td>
-</tr>`;
-
-serviceTable.innerHTML += row;
+</tr>
+`;
 
 });
 
@@ -427,25 +447,49 @@ bookings.forEach(b=>{
 
 if(b.date === today){
 
-let services = b.services.map(s=>s.name).join(", ");
+let services = b.services ? b.services.map(s=>s.name).join(", ") : "";
 
-let row = `
+todayTable.innerHTML += `
 <tr>
 <td>${b.id}</td>
 <td>${services}</td>
-<td>${b.staff}</td>
+<td>${b.staff || "-"}</td>
 <td>${b.time}</td>
-<td>₱${b.downpayment.toLocaleString()}</td>
-<td>₱${b.remaining.toLocaleString()}</td>
+<td>₱${(b.downpayment || 0).toLocaleString()}</td>
+<td>₱${(b.remaining || 0).toLocaleString()}</td>
 <td><span class="status">Pending</span></td>
 </tr>
 `;
 
-todayTable.innerHTML += row;
-
 }
 
 });
+
+/* UPLOAD GCASH QR */
+
+const uploadBtn = document.getElementById("uploadQRBtn");
+const fileInput = document.getElementById("qrFileInput");
+
+uploadBtn.onclick = () => fileInput.click();
+
+fileInput.onchange = function(){
+
+const file = this.files[0];
+if(!file) return;
+
+const reader = new FileReader();
+
+reader.onload = function(e){
+
+localStorage.setItem("gcashQR", e.target.result);
+
+alert("GCash QR Code updated successfully!");
+
+};
+
+reader.readAsDataURL(file);
+
+};
 
 </script>
 
