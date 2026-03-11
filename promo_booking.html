@@ -27,6 +27,7 @@ body{
 margin:0;
 font-family:Poppins;
 background:var(--bg);
+overflow-x:hidden;
 }
 
 /* TOPBAR */
@@ -38,12 +39,14 @@ display:flex;
 gap:12px;
 padding:8px 20px;
 font-size:12px;
+flex-wrap:wrap;
 }
 
 .pill{
 padding:6px 10px;
 background:rgba(255,255,255,0.15);
 border-radius:20px;
+white-space:nowrap;
 }
 
 /* NAVBAR */
@@ -53,6 +56,8 @@ background:linear-gradient(180deg,var(--green),var(--green2));
 padding:14px 20px;
 display:flex;
 align-items:center;
+gap:12px;
+flex-wrap:wrap;
 }
 
 .brand{
@@ -77,6 +82,7 @@ justify-content:center;
 margin-left:auto;
 display:flex;
 gap:14px;
+flex-wrap:wrap;
 }
 
 .menu a{
@@ -138,6 +144,7 @@ padding:12px;
 border-radius:12px;
 border:1px solid #ccc;
 margin-top:5px;
+font-family:Poppins;
 }
 
 .totalBox{
@@ -161,6 +168,7 @@ border-radius:12px;
 cursor:pointer;
 font-weight:700;
 margin-top:15px;
+font-family:Poppins;
 }
 
 button:hover{
@@ -171,6 +179,7 @@ background:var(--green2);
 margin-top:10px;
 display:none;
 border-radius:12px;
+max-width:100%;
 }
 
 /* QR POPUP */
@@ -186,6 +195,7 @@ display:none;
 align-items:center;
 justify-content:center;
 z-index:1000;
+padding:20px;
 }
 
 .qrCard{
@@ -194,17 +204,200 @@ padding:25px;
 border-radius:16px;
 text-align:center;
 max-width:320px;
-width:90%;
+width:100%;
 }
 
 .qrCard img{
 width:220px;
 margin:15px 0;
+max-width:100%;
 }
 
 .qrCard button{
 width:auto;
 padding:10px 16px;
+}
+
+/* ===============================
+TABLET
+================================ */
+
+@media (max-width:900px){
+
+.topbar{
+display:none;
+}
+
+.navbar{
+flex-wrap:wrap;
+}
+
+.menu{
+width:100%;
+justify-content:center;
+margin-top:10px;
+}
+
+.container{
+padding:22px 16px;
+}
+
+}
+
+/* ===============================
+MOBILE
+================================ */
+
+@media (max-width:600px){
+
+.container{
+padding:16px;
+}
+
+.navbar{
+flex-direction:column;
+align-items:flex-start;
+}
+
+.menu{
+width:100%;
+flex-direction:column;
+align-items:flex-start;
+gap:6px;
+margin-top:10px;
+}
+
+.menu a{
+width:100%;
+}
+
+.row{
+flex-direction:column;
+align-items:flex-start;
+gap:4px;
+}
+
+.card{
+padding:18px;
+}
+
+h2{
+font-size:16px;
+}
+
+input,select{
+font-size:14px;
+}
+
+button{
+font-size:14px;
+}
+
+.qrCard img{
+width:180px;
+}
+
+}
+
+/* ===============================
+SMALL PHONES
+================================ */
+
+@media (max-width:420px){
+
+.container{
+padding:14px;
+}
+
+.card{
+padding:16px;
+}
+
+button{
+padding:12px;
+}
+
+.row{
+font-size:14px;
+}
+
+}
+
+.menuBtn{
+display:none;
+margin-left:auto;
+border:1px solid rgba(255,255,255,.2);
+background:rgba(255,255,255,.1);
+color:white;
+width:42px;
+height:42px;
+border-radius:12px;
+font-size:20px;
+cursor:pointer;
+}
+
+.mobileMenuBack{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.6);
+display:none;
+z-index:999;
+}
+
+.mobileMenu{
+position:absolute;
+top:10px;
+right:10px;
+width:280px;
+background:white;
+border-radius:14px;
+overflow:hidden;
+}
+
+.mobileMenuHead{
+display:flex;
+justify-content:space-between;
+padding:14px;
+border-bottom:1px solid #eee;
+}
+
+.mobileLinks{
+display:flex;
+flex-direction:column;
+padding:12px;
+gap:8px;
+}
+
+.mobileLinks a{
+text-decoration:none;
+color:#111;
+font-weight:600;
+padding:10px;
+border-radius:8px;
+background:#f4f4f4;
+}
+
+.menuClose{
+border:none;
+background:#eee;
+width:36px;
+height:36px;
+border-radius:10px;
+cursor:pointer;
+}
+
+/* MOBILE */
+
+@media(max-width:720px){
+
+.menu{
+display:none;
+}
+
+.menuBtn{
+display:block;
+}
+
 }
 
 </style>
@@ -222,22 +415,48 @@ padding:10px 16px;
 
 <!-- NAVBAR -->
 
-<div class="navbar">
+<header class="navbar">
 
 <div class="brand">
 <div class="logo">🌿</div>
 <span>BASIT</span>
 </div>
 
-<div class="menu">
+<nav class="menu">
 <a href="index.html">Home</a>
 <a href="services.html">Service</a>
 <a href="gallery.html">Gallery</a>
 <a href="specialist.html">Specialist</a>
 <a href="promo.html">Promos</a>
+</nav>
+
+<!-- Hamburger Button -->
+<button class="menuBtn" id="menuBtn">☰</button>
+
+</header>
+
+
+<!-- MOBILE MENU -->
+<div class="mobileMenuBack" id="mobileMenuBack">
+
+<div class="mobileMenu">
+
+<div class="mobileMenuHead">
+<span class="mobileTitle">Menu</span>
+<button class="menuClose" id="menuClose">✕</button>
 </div>
 
+<nav class="mobileLinks">
+<a href="index.html">Home</a>
+<a href="services.html">Service</a>
+<a href="gallery.html">Gallery</a>
+<a href="specialist.html">Specialist</a>
+<a href="promo.html">Promos</a>
+</nav>
+
 </div>
+</div>
+
 
 <div class="container">
 
@@ -245,7 +464,7 @@ padding:10px 16px;
 
 <div class="card">
 
-<h2>Promo Details</h2>
+<h2>Promo Summary</h2>
 
 <div class="row">
 <span>Promo Deal</span>
@@ -337,7 +556,7 @@ padding:10px 16px;
 
 <h3>Scan to Pay (GCash)</h3>
 
-<img src="gcash_qr.png">
+<img id="gcashQRImage" src="gcash_qr.png">
 
 <p>Send the required 10% downpayment.</p>
 
@@ -349,7 +568,13 @@ padding:10px 16px;
 
 
 <script>
-    
+
+/* ===============================
+WAIT UNTIL PAGE LOADS
+================================ */
+
+document.addEventListener("DOMContentLoaded", function(){
+
 /* ===============================
 CHECK LOGIN
 ================================ */
@@ -361,6 +586,17 @@ JSON.parse(sessionStorage.getItem("salonSession"));
 if(!session){
 alert("Please log in first.");
 window.location.href = "log_in.html";
+return;
+}
+
+/* ===============================
+LOAD ADMIN GCASH QR
+================================ */
+
+const savedQR = localStorage.getItem("gcashQR");
+
+if(savedQR){
+document.getElementById("gcashQRImage").src = savedQR;
 }
 
 /* ===============================
@@ -370,113 +606,125 @@ GET PROMO
 const promo = JSON.parse(localStorage.getItem("selectedPromo"));
 
 if(!promo){
-
 alert("No promo selected");
-
-window.location.href="promo.html";
-
+window.location.href = "promo.html";
+return;
 }
-
 
 /* ===============================
 DISPLAY PROMO DETAILS
 ================================ */
 
-document.getElementById("promoName").textContent = promo.title;
-document.getElementById("promoType").textContent = promo.type;
-document.getElementById("promoValidity").textContent = promo.validity;
-document.getElementById("promoOld").textContent = "₱"+promo.oldPrice;
-document.getElementById("promoPrice").textContent = "₱"+promo.dealPrice;
-
+setText("promoName", promo.title);
+setText("promoType", promo.type);
+setText("promoValidity", promo.validity);
+setText("promoOld", "₱" + promo.oldPrice);
+setText("promoPrice", "₱" + promo.dealPrice);
 
 /* ===============================
 PRICE COMPUTATION
 ================================ */
 
-const total = promo.dealPrice;
+const total = Number(promo.dealPrice);
 const down = total * 0.10;
 const remain = total - down;
 
-document.getElementById("total").textContent = "₱"+total;
-document.getElementById("down").textContent = "₱"+down.toFixed(2);
-document.getElementById("remain").textContent = "₱"+remain.toFixed(2);
-
+setText("total", "₱" + total);
+setText("down", "₱" + down.toFixed(2));
+setText("remain", "₱" + remain.toFixed(2));
 
 /* ===============================
 UPLOAD RECEIPT PREVIEW
 ================================ */
 
-let receiptImage="";
+let receiptImage = "";
 
-document.getElementById("receipt").addEventListener("change",function(){
+const receiptInput = document.getElementById("receipt");
 
-const file=this.files[0];
+if(receiptInput){
 
-const reader=new FileReader();
+receiptInput.addEventListener("change", function(){
 
-reader.onload=function(e){
+const file = this.files[0];
+if(!file) return;
 
-receiptImage=e.target.result;
+const reader = new FileReader();
 
-document.getElementById("preview").src=receiptImage;
-document.getElementById("preview").style.display="block";
+reader.onload = function(e){
 
+receiptImage = e.target.result;
+
+const preview = document.getElementById("preview");
+
+if(preview){
+preview.src = receiptImage;
+preview.style.display = "block";
 }
+
+};
 
 reader.readAsDataURL(file);
 
 });
 
+}
 
 /* ===============================
 QR POPUP
 ================================ */
 
-const qrModal=document.getElementById("qrModal");
+const qrModal = document.getElementById("qrModal");
+const showQR = document.getElementById("showQR");
+const closeQR = document.getElementById("closeQR");
 
-document.getElementById("showQR").onclick=function(){
-qrModal.style.display="flex";
+if(showQR){
+showQR.onclick = function(){
+qrModal.style.display = "flex";
+};
 }
 
-document.getElementById("closeQR").onclick=function(){
-qrModal.style.display="none";
+if(closeQR){
+closeQR.onclick = function(){
+qrModal.style.display = "none";
+};
 }
 
-qrModal.onclick=function(e){
-if(e.target===qrModal){
-qrModal.style.display="none";
+if(qrModal){
+qrModal.onclick = function(e){
+if(e.target === qrModal){
+qrModal.style.display = "none";
 }
+};
 }
-
 
 /* ===============================
 CONFIRM BOOKING
 ================================ */
 
-document.getElementById("confirm").onclick=function(){
+const confirmBtn = document.getElementById("confirm");
 
-const date=document.getElementById("date").value;
-const time=document.getElementById("time").value;
+if(confirmBtn){
+
+confirmBtn.onclick = function(){
+
+const date = document.getElementById("date").value;
+const time = document.getElementById("time").value;
 
 if(!date){
-
 alert("Please select a date.");
-
 return;
-
 }
 
 if(!receiptImage){
-
 alert("Please upload proof of payment.");
-
 return;
-
 }
 
-const booking={
+const booking = {
 
 type:"promo",
+
+email: session.email,
 
 promo:promo.title,
 price:total,
@@ -488,24 +736,73 @@ downpayment:down,
 remaining:remain,
 
 receipt:receiptImage,
-
 status:"Pending",
 
-id:"PR-"+Math.random().toString(16).slice(2,8)
+id:"PR-" + Math.random().toString(16).slice(2,8)
 
 };
 
-const bookings=JSON.parse(localStorage.getItem("salonBookings")||"[]");
+const bookings = JSON.parse(localStorage.getItem("salonBookings") || "[]");
 
 bookings.push(booking);
 
-localStorage.setItem("salonBookings",JSON.stringify(bookings));
+localStorage.setItem("salonBookings", JSON.stringify(bookings));
 
 alert("Promo booking confirmed!");
 
-window.location.href="customer_dashboard.html";
+window.location.href = "customer_dashboard.html";
 
 };
+
+}
+
+/* ===============================
+SAFE TEXT FUNCTION
+================================ */
+
+function setText(id, value){
+
+const el = document.getElementById(id);
+
+if(el){
+el.textContent = value;
+}
+
+}
+
+});
+
+/* ===============================
+MOBILE MENU
+================================ */
+
+const menuBtn = document.getElementById("menuBtn");
+const mobileMenuBack = document.getElementById("mobileMenuBack");
+const menuClose = document.getElementById("menuClose");
+
+menuBtn.onclick = function(){
+
+mobileMenuBack.style.display = "block";
+document.body.style.overflow = "hidden";
+
+};
+
+menuClose.onclick = closeMenu;
+
+mobileMenuBack.onclick = function(e){
+
+if(e.target === mobileMenuBack){
+closeMenu();
+}
+
+};
+
+function closeMenu(){
+
+mobileMenuBack.style.display = "none";
+document.body.style.overflow = "";
+
+}
 
 </script>
 
