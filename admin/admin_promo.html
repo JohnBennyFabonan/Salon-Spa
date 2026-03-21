@@ -301,8 +301,16 @@ width:100%;
 <button class="saveBtn" onclick="savePromo()">Save Promo</button>
 
 </div>
+<script src="session.js"></script>
 
 <script>
+    const session =
+JSON.parse(localStorage.getItem("salonSession")) ||
+JSON.parse(sessionStorage.getItem("salonSession"));
+
+if(!session || session.role !== "admin"){
+  window.location.href="../log_in.html";
+}
 
 let promos = JSON.parse(localStorage.getItem("promos")) || []
 

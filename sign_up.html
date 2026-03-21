@@ -525,55 +525,75 @@
         </div>
 
         <form id="signupForm" novalidate>
-          <div class="grid2">
-            <div class="field" style="grid-column: 1 / -1;">
-              <label for="name">Customer Name</label>
-              <input class="input" id="name" name="name" type="text" placeholder="Juan Dela Cruz" autocomplete="name" required />
-            </div>
+  <div class="grid2">
+    <div class="field" style="grid-column: 1 / -1;">
+      <label for="name">Customer Name</label>
+      <input class="input" id="name" name="name" type="text" placeholder="Juan Dela Cruz" autocomplete="name" required />
+    </div>
 
-            <div class="field">
-              <label for="contact">Contact Number</label>
-              <input class="input" id="contact" name="contact" type="tel" placeholder="09XXXXXXXXX" autocomplete="tel" inputmode="numeric" required />
-            </div>
+    <div class="field">
+      <label for="contact">Contact Number</label>
+      <input class="input" id="contact" name="contact" type="tel" placeholder="09XXXXXXXXX" autocomplete="tel" inputmode="numeric" required />
+    </div>
 
-            <div class="field">
-              <label for="email">Email Address</label>
-              <input class="input" id="email" name="email" type="email" placeholder="you@email.com" autocomplete="email" required />
-            </div>
+    <div class="field">
+      <label for="email">Email Address</label>
+      <input class="input" id="email" name="email" type="email" placeholder="you@email.com" autocomplete="email" required />
+    </div>
 
-            <div class="field" style="grid-column: 1 / -1;">
-              <label for="password">Password</label>
-              <div style="display:flex; gap:10px; align-items:center;">
-                <input class="input" id="password" name="password" type="password" placeholder="Create a strong password" autocomplete="new-password" required />
-                <button class="btnOutline"
-                        id="togglePass"
-                        type="button"
-                        style="flex:0 0 auto; padding:12px 12px; border-radius:12px; font-weight:950; font-size:13px;">
-                  Show
-                </button>
-              </div>
-              <div class="hint" style="margin-top:8px;">Use at least 8 characters (mix letters + numbers).</div>
-            </div>
-          </div>
+    <div class="field" style="grid-column: 1 / -1;">
+      <label for="password">Password</label>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <input class="input" id="password" name="password" type="password" placeholder="Create a strong password" autocomplete="new-password" required />
+        <button class="btnOutline"
+                id="togglePass"
+                type="button"
+                style="flex:0 0 auto; padding:12px 12px; border-radius:12px; font-weight:950; font-size:13px;">
+          Show
+        </button>
+      </div>
+      <div class="hint" style="margin-top:8px;">Use at least 8 characters (mix letters + numbers).</div>
+    </div>
 
-          <div class="helpRow">
-            <label class="check">
-              <input type="checkbox" id="agree" required />
-              <span>I agree to the Terms & Privacy Policy.</span>
-            </label>
-          </div>
+    <!-- ✅ SECURITY QUESTION -->
+    <div class="field" style="grid-column: 1 / -1;">
+      <label for="securityQuestion">Security Question</label>
+      <select class="input" id="securityQuestion" required>
+        <option value="">Select a question</option>
+        <option value="pet">What is your first pet's name?</option>
+        <option value="school">What is the name of your elementary school?</option>
+        <option value="city">In what city were you born?</option>
+        <option value="mother">What is your mother's maiden name?</option>
+        <option value="food">What is your favorite food?</option>
+      </select>
+    </div>
 
-          <div class="error" id="errBox"></div>
+    <!-- ✅ SECURITY ANSWER -->
+    <div class="field" style="grid-column: 1 / -1;">
+      <label for="securityAnswer">Your Answer</label>
+      <input class="input" id="securityAnswer" type="text" placeholder="Enter your answer" required />
+    </div>
 
-          <div class="actions">
-            <button class="btn" type="submit">Create Account</button>
-            <button class="btn btnOutline" type="reset">Clear</button>
-          </div>
+  </div>
 
-          <div class="alt">
-            Already have an account? <a href="log_in.html">Log in</a>
-          </div>
-        </form>
+  <div class="helpRow">
+    <label class="check">
+      <input type="checkbox" id="agree" required />
+      <span>I agree to the Terms & Privacy Policy.</span>
+    </label>
+  </div>
+
+  <div class="error" id="errBox"></div>
+
+  <div class="actions">
+    <button class="btn" type="submit">Create Account</button>
+    <button class="btn btnOutline" type="reset">Clear</button>
+  </div>
+
+  <div class="alt">
+    Already have an account? <a href="log_in.html">Log in</a>
+  </div>
+</form>
       </section>
     </div>
   </main>
@@ -621,6 +641,10 @@ const emailEl = document.getElementById("email");
 const passEl = document.getElementById("password");
 const agreeEl = document.getElementById("agree");
 
+// ✅ NEW (security question)
+const secQEl = document.getElementById("securityQuestion");
+const secAEl = document.getElementById("securityAnswer");
+
 const togglePass = document.getElementById("togglePass");
 
 togglePass.addEventListener("click",()=>{
@@ -651,13 +675,18 @@ form.addEventListener("submit",(e)=>{
   e.preventDefault();
   clearError();
 
-  const name=nameEl.value.trim();
-  const contact=contactEl.value.trim();
-  const email=emailEl.value.trim();
-  const pass=passEl.value;
+  const name = nameEl.value.trim();
+  const contact = contactEl.value.trim();
+  const email = emailEl.value.trim();
+  const pass = passEl.value;
 
-  if(!name || !contact || !email || !pass){
-    return showError("Please fill out all fields.");
+  // ✅ NEW
+  const secQ = secQEl.value;
+  const secA = secAEl.value.trim();
+
+  // ===== VALIDATION =====
+  if(!name || !contact || !email || !pass || !secQ || !secA){
+    return showError("Please fill out all fields including the security question.");
   }
 
   if(!isValidPHMobile(contact)){
@@ -676,32 +705,32 @@ form.addEventListener("submit",(e)=>{
     return showError("Please accept the Terms & Privacy Policy.");
   }
 
-
   // ===== Load existing users =====
   let users = JSON.parse(localStorage.getItem("users")) || [];
-
 
   // ===== Check duplicate email =====
   if(users.some(u => u.email.toLowerCase() === email.toLowerCase())){
     return showError("Email already registered.");
   }
 
-
   // ===== Save new user =====
   const newUser = {
-    id:"U"+Math.floor(Math.random()*100000),
+    id: "U" + Math.floor(Math.random()*100000),
     name,
     contact,
     email,
-    password:pass,
-    role:"customer",
-    createdAt:Date.now()
+    password: pass,
+
+    // ✅ NEW (security fields)
+    securityQuestion: secQ,
+    securityAnswer: secA.toLowerCase(),
+
+    role: "customer",
+    createdAt: Date.now()
   };
 
   users.push(newUser);
-
-  localStorage.setItem("users",JSON.stringify(users));
-
+  localStorage.setItem("users", JSON.stringify(users));
 
   alert("Account created successfully!");
 
@@ -709,7 +738,9 @@ form.addEventListener("submit",(e)=>{
 
 });
 
-form.addEventListener("reset",clearError);
+form.addEventListener("reset",()=>{
+  clearError();
+});
 
 </script>
 </body>

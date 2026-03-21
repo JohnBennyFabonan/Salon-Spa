@@ -131,6 +131,7 @@ font-weight:700;
 td{
 padding:12px;
 border-bottom:1px solid var(--line);
+vertical-align:middle;
 }
 
 tr:hover{
@@ -140,12 +141,25 @@ background:#f9fdfb;
 /* STATUS */
 
 .status{
-background:#e7f7ef;
-color:var(--green2);
 padding:5px 10px;
 border-radius:20px;
 font-size:12px;
 font-weight:600;
+}
+
+.pending{
+background:#fff4e5;
+color:#b45309;
+}
+
+.approved{
+background:#e7f7ef;
+color:var(--green2);
+}
+
+.cancelled{
+background:#fdeaea;
+color:#c53030;
 }
 
 /* ACTION BUTTONS */
@@ -170,7 +184,51 @@ background:#fdeaea;
 color:#c53030;
 }
 
-/* RESPONSIVE */
+/* QR */
+
+.qr{
+width:55px;
+border-radius:6px;
+border:1px solid var(--line);
+cursor:pointer;
+transition:0.2s;
+}
+
+.qr:hover{
+transform:scale(1.05);
+}
+
+/* MODAL */
+
+.qrModal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.7);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:999;
+}
+
+.qrModal img{
+max-width:400px;
+border-radius:10px;
+box-shadow:0 10px 40px rgba(0,0,0,0.4);
+}
+
+.serviceList{
+font-size:13px;
+line-height:1.4;
+}
+
+.empty{
+text-align:center;
+padding:40px;
+color:var(--muted);
+}
 
 @media(max-width:900px){
 
@@ -221,7 +279,24 @@ padding:20px;
 <div class="main">
 
 <div class="header">
+
 <h1>Manage Bookings</h1>
+
+<!-- 🔍 SEARCH BAR -->
+<input 
+type="text" 
+id="searchInput" 
+placeholder="Search by name or date..."
+style="
+padding:10px 14px;
+border-radius:10px;
+border:1px solid var(--line);
+font-family:Poppins;
+width:260px;
+outline:none;
+"
+>
+
 </div>
 
 <div class="tableCard">
@@ -233,48 +308,192 @@ padding:20px;
 <th>Booking ID</th>
 <th>Customer</th>
 <th>Service</th>
+<th>Specialist</th>
 <th>Date</th>
 <th>Time</th>
+<th>Notes</th>
+<th>QR Code</th>
 <th>Status</th>
 <th>Action</th>
 </tr>
 </thead>
 
-<tbody>
-
-<tr>
-<td>#B001</td>
-<td>Maria Santos</td>
-<td>Haircut</td>
-<td>May 12</td>
-<td>10:00 AM</td>
-<td><span class="status">Pending</span></td>
-<td>
-<button class="actionBtn approve">Approve</button>
-<button class="actionBtn cancel">Cancel</button>
-</td>
-</tr>
-
-<tr>
-<td>#B002</td>
-<td>John Cruz</td>
-<td>Hair Color</td>
-<td>May 13</td>
-<td>1:30 PM</td>
-<td><span class="status">Pending</span></td>
-<td>
-<button class="actionBtn approve">Approve</button>
-<button class="actionBtn cancel">Cancel</button>
-</td>
-</tr>
-
-</tbody>
+<tbody id="bookingTable"></tbody>
 
 </table>
 
+<div id="emptyMessage" class="empty" style="display:none;">
+No bookings yet.
 </div>
 
 </div>
+
+</div>
+
+<!-- QR MODAL -->
+
+<div id="qrModal" class="qrModal">
+<img id="qrPreview">
+</div>
+
+<script src="session.js"></script>
+
+<script>
+
+/* LOAD BOOKINGS */
+
+let bookings = JSON.parse(localStorage.getItem("salonBookings")) || [];
+
+const table = document.getElementById("bookingTable");
+const empty = document.getElementById("emptyMessage");
+const searchInput = document.getElementById("searchInput");
+
+/* RENDER BOOKINGS WITH SEARCH */
+
+function renderBookings(){
+
+table.innerHTML = "";
+
+/* GET SEARCH VALUE */
+const searchValue = (searchInput.value || "").toLowerCase();
+
+/* FILTER BOOKINGS */
+const filtered = bookings.filter(booking => {
+
+const name =
+(booking.customer ||
+ booking.name ||
+ booking.user ||
+ booking.email ||
+ "Customer").toLowerCase();
+
+const date = (booking.date || "").toLowerCase();
+
+return name.includes(searchValue) || date.includes(searchValue);
+
+});
+
+/* EMPTY CHECK */
+
+if(filtered.length === 0){
+empty.style.display = "block";
+return;
+}
+
+empty.style.display = "none";
+
+/* DISPLAY FILTERED BOOKINGS */
+
+filtered.forEach((booking)=>{
+
+let servicesHTML = "";
+
+if(Array.isArray(booking.services)){
+
+booking.services.forEach(s=>{
+servicesHTML += `<div class="serviceList">• ${s.name || s.service || "-"} ${s.duration ? "(" + s.duration + ")" : ""}</div>`;
+});
+
+}else{
+servicesHTML = booking.service || "-";
+}
+
+/* STATUS STYLE */
+
+let statusClass = "pending";
+if(booking.status === "Approved") statusClass = "approved";
+if(booking.status === "Cancelled") statusClass = "cancelled";
+
+/* CUSTOMER NAME */
+
+const customerName =
+booking.customer ||
+booking.name ||
+booking.user ||
+booking.email ||
+"Customer";
+
+/* QR IMAGE */
+
+const qrImage =
+booking.qr ||
+booking.receipt ||
+"";
+
+/* GET REAL INDEX (IMPORTANT FIX) */
+
+const realIndex = bookings.indexOf(booking);
+
+/* CREATE ROW */
+
+const row = document.createElement("tr");
+
+row.innerHTML = `
+<td>#B${String(realIndex+1).padStart(3,'0')}</td>
+<td>${customerName}</td>
+<td>${servicesHTML}</td>
+<td>${booking.staff || "No preference"}</td>
+<td>${booking.date || "-"}</td>
+<td>${booking.time || "-"}</td>
+<td>${booking.notes || "-"}</td>
+<td>
+${qrImage ? `<img src="${qrImage}" class="qr" onclick="openQR('${qrImage}')">` : "-"}
+</td>
+<td>
+<span class="status ${statusClass}">
+${booking.status || "Pending"}
+</span>
+</td>
+<td>
+<button class="actionBtn approve" onclick="approveBooking(${realIndex})">Approve</button>
+<button class="actionBtn cancel" onclick="cancelBooking(${realIndex})">Cancel</button>
+</td>
+`;
+
+table.appendChild(row);
+
+});
+
+}
+
+/* SEARCH LISTENER */
+
+searchInput.addEventListener("input", renderBookings);
+
+/* APPROVE */
+
+function approveBooking(index){
+bookings[index].status = "Approved";
+localStorage.setItem("salonBookings", JSON.stringify(bookings));
+renderBookings();
+}
+
+/* CANCEL */
+
+function cancelBooking(index){
+bookings[index].status = "Cancelled";
+localStorage.setItem("salonBookings", JSON.stringify(bookings));
+renderBookings();
+}
+
+/* QR MODAL */
+
+function openQR(src){
+const modal = document.getElementById("qrModal");
+const preview = document.getElementById("qrPreview");
+preview.src = src;
+modal.style.display = "flex";
+}
+
+document.getElementById("qrModal").addEventListener("click", function(){
+this.style.display = "none";
+});
+
+/* INIT */
+
+renderBookings();
+
+</script>
 
 </body>
 </html>

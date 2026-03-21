@@ -360,13 +360,64 @@ Upload GCash QR
 
 <script>
 
-/* LOAD BOOKINGS */
+/* ===============================
+ADMIN SESSION CHECK FUNCTION
+================================ */
 
-const bookings = JSON.parse(localStorage.getItem("salonBookings") || []);
+function checkAdminSession(){
+
+const session =
+JSON.parse(localStorage.getItem("salonSession")) ||
+JSON.parse(sessionStorage.getItem("salonSession"));
+
+if(!session || session.role !== "admin"){
+window.location.replace("../log_in.html");
+}
+
+}
+
+/* Run session check immediately */
+
+checkAdminSession();
+
+
+/* ===============================
+PREVENT BACK BUTTON CACHE
+================================ */
+
+window.addEventListener("pageshow", function(event){
+
+if(event.persisted){
+location.reload();
+}
+
+checkAdminSession();
+
+});
+
+
+/* ===============================
+CHECK SESSION WHEN PAGE VISIBLE
+================================ */
+
+document.addEventListener("visibilitychange", function(){
+
+if(document.visibilityState === "visible"){
+checkAdminSession();
+}
+
+});
+
+
+/* ===============================
+LOAD BOOKINGS
+================================ */
+
+const bookings = JSON.parse(localStorage.getItem("salonBookings") || "[]");
 
 document.getElementById("totalBookings").textContent = bookings.length;
 
-let today = new Date().toISOString().split("T")[0];
+const today = new Date().toISOString().split("T")[0];
 
 let todayCount = 0;
 let upcoming = 0;
@@ -375,40 +426,51 @@ let revenue = 0;
 let revenueByDate = {};
 let serviceCount = {};
 
-/* PROCESS BOOKINGS */
 
-bookings.forEach(b=>{
+/* ===============================
+PROCESS BOOKINGS
+================================ */
+
+bookings.forEach(b => {
 
 if(b.date === today) todayCount++;
 if(b.date > today) upcoming++;
 
 revenue += b.totalPrice || 0;
 
-if(!revenueByDate[b.date]) revenueByDate[b.date] = {count:0,total:0};
+if(!revenueByDate[b.date]){
+revenueByDate[b.date] = {count:0,total:0};
+}
 
 revenueByDate[b.date].count++;
 revenueByDate[b.date].total += b.totalPrice || 0;
 
 if(b.services){
 b.services.forEach(s=>{
-if(!serviceCount[s.name]) serviceCount[s.name]=0;
+if(!serviceCount[s.name]) serviceCount[s.name] = 0;
 serviceCount[s.name]++;
 });
 }
 
 });
 
-/* UPDATE CARDS */
+
+/* ===============================
+UPDATE DASHBOARD CARDS
+================================ */
 
 document.getElementById("todayBookings").textContent = todayCount;
 document.getElementById("upcomingBookings").textContent = upcoming;
-document.getElementById("totalRevenue").textContent = "₱"+revenue.toLocaleString();
+document.getElementById("totalRevenue").textContent = "₱" + revenue.toLocaleString();
 
-/* DAILY REVENUE */
+
+/* ===============================
+DAILY REVENUE TABLE
+================================ */
 
 const revenueTable = document.getElementById("dailyRevenueTable");
 
-Object.keys(revenueByDate).forEach(date=>{
+Object.keys(revenueByDate).forEach(date => {
 
 let r = revenueByDate[date];
 
@@ -422,7 +484,10 @@ revenueTable.innerHTML += `
 
 });
 
-/* TOP SERVICES */
+
+/* ===============================
+TOP SERVICES
+================================ */
 
 const serviceTable = document.getElementById("topServiceTable");
 
@@ -439,7 +504,10 @@ serviceTable.innerHTML += `
 
 });
 
-/* TODAY BOOKINGS */
+
+/* ===============================
+TODAY BOOKINGS TABLE
+================================ */
 
 const todayTable = document.getElementById("todayBookingTable");
 
@@ -465,7 +533,10 @@ todayTable.innerHTML += `
 
 });
 
-/* UPLOAD GCASH QR */
+
+/* ===============================
+UPLOAD GCASH QR
+================================ */
 
 const uploadBtn = document.getElementById("uploadQRBtn");
 const fileInput = document.getElementById("qrFileInput");
