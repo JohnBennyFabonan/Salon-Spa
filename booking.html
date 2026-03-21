@@ -625,11 +625,7 @@ background:white;
             <div class="field">
               <label for="staff">Preferred Specialist (optional)</label>
               <select id="staff">
-                <option value="">No preference</option>
-                <option>Maria • Hair Stylist</option>
-                <option>Anne • Nail Technician</option>
-                <option>Jessa • Massage Therapist</option>
-                <option>Kevin • Barber</option>
+              <option value="">No preference</option>
               </select>
             </div>
           </div>
@@ -743,7 +739,8 @@ background:white;
 </div>
 
   <script>
-    /* ===============================
+
+/* ===============================
 PROTECT BOOKING PAGE (LOGIN REQUIRED)
 ================================ */
 
@@ -752,15 +749,15 @@ JSON.parse(localStorage.getItem("salonSession")) ||
 JSON.parse(sessionStorage.getItem("salonSession"));
 
 if(!session){
-
 alert("Please log in first before booking.");
-
 window.location.href = "log_in.html";
-
 }
-    /* ===============================
+
+
+/* ===============================
 LOGIN NAVBAR SWITCH
 ================================ */
+
 if(session){
 
 document.getElementById("loginLink").style.display="none";
@@ -776,6 +773,7 @@ document.getElementById("mDashboard").style.display="block";
 document.getElementById("mLogout").style.display="block";
 
 }
+
 
 /* ===============================
 LOGOUT FUNCTION
@@ -793,50 +791,80 @@ window.location.href="index.html";
 
 }
 
-// ===== Mobile menu toggle =====
+
+/* ===============================
+MOBILE MENU
+================================ */
+
 const menuBtn = document.getElementById("menuBtn");
 const mobileMenuBack = document.getElementById("mobileMenuBack");
 const menuClose = document.getElementById("menuClose");
 
 function openMenu(){
-  mobileMenuBack.style.display = "block";
-  document.body.style.overflow = "hidden";
+mobileMenuBack.style.display="block";
+document.body.style.overflow="hidden";
 }
 
 function closeMenu(){
-  mobileMenuBack.style.display = "none";
-  document.body.style.overflow = "";
+mobileMenuBack.style.display="none";
+document.body.style.overflow="";
 }
 
-menuBtn?.addEventListener("click", openMenu);
-menuClose?.addEventListener("click", closeMenu);
+menuBtn?.addEventListener("click",openMenu);
+menuClose?.addEventListener("click",closeMenu);
 
 mobileMenuBack?.addEventListener("click",(e)=>{
-  if(e.target === mobileMenuBack) closeMenu();
+if(e.target===mobileMenuBack) closeMenu();
 });
 
-// ===== Services Data =====
+
+/* ===============================
+SERVICES DATA
+================================ */
+
 let SERVICES = JSON.parse(localStorage.getItem("services")) || [];
+
 SERVICES = SERVICES.map(s => ({
-  id: s.id,
-  icon: "💇",
-  name: s.name,
-  duration: s.duration + " mins",
-  price: s.amount
+id:s.id,
+icon:"💇",
+name:s.name,
+duration:s.duration + " mins",
+price:s.amount
 }));
 
+
+/* ===============================
+TIME SLOTS
+================================ */
+
 const TIME_SLOTS = [
-"9:00 AM","10:00 AM","11:00 AM","12:00 PM",
-"1:00 PM","2:00 PM","3:00 PM","4:00 PM"
+"9:00 AM",
+"10:00 AM",
+"11:00 AM",
+"12:00 PM",
+"1:00 PM",
+"2:00 PM",
+"3:00 PM",
+"4:00 PM",
+"5:00 PM",
+"6:00 PM"
 ];
 
-const UNAVAILABLE = new Set(["12:00 PM","3:00 PM"]);
+const UNAVAILABLE = new Set([]);
 
-// ===== STATE =====
+
+/* ===============================
+STATE
+================================ */
+
 let selectedServices = [];
 let selectedTime = "";
 
-// ===== Elements =====
+
+/* ===============================
+ELEMENTS
+================================ */
+
 const serviceGrid = document.getElementById("serviceGrid");
 const dateEl = document.getElementById("date");
 const staffEl = document.getElementById("staff");
@@ -858,166 +886,233 @@ const okBox = document.getElementById("okBox");
 const confirmBtn = document.getElementById("confirmBtn");
 const clearBtn = document.getElementById("clearBtn");
 
-// ===== Helpers =====
+
+/* ===============================
+LOAD SPECIALISTS FROM ADMIN PANEL
+================================ */
+
+const specialists = JSON.parse(localStorage.getItem("specialists")) || [];
+
+specialists.forEach(sp=>{
+
+const option=document.createElement("option");
+
+option.value = sp.name;
+
+option.textContent = sp.name + " • " + sp.role;
+
+staffEl.appendChild(option);
+
+});
+
+
+/* ===============================
+HELPERS
+================================ */
+
 function peso(n){
- return new Intl.NumberFormat("en-PH",{
-  style:"currency",
-  currency:"PHP",
-  minimumFractionDigits:0
- }).format(n);
+
+return new Intl.NumberFormat("en-PH",{
+style:"currency",
+currency:"PHP",
+minimumFractionDigits:0
+}).format(n);
+
 }
 
 function showErr(msg){
- okBox.style.display="none";
- errBox.textContent=msg;
- errBox.style.display="block";
+
+okBox.style.display="none";
+errBox.textContent=msg;
+errBox.style.display="block";
+
 }
 
 function showOk(msg){
- errBox.style.display="none";
- okBox.textContent=msg;
- okBox.style.display="block";
+
+errBox.style.display="none";
+okBox.textContent=msg;
+okBox.style.display="block";
+
 }
 
 function clearMsg(){
- errBox.style.display="none";
- okBox.style.display="none";
+
+errBox.style.display="none";
+okBox.style.display="none";
+
 }
 
-// ===== Date =====
+
+/* ===============================
+SET MIN DATE
+================================ */
+
 function setMinDateToday(){
- const today=new Date();
- const y=today.getFullYear();
- const m=String(today.getMonth()+1).padStart(2,"0");
- const d=String(today.getDate()).padStart(2,"0");
- dateEl.min=`${y}-${m}-${d}`;
- dateEl.value=dateEl.min;
+
+const today=new Date();
+
+const y=today.getFullYear();
+const m=String(today.getMonth()+1).padStart(2,"0");
+const d=String(today.getDate()).padStart(2,"0");
+
+dateEl.min=`${y}-${m}-${d}`;
+dateEl.value=dateEl.min;
+
 }
 
-// ===== Render Services =====
+
+/* ===============================
+RENDER SERVICES
+================================ */
+
 function renderServices(){
 
- serviceGrid.innerHTML="";
+serviceGrid.innerHTML="";
 
- SERVICES.forEach(s=>{
+SERVICES.forEach(s=>{
 
-   const div=document.createElement("div");
-   div.className="service";
+const div=document.createElement("div");
 
-   div.innerHTML=`
-   <span class="sChip">Selected</span>
-   <div class="sIcon">${s.icon}</div>
-   <div class="sMeta">
-   <b>${s.name}</b>
-   <small>${s.duration}</small>
-   </div>
-   <div class="sPrice">${peso(s.price)}</div>
-   `;
+div.className="service";
 
-   div.addEventListener("click",()=>{
+div.innerHTML=`
+<span class="sChip">Selected</span>
 
-     const index=selectedServices.findIndex(x=>x.id===s.id);
+<div class="sIcon">${s.icon}</div>
 
-     if(index>-1){
-       selectedServices.splice(index,1);
-       div.classList.remove("active");
-     }else{
-       selectedServices.push(s);
-       div.classList.add("active");
-     }
+<div class="sMeta">
+<b>${s.name}</b>
+<small>${s.duration}</small>
+</div>
 
-     updateSummary();
-     clearMsg();
+<div class="sPrice">${peso(s.price)}</div>
+`;
 
-   });
+div.addEventListener("click",()=>{
 
-   serviceGrid.appendChild(div);
+const index=selectedServices.findIndex(x=>x.id===s.id);
 
- });
+if(index>-1){
+
+selectedServices.splice(index,1);
+div.classList.remove("active");
+
+}else{
+
+selectedServices.push(s);
+div.classList.add("active");
 
 }
 
-// ===== Render Time Slots =====
+updateSummary();
+clearMsg();
+
+});
+
+serviceGrid.appendChild(div);
+
+});
+
+}
+
+
+/* ===============================
+RENDER TIME SLOTS
+================================ */
+
 function renderSlots(){
 
- slotsEl.innerHTML="";
+slotsEl.innerHTML="";
 
- TIME_SLOTS.forEach(t=>{
+TIME_SLOTS.forEach(t=>{
 
-   const btn=document.createElement("div");
-   btn.className="slot";
-   btn.textContent=t;
+const btn=document.createElement("div");
 
-   if(UNAVAILABLE.has(t)){
-     btn.classList.add("disabled");
-   }
+btn.className="slot";
+btn.textContent=t;
 
-   btn.addEventListener("click",()=>{
+if(UNAVAILABLE.has(t)){
+btn.classList.add("disabled");
+}
 
-     if(UNAVAILABLE.has(t)) return;
+btn.addEventListener("click",()=>{
 
-     selectedTime=t;
+if(UNAVAILABLE.has(t)) return;
 
-     document.querySelectorAll(".slot").forEach(s=>s.classList.remove("active"));
-     btn.classList.add("active");
+selectedTime=t;
 
-     updateSummary();
-   });
+document.querySelectorAll(".slot").forEach(s=>s.classList.remove("active"));
 
-   slotsEl.appendChild(btn);
+btn.classList.add("active");
 
- });
+updateSummary();
+
+});
+
+slotsEl.appendChild(btn);
+
+});
 
 }
 
-// ===== Update Summary =====
+
+/* ===============================
+UPDATE SUMMARY
+================================ */
+
 function updateSummary(){
 
- if(selectedServices.length===0){
+if(selectedServices.length===0){
 
-   sumService.textContent="—";
-   sumDuration.textContent="—";
-   sumTotal.textContent="—";
-   sumDownpayment.textContent="—";
-   sumRemaining.textContent="—";
-   return;
+sumService.textContent="—";
+sumDuration.textContent="—";
+sumTotal.textContent="—";
+sumDownpayment.textContent="—";
+sumRemaining.textContent="—";
 
- }
-
- const names=selectedServices.map(s=>s.name).join(", ");
- const durations=selectedServices.map(s=>s.duration).join(", ");
-
- const total = selectedServices.reduce((sum,s)=>sum+Number(s.price),0);
-
-const down = Math.round(total * 0.10);
-const remain = total - down;
-
- sumService.textContent=names;
- sumDuration.textContent=durations;
- sumStaff.textContent=staffEl.value || "No preference";
- sumDate.textContent=dateEl.value || "—";
- sumTime.textContent=selectedTime || "—";
-
- sumTotal.textContent=peso(total);
- sumDownpayment.textContent=peso(down);
- sumRemaining.textContent=peso(remain);
+return;
 
 }
 
-// ===== Clear Booking =====
+const names = selectedServices.map(s=>s.name).join(", ");
+const durations = selectedServices.map(s=>s.duration).join(", ");
+
+const total = selectedServices.reduce((sum,s)=>sum+Number(s.price),0);
+
+const down = Math.round(total*0.10);
+const remain = total-down;
+
+sumService.textContent=names;
+sumDuration.textContent=durations;
+sumStaff.textContent=staffEl.value || "No preference";
+sumDate.textContent=dateEl.value || "—";
+sumTime.textContent=selectedTime || "—";
+
+sumTotal.textContent=peso(total);
+sumDownpayment.textContent=peso(down);
+sumRemaining.textContent=peso(remain);
+
+}
+
+
+/* ===============================
+CLEAR BOOKING
+================================ */
+
 function clearAll(){
 
- selectedServices=[];
- selectedTime="";
+selectedServices=[];
+selectedTime="";
 
- notesEl.value="";
- staffEl.value="";
+notesEl.value="";
+staffEl.value="";
 
- document.querySelectorAll(".service").forEach(s=>s.classList.remove("active"));
- document.querySelectorAll(".slot").forEach(s=>s.classList.remove("active"));
+document.querySelectorAll(".service").forEach(s=>s.classList.remove("active"));
+document.querySelectorAll(".slot").forEach(s=>s.classList.remove("active"));
 
- updateSummary();
- clearMsg();
+updateSummary();
+clearMsg();
 
 }
 
@@ -1026,151 +1121,166 @@ clearBtn.addEventListener("click",clearAll);
 staffEl.addEventListener("change",updateSummary);
 dateEl.addEventListener("change",updateSummary);
 
-// ===== Confirm Booking =====
+
+/* ===============================
+CONFIRM BOOKING
+================================ */
+
 confirmBtn.addEventListener("click",()=>{
 
- clearMsg();
+clearMsg();
 
- if(selectedServices.length===0)
- return showErr("Please select at least one service.");
+if(selectedServices.length===0)
+return showErr("Please select at least one service.");
 
- if(!selectedTime)
- return showErr("Please choose a time slot.");
+if(!selectedTime)
+return showErr("Please choose a time slot.");
 
- // Calculate prices properly
- const total = selectedServices.reduce((sum,s)=>sum + Number(s.price),0);
+const total = selectedServices.reduce((sum,s)=>sum+Number(s.price),0);
+const down = Math.round(total*0.10);
+const remain = total-down;
 
- const down = Math.round(total * 0.10);
+const booking = {
 
- const remain = total - down;
+id:"BK-"+Math.random().toString(16).slice(2,10).toUpperCase(),
 
- const booking = {
- id:"BK-"+Math.random().toString(16).slice(2,10).toUpperCase(),
+customer:session.name || session.email || "Customer",
 
- services:selectedServices,
+services:selectedServices,
 
- totalPrice:total,
+totalPrice:total,
+downpayment:down,
+remaining:remain,
 
- downpayment:down,
+date:dateEl.value,
+time:selectedTime,
 
- remaining:remain,
+staff:staffEl.value || "No preference",
 
- date:dateEl.value,
+notes:notesEl.value.trim(),
 
- time:selectedTime,
+qr:receiptImage,
 
- staff:staffEl.value || "No preference",
+status:"Pending",
 
- notes:notesEl.value.trim(),
+createdAt:Date.now()
 
- receipt:receiptImage,
+};
 
- createdAt:Date.now()
- };
+/* SAVE TEMP BOOKING */
 
- const existing = JSON.parse(localStorage.getItem("salonBookings") || "[]");
+localStorage.setItem("pendingBooking", JSON.stringify(booking));
 
- existing.unshift(booking);
+/* GO TO CONFIRMATION PAGE */
 
- localStorage.setItem("salonBookings",JSON.stringify(existing));
-
- showOk("Booking confirmed! 10% downpayment required.");
+window.location = "booking_confirmation.html";
 
 });
 
-// ===== GCash QR Popup =====
 
-const gcashBtn = document.getElementById("gcashBtn");
-const gcashModal = document.getElementById("gcashModal");
-const closeQR = document.getElementById("closeQR");
+/* ===============================
+GCASH QR
+================================ */
 
-gcashBtn.addEventListener("click", () => {
-  gcashModal.style.display = "flex";
+const gcashBtn=document.getElementById("gcashBtn");
+const gcashModal=document.getElementById("gcashModal");
+const closeQR=document.getElementById("closeQR");
+
+gcashBtn.addEventListener("click",()=>{
+gcashModal.style.display="flex";
 });
 
-closeQR.addEventListener("click", () => {
-  gcashModal.style.display = "none";
+closeQR.addEventListener("click",()=>{
+gcashModal.style.display="none";
 });
 
 gcashModal.addEventListener("click",(e)=>{
-  if(e.target === gcashModal){
-    gcashModal.style.display="none";
-  }
+if(e.target===gcashModal){
+gcashModal.style.display="none";
+}
 });
 
-// ===== Receipt Upload =====
 
-let receiptImage = "";
+/* ===============================
+RECEIPT UPLOAD
+================================ */
 
-const receiptUpload = document.getElementById("receiptUpload");
-const receiptPreview = document.getElementById("receiptPreview");
-const receiptPreviewBox = document.getElementById("receiptPreviewBox");
+let receiptImage="";
 
-receiptUpload.addEventListener("change", function(){
+const receiptUpload=document.getElementById("receiptUpload");
+const receiptPreview=document.getElementById("receiptPreview");
+const receiptPreviewBox=document.getElementById("receiptPreviewBox");
 
-const file = this.files[0];
+receiptUpload.addEventListener("change",function(){
+
+const file=this.files[0];
 
 if(!file) return;
 
-const reader = new FileReader();
+const reader=new FileReader();
 
-reader.onload = function(e){
+reader.onload=function(e){
 
-receiptImage = e.target.result;
+receiptImage=e.target.result;
 
-receiptPreview.src = receiptImage;
+receiptPreview.src=receiptImage;
 
-receiptPreviewBox.style.display = "block";
+receiptPreviewBox.style.display="block";
 
-}
+};
 
 reader.readAsDataURL(file);
 
 });
 
-// ===== Load service from Services page =====
 
-const savedService = localStorage.getItem("selectedService");
+/* ===============================
+LOAD SERVICE FROM SERVICES PAGE
+================================ */
+
+const savedService=localStorage.getItem("selectedService");
 
 if(savedService){
 
-  const svc = JSON.parse(savedService);
+const svc=JSON.parse(savedService);
 
-  const found = SERVICES.find(s => s.name === svc.name);
+const found=SERVICES.find(s=>s.name===svc.name);
 
-  if(found){
-    selectedServices.push(found);
-  }
-
-  localStorage.removeItem("selectedService");
+if(found){
+selectedServices.push(found);
 }
 
-// ===== Init =====
+localStorage.removeItem("selectedService");
+
+}
+
+
+/* ===============================
+INIT
+================================ */
+
 setMinDateToday();
 renderServices();
 renderSlots();
 updateSummary();
 
-// highlight selected service automatically
-document.querySelectorAll(".service").forEach(div => {
-  const name = div.querySelector("b").textContent;
 
-  if(selectedServices.some(s => s.name === name)){
-    div.classList.add("active");
-  }
-});
-
-/* =========================
+/* ===============================
 LOAD ADMIN GCASH QR
-========================= */
+================================ */
 
-const savedQR = localStorage.getItem("gcashQR");
+const savedQR=localStorage.getItem("gcashQR");
 
 if(savedQR){
-  document.getElementById("gcashQRImage").src = savedQR;
+
+document.getElementById("gcashQRImage").src=savedQR;
+
 }else{
-  document.getElementById("gcashQRImage").src = "gcash_qr.png";
+
+document.getElementById("gcashQRImage").src="gcash_qr.png";
+
 }
+
 </script>
 </body>
 </html>

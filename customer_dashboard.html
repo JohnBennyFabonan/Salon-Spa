@@ -550,6 +550,11 @@ align-items:flex-start;
 </div>
 
 <div class="card">
+<h4>Cancelled Bookings</h4>
+<p id="cancelledBookings">0</p>
+</div>
+
+<div class="card">
 <h4>Completed Bookings</h4>
 <p id="completedBookings">0</p>
 </div>
@@ -581,6 +586,7 @@ align-items:flex-start;
 <th>Time</th>
 <th>Downpayment</th>
 <th>Status</th>
+<th>Action</th>
 </tr>
 
 </thead>
@@ -657,9 +663,12 @@ LOAD BOOKINGS
 
 const allBookings = JSON.parse(localStorage.getItem("salonBookings") || "[]");
 
-/* show only bookings of logged user */
+/* show bookings of logged user */
 
-const bookings = allBookings.filter(b => b.email === session.email);
+const bookings = allBookings.filter(b =>
+b.email === session.email ||
+b.customer === session.name
+);
 
 
 /* ===============================
@@ -679,81 +688,89 @@ let today = new Date().toISOString().split("T")[0];
 
 let upcoming = 0;
 let completed = 0;
+let cancelled = 0;
 let totalPaid = 0;
 
 setText("totalBookings", totalBookings);
 
 
 /* ===============================
+CLEAR TABLES
+================================ */
+
+upcomingTable.innerHTML="";
+historyTable.innerHTML="";
+
+
+/* ===============================
 RENDER BOOKINGS
 ================================ */
 
-if(bookings.length === 0){
+bookings.forEach((b,index)=>{
 
-upcomingTable.innerHTML =
-`<tr><td colspan="6">No bookings yet.</td></tr>`;
-
-historyTable.innerHTML =
-`<tr><td colspan="6">No booking history.</td></tr>`;
-
-}
-
-bookings.forEach(b => {
-
-let serviceName = "Booking";
-
-/* service booking */
+let serviceName="Booking";
 
 if(b.services){
-serviceName = b.services.map(s => s.name).join(", ");
+serviceName=b.services.map(s=>s.name).join(", ");
 }
-
-/* promo booking */
 
 if(b.promo){
-serviceName = b.promo;
+serviceName=b.promo;
 }
 
-totalPaid += b.downpayment || 0;
+totalPaid+=b.downpayment||0;
+
+const status=b.status||"Pending";
 
 
 /* ===============================
 UPCOMING BOOKINGS
 ================================ */
 
-if(b.date >= today){
+if(b.date>=today && status!=="Cancelled"){
 
 upcoming++;
 
-upcomingTable.innerHTML += `
+upcomingTable.innerHTML+=`
 <tr>
-<td>${b.id}</td>
+<td>${b.id||"-"}</td>
 <td>${serviceName}</td>
-<td>${b.date}</td>
-<td>${b.time}</td>
-<td>₱${(b.downpayment || 0).toLocaleString()}</td>
-<td><span class="status">Pending</span></td>
+<td>${b.date||"-"}</td>
+<td>${b.time||"-"}</td>
+<td>₱${(b.downpayment||0).toLocaleString()}</td>
+<td><span class="status">${status}</span></td>
+<td>
+<button onclick="cancelBooking(${index})"
+style="padding:6px 10px;border:none;border-radius:8px;background:#fdeaea;color:#c53030;font-weight:600;cursor:pointer;">
+Cancel
+</button>
+</td>
 </tr>
 `;
 
 }
 
+
 /* ===============================
-COMPLETED BOOKINGS
+HISTORY BOOKINGS
 ================================ */
 
 else{
 
+if(status==="Cancelled"){
+cancelled++;
+}else{
 completed++;
+}
 
-historyTable.innerHTML += `
+historyTable.innerHTML+=`
 <tr>
-<td>${b.id}</td>
+<td>${b.id||"-"}</td>
 <td>${serviceName}</td>
-<td>${b.date}</td>
-<td>${b.time}</td>
-<td>₱${(b.remaining || 0).toLocaleString()}</td>
-<td><span class="status">Completed</span></td>
+<td>${b.date||"-"}</td>
+<td>${b.time||"-"}</td>
+<td>₱${(b.remaining||0).toLocaleString()}</td>
+<td><span class="status">${status}</span></td>
 </tr>
 `;
 
@@ -763,12 +780,28 @@ historyTable.innerHTML += `
 
 
 /* ===============================
+EMPTY STATES
+================================ */
+
+if(upcomingTable.innerHTML===""){
+upcomingTable.innerHTML=
+`<tr><td colspan="7">No upcoming bookings.</td></tr>`;
+}
+
+if(historyTable.innerHTML===""){
+historyTable.innerHTML=
+`<tr><td colspan="6">No booking history.</td></tr>`;
+}
+
+
+/* ===============================
 UPDATE DASHBOARD CARDS
 ================================ */
 
-setText("upcomingBookings", upcoming);
-setText("completedBookings", completed);
-setText("totalPaid", "₱" + totalPaid.toLocaleString());
+setText("upcomingBookings",upcoming);
+setText("completedBookings",completed);
+setText("cancelledBookings",cancelled);
+setText("totalPaid","₱"+totalPaid.toLocaleString());
 
 
 /* ===============================
@@ -777,11 +810,28 @@ SAFE TEXT FUNCTION
 
 function setText(id,value){
 
-const el = document.getElementById(id);
+const el=document.getElementById(id);
 
 if(el){
-el.textContent = value;
+el.textContent=value;
 }
+
+}
+
+
+/* ===============================
+CANCEL BOOKING
+================================ */
+
+window.cancelBooking=function(index){
+
+if(!confirm("Are you sure you want to cancel this booking?")) return;
+
+allBookings[index].status="Cancelled";
+
+localStorage.setItem("salonBookings",JSON.stringify(allBookings));
+
+location.reload();
 
 }
 
@@ -790,13 +840,13 @@ el.textContent = value;
 NAVBAR MOBILE MENU
 ================================ */
 
-const menuBtn = document.getElementById("menuBtn");
-const mobileMenuBack = document.getElementById("mobileMenuBack");
-const menuClose = document.getElementById("menuClose");
+const menuBtn=document.getElementById("menuBtn");
+const mobileMenuBack=document.getElementById("mobileMenuBack");
+const menuClose=document.getElementById("menuClose");
 
 if(menuBtn){
 
-menuBtn.onclick = () => {
+menuBtn.onclick=()=>{
 
 mobileMenuBack.style.display="block";
 document.body.style.overflow="hidden";
@@ -806,16 +856,14 @@ document.body.style.overflow="hidden";
 }
 
 if(menuClose){
-
-menuClose.onclick = closeMenu;
-
+menuClose.onclick=closeMenu;
 }
 
 if(mobileMenuBack){
 
-mobileMenuBack.onclick = (e)=>{
+mobileMenuBack.onclick=(e)=>{
 
-if(e.target === mobileMenuBack){
+if(e.target===mobileMenuBack){
 closeMenu();
 }
 
@@ -835,15 +883,15 @@ document.body.style.overflow="";
 LOGOUT
 ================================ */
 
-const logoutBtn = document.getElementById("logoutBtn");
-const mLogout = document.getElementById("mLogout");
+const logoutBtn=document.getElementById("logoutBtn");
+const mLogout=document.getElementById("mLogout");
 
 if(logoutBtn){
-logoutBtn.onclick = logout;
+logoutBtn.onclick=logout;
 }
 
 if(mLogout){
-mLogout.onclick = logout;
+mLogout.onclick=logout;
 }
 
 function logout(){

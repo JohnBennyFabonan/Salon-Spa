@@ -668,8 +668,11 @@ function ok(msg){
 // ===== Create default admin account =====
 if(!localStorage.getItem("adminAccount")){
   localStorage.setItem("adminAccount",JSON.stringify({
+    id:1,
+    name:"Administrator",
     email:"admin@basit.com",
-    password:"admin123"
+    password:"admin123",
+    role:"admin"
   }));
 }
 
@@ -693,27 +696,33 @@ form.addEventListener("submit",(e)=>{
 
 
   // ===== ADMIN LOGIN =====
-  const admin=JSON.parse(localStorage.getItem("adminAccount"));
+const admin = JSON.parse(localStorage.getItem("adminAccount"));
 
-  if(email===admin.email && pass===admin.password){
+if(
+  admin &&
+  email.toLowerCase() === admin.email.toLowerCase() &&
+  pass === admin.password
+){
 
-    const session={
-      email,
-      role:"admin",
-      when:Date.now()
-    };
+  const session = {
+    id: admin.id || 1,
+    name: admin.name || "Administrator",
+    email: admin.email,
+    role: "admin",
+    when: Date.now()
+  };
 
-    localStorage.setItem("salonSession",JSON.stringify(session));
+  localStorage.setItem("salonSession", JSON.stringify(session));
+  sessionStorage.removeItem("salonSession");
 
-    ok("Admin login successful! Redirecting...");
+  ok("Admin login successful! Redirecting...");
 
-    setTimeout(()=>{
-      window.location.href="admin/admin_dashboard.html";
-    },700);
+  setTimeout(() => {
+    window.location.href = "admin/admin_dashboard.html";
+  }, 700);
 
-    return;
-  }
-
+  return;
+}
 
   // ===== CUSTOMER LOGIN =====
   const users=JSON.parse(localStorage.getItem("users")) || [];
@@ -729,21 +738,24 @@ form.addEventListener("submit",(e)=>{
 
 
   // ===== Save session =====
-  const session={
-    email:user.email,
-    name:user.name,
-    role:"customer",
-    when:Date.now()
-  };
+const session = {
+  id: user.id || null,
+  email: user.email,
+  name: user.name,
+  role: "customer",
+  when: Date.now()
+};
 
-  if(rememberEl.checked){
-    localStorage.setItem("salonSession",JSON.stringify(session));
-  }else{
-    sessionStorage.setItem("salonSession",JSON.stringify(session));
-    localStorage.removeItem("salonSession");
-  }
+if(rememberEl.checked){
+  // persistent login
+  localStorage.setItem("salonSession", JSON.stringify(session));
+  sessionStorage.removeItem("salonSession");
+}else{
+  // session only (clears when browser closes)
+  sessionStorage.setItem("salonSession", JSON.stringify(session));
+}
 
-  ok("Login successful! Redirecting...");
+ok("Login successful! Redirecting...");
 
   // ✅ FIXED REDIRECT
   setTimeout(()=>{

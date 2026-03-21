@@ -7,6 +7,11 @@
 
 <title>Admin Logout</title>
 
+<!-- ✅ PREVENT BACK BUTTON CACHE -->
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
@@ -34,7 +39,6 @@ color:var(--text);
 }
 
 /* SIDEBAR */
-
 .sidebar{
 width:260px;
 background:linear-gradient(180deg,var(--green),var(--green2));
@@ -75,7 +79,6 @@ background:rgba(255,255,255,.25);
 }
 
 /* MAIN */
-
 .main{
 flex:1;
 padding:30px;
@@ -85,7 +88,6 @@ justify-content:center;
 }
 
 /* CARD */
-
 .tableCard{
 background:var(--card);
 padding:40px;
@@ -97,7 +99,6 @@ max-width:400px;
 }
 
 /* TEXT */
-
 .tableCard h2{
 margin-top:0;
 font-size:20px;
@@ -105,7 +106,6 @@ margin-bottom:25px;
 }
 
 /* BUTTONS */
-
 .button{
 background:var(--green);
 color:white;
@@ -133,21 +133,10 @@ background:#cbd5e1;
 }
 
 /* MOBILE */
-
 @media(max-width:900px){
-
-.sidebar{
-display:none;
-}
-
-body{
-flex-direction:column;
-}
-
-.main{
-padding:20px;
-}
-
+.sidebar{display:none;}
+body{flex-direction:column;}
+.main{padding:20px;}
 }
 
 </style>
@@ -157,13 +146,11 @@ padding:20px;
 <body>
 
 <!-- SIDEBAR -->
-
 <div class="sidebar">
 
 <div class="logo">🌿 BASIT Admin</div>
 
 <div class="nav">
-
 <a href="admin_dashboard.html">Dashboard</a>
 <a href="admin_gallery.html">Manage Gallery</a>
 <a href="admin_bookings.html">Manage Bookings</a>
@@ -172,25 +159,49 @@ padding:20px;
 <a href="admin_specialist.html">Manage Specialist</a>
 <a href="admin_account.html">Account Settings</a>
 <a class="active">Log Out</a>
-
 </div>
 
 </div>
 
 <!-- MAIN -->
-
 <div class="main">
 
 <div class="tableCard">
 
 <h2>Are you sure you want to log out?</h2>
 
-<button class="button">Yes, Log Out</button>
+<button class="button" onclick="logout()">Yes, Log Out</button>
 <button class="button cancel" onclick="history.back()">Cancel</button>
 
 </div>
 
 </div>
+
+<script>
+
+// ✅ PROTECT PAGE (no access if not admin)
+const session =
+JSON.parse(localStorage.getItem("salonSession")) ||
+JSON.parse(sessionStorage.getItem("salonSession"));
+
+if(!session || session.role !== "admin"){
+  window.location.replace("../log_in.html");
+}
+
+
+// ✅ LOGOUT FUNCTION
+function logout(){
+
+  // Clear session
+  localStorage.removeItem("salonSession");
+  sessionStorage.removeItem("salonSession");
+
+  // Redirect (no back button)
+  window.location.replace("../log_in.html");
+
+}
+
+</script>
 
 </body>
 </html>

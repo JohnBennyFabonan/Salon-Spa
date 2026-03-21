@@ -2,75 +2,125 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Booking Confirmed | Salon & Spa</title>
 
+<link rel="stylesheet" href="mobile.css">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 
 :root{
 --green:#2f7d62;
---green2:#256a52;
+--green-2:#256a52;
 --bg:#f4fbf7;
 --card:#ffffff;
 --text:#0f172a;
 --muted:#64748b;
+--line:rgba(15,23,42,.10);
+--shadow:0 14px 40px rgba(2,6,23,.08);
+--radius:16px;
+--green-soft: rgba(47,125,98,.12);
 }
 
 *{box-sizing:border-box}
 
 body{
 margin:0;
-font-family:Poppins,sans-serif;
+font-family:"Poppins",sans-serif;
 background:var(--bg);
 color:var(--text);
 }
 
-.navbar{
-background:linear-gradient(180deg,var(--green),var(--green2));
-padding:16px 20px;
+/* ===== TOPBAR ===== */
+
+.topbar{
+background: var(--green);
+min-height: 40px;
 display:flex;
 align-items:center;
-justify-content:space-between;
+gap: 14px;
+padding: 8px 22px;
+color: rgba(255,255,255,.92);
+font-size: 12px;
+flex-wrap: wrap;
+}
+
+.topbar .left,.topbar .right{
+display:flex;
+align-items:center;
+gap:12px;
+flex-wrap:wrap;
+}
+
+.topbar .right{margin-left:auto}
+
+.pill{
+display:flex;
+align-items:center;
+gap:8px;
+padding:6px 10px;
+border-radius:999px;
+border:1px solid rgba(255,255,255,.18);
+background:rgba(255,255,255,.08);
+}
+
+/* ===== NAVBAR ===== */
+
+.navbar{
+background: linear-gradient(180deg,var(--green),var(--green-2));
+padding:16px 22px;
+display:flex;
+align-items:center;
+gap:18px;
 }
 
 .brand{
 display:flex;
 align-items:center;
-gap:10px;
+gap:12px;
 color:white;
 font-weight:800;
+letter-spacing:.6px;
+text-transform:uppercase;
 }
 
 .logo{
-width:40px;
-height:40px;
-border-radius:12px;
-background:rgba(255,255,255,.15);
+width:44px;
+height:44px;
+border-radius:14px;
 display:grid;
 place-items:center;
+background:rgba(255,255,255,.10);
+border:1px solid rgba(255,255,255,.18);
 }
 
 .menu{
+margin-left:auto;
 display:flex;
-gap:12px;
+gap:18px;
+align-items:center;
 }
 
 .menu a{
-color:white;
+color:rgba(255,255,255,.92);
 text-decoration:none;
-font-weight:700;
 font-size:13px;
+font-weight:600;
 padding:8px 10px;
-border-radius:20px;
+border-radius:999px;
 }
 
 .menu a:hover{
-background:rgba(255,255,255,.15);
+background:rgba(255,255,255,.12);
 }
+
+/* ===== PAGE ===== */
 
 .container{
 max-width:900px;
@@ -80,25 +130,27 @@ padding:40px 20px;
 
 .card{
 background:var(--card);
-border-radius:18px;
-padding:30px;
-box-shadow:0 10px 35px rgba(0,0,0,.08);
+border:1px solid var(--line);
+border-radius:var(--radius);
+padding:40px;
+box-shadow:var(--shadow);
 }
 
 .successIcon{
 font-size:60px;
 text-align:center;
+margin-bottom:10px;
 }
 
 h1{
 text-align:center;
-margin:10px 0;
+margin:0;
 }
 
 .subtitle{
 text-align:center;
 color:var(--muted);
-margin-bottom:30px;
+margin:10px 0 30px;
 }
 
 .row{
@@ -125,7 +177,7 @@ font-weight:800;
 .total{
 margin-top:20px;
 padding:15px;
-background:rgba(47,125,98,.12);
+background:var(--green-soft);
 border-radius:12px;
 display:flex;
 justify-content:space-between;
@@ -154,7 +206,7 @@ color:white;
 }
 
 .primary:hover{
-background:var(--green2);
+background:var(--green-2);
 }
 
 .outline{
@@ -163,7 +215,11 @@ border:2px solid var(--green);
 color:var(--green);
 }
 
-@media(max-width:600px){
+/* ===== MOBILE ===== */
+
+@media(max-width:720px){
+
+.menu{display:none}
 
 .row{
 flex-direction:column;
@@ -177,20 +233,47 @@ gap:4px;
 
 <body>
 
+<!-- TOPBAR -->
+<div class="topbar">
+<div class="left">
+<div class="pill">📞 0936 411 6193</div>
+<div class="pill">✉️ trinettebless@gmail.com</div>
+<div class="pill">🕘 Mon–Sun: 9:00am–7:00pm</div>
+</div>
+
+<div class="right">
+<div class="pill">💚 Booking</div>
+</div>
+</div>
+
+<!-- NAVBAR -->
 <header class="navbar">
+
 <div class="brand">
 <div class="logo">🌿</div>
 <span>BASIT</span>
 </div>
 
 <nav class="menu">
+
 <a href="index.html">Home</a>
-<a href="services.html">Service</a>
-<a href="booking.html">Book Now</a>
-<a href="log_in.html">Log in</a>
+<a href="services.html">Services</a>
+<a href="gallery.html">Gallery</a>
+<a href="specialist.html">Specialist</a>
+<a href="promo.html">Promos</a>
+
+<a id="loginLink" href="log_in.html">Log in</a>
+<a id="signupLink" href="Sign_up.html">Sign up</a>
+
+<a id="dashboardLink" href="customer_dashboard.html" style="display:none;">Dashboard</a>
+<a id="logoutLink" href="#" style="display:none;">Log out</a>
+
 </nav>
+
 </header>
 
+
+<!-- PAGE CONTENT -->
 <div class="container">
 
 <div class="card">
@@ -240,8 +323,8 @@ Your appointment has been successfully scheduled.
 
 <div class="actions">
 
-<button class="btn primary" onclick="window.location='index.html'">
-Back to Home
+<button class="btn primary" onclick="confirmBooking()">
+Confirm Booking
 </button>
 
 <button class="btn outline" onclick="window.location='booking.html'">
@@ -254,21 +337,66 @@ Book Another
 
 </div>
 
+
 <script>
+
+/* GET PENDING BOOKING (NOT YET SAVED) */
+
+const pending = JSON.parse(localStorage.getItem("pendingBooking"));
+
+function peso(n){
+return new Intl.NumberFormat("en-PH",{
+style:"currency",
+currency:"PHP",
+minimumFractionDigits:0
+}).format(n || 0);
+}
+
+if(pending){
+
+document.getElementById("bookingID").innerText = pending.id || "-";
+
+let serviceNames = "-";
+let serviceDurations = "-";
+
+if(Array.isArray(pending.services) && pending.services.length){
+
+serviceNames = pending.services.map(s => s.name || "-").join(", ");
+serviceDurations = pending.services.map(s => s.duration || "-").join(", ");
+
+}
+
+document.getElementById("service").innerText = serviceNames;
+document.getElementById("duration").innerText = serviceDurations;
+
+document.getElementById("date").innerText = pending.date || "-";
+document.getElementById("time").innerText = pending.time || "-";
+
+document.getElementById("staff").innerText = pending.staff || "No preference";
+
+document.getElementById("price").innerText = peso(pending.totalPrice);
+
+}
+
+
+/* CONFIRM BOOKING (SAVE TO DATABASE / LOCAL STORAGE) */
+
+function confirmBooking(){
+
+const pending = JSON.parse(localStorage.getItem("pendingBooking"));
+
+if(!pending) return;
 
 const bookings = JSON.parse(localStorage.getItem("salonBookings") || "[]");
 
-const latest = bookings[0];
+bookings.unshift(pending);
 
-if(latest){
+localStorage.setItem("salonBookings", JSON.stringify(bookings));
 
-document.getElementById("bookingID").innerText = latest.id;
-document.getElementById("service").innerText = latest.service;
-document.getElementById("duration").innerText = latest.duration + " minutes";
-document.getElementById("date").innerText = latest.date;
-document.getElementById("time").innerText = latest.time;
-document.getElementById("staff").innerText = latest.staff;
-document.getElementById("price").innerText = "₱"+latest.price;
+localStorage.removeItem("pendingBooking");
+
+/* REDIRECT AFTER CONFIRM */
+window.location.href = "customer_dashboard.html";
 
 }
 

@@ -64,7 +64,6 @@ padding:12px 14px;
 border-radius:12px;
 font-size:13px;
 font-weight:600;
-transition:.15s;
 }
 
 .nav a:hover{
@@ -136,21 +135,6 @@ background:#f9fdfb;
 
 /* BUTTONS */
 
-.addBtn{
-background:var(--green);
-color:white;
-border:none;
-padding:9px 16px;
-border-radius:10px;
-font-size:13px;
-font-weight:600;
-cursor:pointer;
-}
-
-.addBtn:hover{
-background:var(--green2);
-}
-
 .actionBtn{
 border:none;
 padding:6px 10px;
@@ -193,7 +177,7 @@ width:420px;
 box-shadow:var(--shadow);
 }
 
-input,select{
+input{
 width:100%;
 padding:10px;
 margin-bottom:12px;
@@ -202,22 +186,13 @@ border:1px solid var(--line);
 font-family:Poppins;
 }
 
-/* MOBILE */
-
-@media(max-width:900px){
-
-.sidebar{
-display:none;
-}
-
-body{
-flex-direction:column;
-}
-
-.main{
-padding:20px;
-}
-
+.saveBtn{
+background:var(--green);
+color:white;
+border:none;
+padding:10px;
+border-radius:8px;
+cursor:pointer;
 }
 
 </style>
@@ -239,7 +214,7 @@ padding:20px;
 <a href="admin_promo.html">Manage Promo</a>
 <a href="admin_services.html">Manage Services</a>
 <a href="admin_specialist.html">Manage Specialist</a>
-<a href="admin_manageaccount.html">Manage Account</a>
+<a class="active">Manage Account</a>
 <a href="admin_account.html">Account Settings</a>
 <a href="logout.html">Log Out</a>
 
@@ -252,11 +227,7 @@ padding:20px;
 <div class="main">
 
 <div class="header">
-
 <h1>Manage Accounts</h1>
-
-<button class="addBtn" onclick="openAdd()">+ Add Account</button>
-
 </div>
 
 <div class="tableCard">
@@ -267,6 +238,7 @@ padding:20px;
 <tr>
 <th>Name</th>
 <th>Email</th>
+<th>Contact</th>
 <th>Role</th>
 <th>Actions</th>
 </tr>
@@ -280,55 +252,55 @@ padding:20px;
 
 </div>
 
-<!-- MODAL -->
+<!-- EDIT MODAL -->
 
 <div class="modal" id="modal">
 
 <div class="modalBox">
 
-<h3>Add / Edit Account</h3>
+<h3>Edit Account</h3>
 
-<input id="name" placeholder="Full Name">
-<input id="email" placeholder="Email">
-<select id="role">
-<option>Admin</option>
-<option>Staff</option>
-</select>
+<input id="name">
+<input id="email">
+<input id="contact">
+<input id="password">
 
-<input id="password" placeholder="Password">
-
-<button class="addBtn" onclick="saveAccount()">Save Account</button>
+<button class="saveBtn" onclick="saveAccount()">Save Changes</button>
 
 </div>
 
 </div>
+
+<script src="session.js"></script>
 
 <script>
 
-let accounts = JSON.parse(localStorage.getItem("accounts")) || []
+let users = JSON.parse(localStorage.getItem("users")) || []
 
-let editIndex = null
+let editIndex=null
 
 function render(){
 
-let body = document.getElementById("tableBody")
+let body=document.getElementById("tableBody")
 
 body.innerHTML=""
 
-accounts.forEach((a,i)=>{
+users.forEach((u,i)=>{
 
 body.innerHTML+=`
 
 <tr>
 
-<td>${a.name}</td>
-<td>${a.email}</td>
-<td>${a.role}</td>
+<td>${u.name || "-"}</td>
+<td>${u.email || "-"}</td>
+<td>${u.contact || "-"}</td>
+<td>${u.role || "Customer"}</td>
 
 <td>
 
-<button class="actionBtn edit" onclick="edit(${i})">Edit</button>
-<button class="actionBtn delete" onclick="remove(${i})">Delete</button>
+<button class="actionBtn edit" onclick="editUser(${i})">Edit</button>
+
+<button class="actionBtn delete" onclick="deleteUser(${i})">Delete</button>
 
 </td>
 
@@ -340,9 +312,16 @@ body.innerHTML+=`
 
 }
 
-function openAdd(){
+function editUser(i){
 
-editIndex=null
+editIndex=i
+
+let u=users[i]
+
+document.getElementById("name").value=u.name
+document.getElementById("email").value=u.email
+document.getElementById("contact").value=u.contact
+document.getElementById("password").value=u.password
 
 document.getElementById("modal").style.display="flex"
 
@@ -350,26 +329,12 @@ document.getElementById("modal").style.display="flex"
 
 function saveAccount(){
 
-let data={
+users[editIndex].name=document.getElementById("name").value
+users[editIndex].email=document.getElementById("email").value
+users[editIndex].contact=document.getElementById("contact").value
+users[editIndex].password=document.getElementById("password").value
 
-name:document.getElementById("name").value,
-email:document.getElementById("email").value,
-role:document.getElementById("role").value,
-password:document.getElementById("password").value
-
-}
-
-if(editIndex!==null){
-
-accounts[editIndex]=data
-
-}else{
-
-accounts.push(data)
-
-}
-
-localStorage.setItem("accounts",JSON.stringify(accounts))
+localStorage.setItem("users",JSON.stringify(users))
 
 document.getElementById("modal").style.display="none"
 
@@ -377,28 +342,13 @@ render()
 
 }
 
-function edit(i){
+function deleteUser(i){
 
-editIndex=i
+if(confirm("Delete this user account?")){
 
-let a=accounts[i]
+users.splice(i,1)
 
-document.getElementById("name").value=a.name
-document.getElementById("email").value=a.email
-document.getElementById("role").value=a.role
-document.getElementById("password").value=a.password
-
-document.getElementById("modal").style.display="flex"
-
-}
-
-function remove(i){
-
-if(confirm("Delete account?")){
-
-accounts.splice(i,1)
-
-localStorage.setItem("accounts",JSON.stringify(accounts))
+localStorage.setItem("users",JSON.stringify(users))
 
 render()
 

@@ -209,21 +209,21 @@ padding:20px;
 
 <div class="tableCard">
 
-<form class="settingsForm">
+<form class="settingsForm" id="settingsForm">
 
 <div class="formGroup">
 <label>Admin Name</label>
-<input type="text" value="Admin">
+<input type="text" id="adminName">
 </div>
 
 <div class="formGroup">
 <label>Email</label>
-<input type="email" value="admin@gmail.com">
+<input type="email" id="adminEmail">
 </div>
 
 <div class="formGroup">
 <label>Change Password</label>
-<input type="password" placeholder="Enter new password">
+<input type="password" id="adminPassword" placeholder="Enter new password">
 </div>
 
 <button class="saveBtn">Save Changes</button>
@@ -233,6 +233,69 @@ padding:20px;
 </div>
 
 </div>
+
+<script src="session.js"></script>
+
+<script>
+
+/* ===============================
+LOAD ADMIN DATA
+=============================== */
+
+let adminData = JSON.parse(localStorage.getItem("adminAccount"));
+
+/* If no admin account exists create default */
+
+if(!adminData){
+
+adminData = {
+name:"Admin",
+email:"admin@gmail.com",
+password:"admin123"
+};
+
+localStorage.setItem("adminAccount",JSON.stringify(adminData));
+
+}
+
+/* Fill inputs */
+
+document.getElementById("adminName").value = adminData.name;
+document.getElementById("adminEmail").value = adminData.email;
+
+
+/* ===============================
+SAVE SETTINGS
+=============================== */
+
+document.getElementById("settingsForm").addEventListener("submit",function(e){
+
+e.preventDefault();
+
+const newName = document.getElementById("adminName").value.trim();
+const newEmail = document.getElementById("adminEmail").value.trim();
+const newPassword = document.getElementById("adminPassword").value.trim();
+
+/* Update name and email */
+
+adminData.name = newName;
+adminData.email = newEmail;
+
+/* Update password only if entered */
+
+if(newPassword !== ""){
+adminData.password = newPassword;
+}
+
+/* Save to localStorage */
+
+localStorage.setItem("adminAccount",JSON.stringify(adminData));
+
+alert("Account updated successfully.");
+
+});
+
+</script>
 
 </body>
 </html>
