@@ -252,11 +252,26 @@ padding:20px;
 
 <h1>Dashboard Overview</h1>
 
-<button class="qrUploadBtn" id="uploadQRBtn">
+<div style="display:flex; gap:10px; flex-wrap:wrap;">
+
+<button class="qrUploadBtn" id="uploadGCashBtn">
 Upload GCash QR
 </button>
 
-<input type="file" id="qrFileInput" accept="image/*" hidden>
+<button class="qrUploadBtn" id="uploadBPIBtn">
+Upload BPI QR
+</button>
+
+<button class="qrUploadBtn" id="uploadMayaBtn">
+Upload Maya QR
+</button>
+
+</div>
+
+<!-- FILE INPUTS -->
+<input type="file" id="gcashInput" accept="image/*" hidden>
+<input type="file" id="bpiInput" accept="image/*" hidden>
+<input type="file" id="mayaInput" accept="image/*" hidden>
 
 </div>
 
@@ -267,6 +282,12 @@ Upload GCash QR
 <div class="card">
 <h4>Total Revenue</h4>
 <p id="totalRevenue">₱0</p>
+</div>
+
+<!-- ✅ NEW -->
+<div class="card">
+<h4>Today's Revenue</h4>
+<p id="todayRevenue">₱0</p>
 </div>
 
 <div class="card">
@@ -346,6 +367,7 @@ Upload GCash QR
 <th>Downpayment</th>
 <th>Remaining</th>
 <th>Status</th>
+<th>Action</th>
 </tr>
 </thead>
 
@@ -422,10 +444,10 @@ const today = new Date().toISOString().split("T")[0];
 let todayCount = 0;
 let upcoming = 0;
 let revenue = 0;
+let todayRevenue = 0; // ✅ NEW
 
 let revenueByDate = {};
 let serviceCount = {};
-
 
 /* ===============================
 PROCESS BOOKINGS
@@ -433,23 +455,45 @@ PROCESS BOOKINGS
 
 bookings.forEach(b => {
 
-if(b.date === today) todayCount++;
-if(b.date > today) upcoming++;
+if(b.date === today){
+  todayCount++;
 
-revenue += b.totalPrice || 0;
-
-if(!revenueByDate[b.date]){
-revenueByDate[b.date] = {count:0,total:0};
+  // ✅ Only count DONE bookings for today's revenue
+  if(b.status === "Done"){
+    todayRevenue += b.totalPrice || 0;
+  }
 }
 
-revenueByDate[b.date].count++;
-revenueByDate[b.date].total += b.totalPrice || 0;
+if(b.date > today) upcoming++;
 
+// ✅ Total revenue (ONLY Done)
+if(b.status === "Done"){
+  revenue += b.totalPrice || 0;
+}
+
+// ✅ Initialize date group
+if(!revenueByDate[b.date]){
+  revenueByDate[b.date] = {count:0,total:0};
+}
+
+// ✅ Count bookings (all bookings)
+revenueByDate[b.date].count++;
+
+// ❗ ONLY add revenue if DONE
+if(b.status === "Done"){
+  revenueByDate[b.date].total += b.totalPrice || 0;
+}
+
+// ✅ Top services (you can keep this as all bookings OR only Done)
 if(b.services){
-b.services.forEach(s=>{
-if(!serviceCount[s.name]) serviceCount[s.name] = 0;
-serviceCount[s.name]++;
-});
+  b.services.forEach(s=>{
+
+    // (Optional) Only count Done services:
+    // if(b.status !== "Done") return;
+
+    if(!serviceCount[s.name]) serviceCount[s.name] = 0;
+    serviceCount[s.name]++;
+  });
 }
 
 });
@@ -462,6 +506,7 @@ UPDATE DASHBOARD CARDS
 document.getElementById("todayBookings").textContent = todayCount;
 document.getElementById("upcomingBookings").textContent = upcoming;
 document.getElementById("totalRevenue").textContent = "₱" + revenue.toLocaleString();
+document.getElementById("todayRevenue").textContent = "₱" + todayRevenue.toLocaleString();
 
 
 /* ===============================
@@ -511,6 +556,8 @@ TODAY BOOKINGS TABLE
 
 const todayTable = document.getElementById("todayBookingTable");
 
+todayTable.innerHTML = ""; // clear first
+
 bookings.forEach(b=>{
 
 if(b.date === today){
@@ -525,7 +572,19 @@ todayTable.innerHTML += `
 <td>${b.time}</td>
 <td>₱${(b.downpayment || 0).toLocaleString()}</td>
 <td>₱${(b.remaining || 0).toLocaleString()}</td>
-<td><span class="status">Pending</span></td>
+
+<td>
+  <span class="status ${b.status === 'Done' ? 'done' : 'pending'}">
+    ${b.status || "Pending"}
+  </span>
+</td>
+
+<td>
+  ${b.status !== "Done" 
+    ? `<button onclick="markDone('${b.id}')" style="padding:6px 10px; border:none; background:#2f7d62; color:white; border-radius:6px; cursor:pointer;">Done</button>` 
+    : "—"}
+</td>
+
 </tr>
 `;
 
@@ -533,17 +592,27 @@ todayTable.innerHTML += `
 
 });
 
-
 /* ===============================
-UPLOAD GCASH QR
+UPLOAD QR CODES (GCash, BPI, Maya)
 ================================ */
 
-const uploadBtn = document.getElementById("uploadQRBtn");
-const fileInput = document.getElementById("qrFileInput");
+const gcashBtn = document.getElementById("uploadGCashBtn");
+const bpiBtn = document.getElementById("uploadBPIBtn");
+const mayaBtn = document.getElementById("uploadMayaBtn");
 
-uploadBtn.onclick = () => fileInput.click();
+const gcashInput = document.getElementById("gcashInput");
+const bpiInput = document.getElementById("bpiInput");
+const mayaInput = document.getElementById("mayaInput");
 
-fileInput.onchange = function(){
+/* BUTTON CLICK */
+gcashBtn.onclick = () => gcashInput.click();
+bpiBtn.onclick = () => bpiInput.click();
+mayaBtn.onclick = () => mayaInput.click();
+
+/* REUSABLE FUNCTION */
+function handleQRUpload(input, storageKey, message){
+
+input.onchange = function(){
 
 const file = this.files[0];
 if(!file) return;
@@ -552,9 +621,8 @@ const reader = new FileReader();
 
 reader.onload = function(e){
 
-localStorage.setItem("gcashQR", e.target.result);
-
-alert("GCash QR Code updated successfully!");
+localStorage.setItem(storageKey, e.target.result);
+alert(message);
 
 };
 
@@ -562,6 +630,28 @@ reader.readAsDataURL(file);
 
 };
 
+}
+
+/* APPLY TO ALL QR TYPES */
+handleQRUpload(gcashInput, "gcashQR", "GCash QR updated successfully!");
+handleQRUpload(bpiInput, "bpiQR", "BPI QR updated successfully!");
+handleQRUpload(mayaInput, "mayaQR", "Maya QR updated successfully!");
+
+function markDone(id){
+
+let bookings = JSON.parse(localStorage.getItem("salonBookings")) || [];
+
+const index = bookings.findIndex(b => b.id === id);
+
+if(index === -1) return;
+
+bookings[index].status = "Done";
+
+localStorage.setItem("salonBookings", JSON.stringify(bookings));
+
+location.reload();
+
+}
 </script>
 
 </body>

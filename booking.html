@@ -75,11 +75,11 @@
       user-select:none;
     }
     .brand .logo{
-      width:44px; height:44px; border-radius:14px;
-      display:grid; place-items:center;
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.18);
-    }
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  overflow:hidden;
+}
     .menu{
       margin-left:auto;
       display:flex;
@@ -289,7 +289,7 @@
     }
     .sChip{
       position:absolute;
-      top: 10px;
+      bottom: 10px;
       right: 10px;
       font-size: 10px;
       font-weight: 950;
@@ -520,6 +520,12 @@ border:1px solid rgba(0,0,0,0.1);
 padding:5px;
 background:white;
 }
+
+.logo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
   </style>
 </head>
 
@@ -537,11 +543,13 @@ background:white;
   </div>
 
   <!-- NAVBAR -->
-  <header class="navbar">
-    <div class="brand">
-      <div class="logo" aria-hidden="true">🌿</div>
-      <span>BASIT</span>
+<header class="navbar">
+  <div class="brand">
+    <div class="logo">
+      <img src="images/logo.png" alt="Logo">
     </div>
+    <span>Zai Trinette Wellness Spa</span>
+  </div>
 
     <nav class="menu" aria-label="Primary">
 
@@ -709,7 +717,10 @@ background:white;
           <div class="actions">
             <button class="btn" id="confirmBtn">Confirm Booking</button>
             <button class="btn btnOutline" id="clearBtn" type="button">Clear</button>
-            <button class="btn btnOutline" id="gcashBtn" type="button">GCash QR Code</button>
+
+            <button class="btn btnOutline" id="gcashBtn" type="button">GCash QrCode</button>
+            <button class="btn btnOutline" id="bpiBtn" type="button">BPI QrCode</button>
+            <button class="btn btnOutline" id="mayaBtn" type="button">Maya QrCode</button>
           </div>
 
           <div class="footNote">
@@ -726,11 +737,11 @@ background:white;
 
   <div class="gcashCard">
 
-    <h3>Scan to Pay (GCash)</h3>
+    <h3 id="qrTitle">Scan to Pay</h3>
 
-    <img id="gcashQRImage" src="" alt="GCash QR Code">
+<img id="qrImage" src="" alt="QR Code">
 
-    <p>Send the required 10% downpayment using GCash.</p>
+<p id="qrDesc">Send the required 10% downpayment.</p>
 
     <button id="closeQR">Close</button>
 
@@ -1136,6 +1147,11 @@ return showErr("Please select at least one service.");
 if(!selectedTime)
 return showErr("Please choose a time slot.");
 
+/* ✅ NEW: Require receipt upload */
+if(!receiptImage){
+return showErr("Please upload proof of payment before confirming your booking.");
+}
+
 const total = selectedServices.reduce((sum,s)=>sum+Number(s.price),0);
 const down = Math.round(total*0.10);
 const remain = total-down;
@@ -1159,7 +1175,7 @@ staff:staffEl.value || "No preference",
 
 notes:notesEl.value.trim(),
 
-qr:receiptImage,
+qr:receiptImage, // ✅ ensured not empty
 
 status:"Pending",
 
@@ -1168,28 +1184,64 @@ createdAt:Date.now()
 };
 
 /* SAVE TEMP BOOKING */
-
 localStorage.setItem("pendingBooking", JSON.stringify(booking));
 
 /* GO TO CONFIRMATION PAGE */
-
 window.location = "booking_confirmation.html";
 
 });
-
 
 /* ===============================
 GCASH QR
 ================================ */
 
-const gcashBtn=document.getElementById("gcashBtn");
-const gcashModal=document.getElementById("gcashModal");
-const closeQR=document.getElementById("closeQR");
+const gcashBtn = document.getElementById("gcashBtn");
+const bpiBtn = document.getElementById("bpiBtn");
+const mayaBtn = document.getElementById("mayaBtn");
 
-gcashBtn.addEventListener("click",()=>{
-gcashModal.style.display="flex";
-});
+const gcashModal = document.getElementById("gcashModal");
+const closeQR = document.getElementById("closeQR");
 
+const qrImage = document.getElementById("qrImage");
+const qrTitle = document.getElementById("qrTitle");
+const qrDesc = document.getElementById("qrDesc");
+
+/* LOAD QR IMAGES FROM ADMIN */
+const gcashQR = localStorage.getItem("gcashQR") || "gcash_qr.png";
+const bpiQR   = localStorage.getItem("bpiQR")   || "bpi_qr.png";
+const mayaQR  = localStorage.getItem("mayaQR")  || "maya_qr.png";
+
+/* OPEN MODAL FUNCTION */
+function openQR(type){
+
+gcashModal.style.display = "flex";
+
+if(type === "gcash"){
+qrImage.src = gcashQR;
+qrTitle.textContent = "Scan to Pay (GCash)";
+qrDesc.textContent = "Send the 10% downpayment via GCash.";
+}
+
+if(type === "bpi"){
+qrImage.src = bpiQR;
+qrTitle.textContent = "Scan to Pay (BPI)";
+qrDesc.textContent = "Send the 10% downpayment via BPI.";
+}
+
+if(type === "maya"){
+qrImage.src = mayaQR;
+qrTitle.textContent = "Scan to Pay (Maya)";
+qrDesc.textContent = "Send the 10% downpayment via Maya.";
+}
+
+}
+
+/* BUTTON EVENTS */
+gcashBtn.addEventListener("click",()=>openQR("gcash"));
+bpiBtn.addEventListener("click",()=>openQR("bpi"));
+mayaBtn.addEventListener("click",()=>openQR("maya"));
+
+/* CLOSE MODAL */
 closeQR.addEventListener("click",()=>{
 gcashModal.style.display="none";
 });

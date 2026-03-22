@@ -179,16 +179,20 @@ color:#c53030;
 /* MODAL */
 
 .modal{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-background:white;
-padding:25px;
-border-radius:14px;
-box-shadow:0 20px 50px rgba(0,0,0,.2);
-display:none;
-width:320px;
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:white;
+  padding:25px;
+  border-radius:14px;
+  box-shadow:0 20px 50px rgba(0,0,0,.2);
+  display:none;
+  width:360px;
+
+  max-height:90vh;     /* ✅ LIMIT HEIGHT */
+  overflow-y:auto;     /* ✅ ENABLE SCROLL */
+  z-index:1000;        /* ✅ STAY ON TOP */
 }
 
 .modal input{
@@ -209,6 +213,13 @@ cursor:pointer;
 width:100%;
 }
 
+.modal textarea{
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+  border:1px solid #ccc;
+  border-radius:8px;
+}
 </style>
 </head>
 
@@ -269,7 +280,6 @@ width:100%;
 
 
 <!-- MODAL -->
-
 <div class="modal" id="promoModal">
 
 <h3>Add Promo / Package</h3>
@@ -298,13 +308,23 @@ width:100%;
 
 <input type="text" id="promoRules" placeholder="Rules (separate by comma)">
 
+<!-- ✅ IMAGE UPLOAD -->
+<label style="font-size:13px;font-weight:600;">Upload Promo Image</label>
+<input type="file" id="promoImage" accept="image/*">
+
+<!-- ✅ IMAGE PREVIEW -->
+<div id="imagePreview" style="margin-top:10px;display:none;">
+  <img id="previewImg" 
+       style="width:100%;height:150px;object-fit:cover;border-radius:10px;">
+</div>
+
 <button class="saveBtn" onclick="savePromo()">Save Promo</button>
 
 </div>
 <script src="session.js"></script>
 
 <script>
-    const session =
+const session =
 JSON.parse(localStorage.getItem("salonSession")) ||
 JSON.parse(sessionStorage.getItem("salonSession"));
 
@@ -312,116 +332,189 @@ if(!session || session.role !== "admin"){
   window.location.href="../log_in.html";
 }
 
-let promos = JSON.parse(localStorage.getItem("promos")) || []
+let promos = JSON.parse(localStorage.getItem("promos")) || [];
+let editIndex = null;
 
-let editIndex = null
+const promoImageInput = document.getElementById("promoImage");
+const preview = document.getElementById("imagePreview");
+const previewImg = document.getElementById("previewImg");
 
+/* ===============================
+RENDER PROMOS
+================================ */
 function renderPromos(){
+  const table = document.getElementById("promoTable");
+  table.innerHTML = "";
 
-const table = document.getElementById("promoTable")
-table.innerHTML = ""
-
-promos.forEach((promo,index)=>{
-
-table.innerHTML += `
-<tr>
-<td>${promo.title}</td>
-<td>${promo.type}</td>
-<td>${promo.highlight}</td>
-<td>${promo.validity}</td>
-<td>
-<button class="actionBtn edit" onclick="editPromo(${index})">Edit</button>
-<button class="actionBtn delete" onclick="deletePromo(${index})">Delete</button>
-</td>
-</tr>
-`
-
-})
-
+  promos.forEach((promo,index)=>{
+    table.innerHTML += `
+    <tr>
+      <td>${promo.title}</td>
+      <td>${promo.type}</td>
+      <td>${promo.highlight}</td>
+      <td>${promo.validity}</td>
+      <td>
+        <button class="actionBtn edit" onclick="editPromo(${index})">Edit</button>
+        <button class="actionBtn delete" onclick="deletePromo(${index})">Delete</button>
+      </td>
+    </tr>
+    `;
+  });
 }
 
+/* ===============================
+OPEN MODAL
+================================ */
 function openModal(){
+  document.getElementById("promoModal").style.display="block";
 
-document.getElementById("promoModal").style.display="block"
-
+  // reset form when adding new
+  if(editIndex === null){
+    document.getElementById("promoName").value="";
+    document.getElementById("promoHighlight").value="";
+    document.getElementById("promoPrice").value="";
+    document.getElementById("promoOldPrice").value="";
+    document.getElementById("promoDate").value="";
+    document.getElementById("promoDesc").value="";
+    document.getElementById("promoRules").value="";
+    promoImageInput.value="";
+    preview.style.display="none";
+  }
 }
 
+/* ===============================
+SAVE PROMO
+================================ */
 function savePromo(){
 
-const title = document.getElementById("promoName").value
-const type = document.getElementById("promoType").value
-const highlight = document.getElementById("promoHighlight").value
-const dealPrice = document.getElementById("promoPrice").value
-const oldPrice = document.getElementById("promoOldPrice").value
-const validity = document.getElementById("promoDate").value
-const status = document.getElementById("promoStatus").value
-const desc = document.getElementById("promoDesc").value
-const rules = document.getElementById("promoRules").value.split(",")
+const title = document.getElementById("promoName").value;
+const type = document.getElementById("promoType").value;
+const highlight = document.getElementById("promoHighlight").value;
+const dealPrice = document.getElementById("promoPrice").value;
+const oldPrice = document.getElementById("promoOldPrice").value;
+const validity = document.getElementById("promoDate").value;
+const status = document.getElementById("promoStatus").value;
+const desc = document.getElementById("promoDesc").value;
+const rules = document.getElementById("promoRules").value.split(",");
 
-const id = "PR"+Math.floor(Math.random()*10000)
+const file = promoImageInput.files[0];
+
+// ✅ ID FIX
+let id;
+if(editIndex === null){
+  id = "PR"+Math.floor(Math.random()*10000);
+}else{
+  id = promos[editIndex].id;
+}
+
+// ✅ SAVE FUNCTION
+function saveData(imageBase64){
 
 const data = {
-id,
-title,
-type,
-highlight,
-dealPrice,
-oldPrice,
-validity,
-status,
-desc,
-rules
-}
+  id,
+  title,
+  type,
+  highlight,
+  dealPrice,
+  oldPrice,
+  validity,
+  status,
+  desc,
+  rules,
+  image: imageBase64
+};
 
-if(editIndex===null){
-
-promos.push(data)
-
+// ✅ ADD OR UPDATE
+if(editIndex === null){
+  promos.push(data);
 }else{
+  promos[editIndex] = data;
+  editIndex = null;
+}
 
-data.id = promos[editIndex].id
-promos[editIndex]=data
-editIndex=null
+localStorage.setItem("promos", JSON.stringify(promos));
+location.reload();
+}
+
+// ✅ IMAGE HANDLING (FINAL FIX)
+if(file){
+  const reader = new FileReader();
+  reader.onload = function(e){
+    saveData(e.target.result);
+  };
+  reader.readAsDataURL(file);
+}else{
+  // ✅ KEEP OLD IMAGE WHEN EDITING
+  if(editIndex !== null){
+    saveData(promos[editIndex].image);
+  }else{
+    saveData(null);
+  }
+}
 
 }
 
-localStorage.setItem("promos",JSON.stringify(promos))
-
-location.reload()
-
-}
-
+/* ===============================
+EDIT PROMO
+================================ */
 function editPromo(index){
 
-const p = promos[index]
+const p = promos[index];
 
-document.getElementById("promoName").value=p.title
-document.getElementById("promoType").value=p.type
-document.getElementById("promoHighlight").value=p.highlight
-document.getElementById("promoPrice").value=p.dealPrice
-document.getElementById("promoOldPrice").value=p.oldPrice
-document.getElementById("promoDate").value=p.validity
-document.getElementById("promoStatus").value=p.status
-document.getElementById("promoDesc").value=p.desc
-document.getElementById("promoRules").value=p.rules.join(",")
+document.getElementById("promoName").value = p.title;
+document.getElementById("promoType").value = p.type;
+document.getElementById("promoHighlight").value = p.highlight;
+document.getElementById("promoPrice").value = p.dealPrice;
+document.getElementById("promoOldPrice").value = p.oldPrice;
+document.getElementById("promoDate").value = p.validity;
+document.getElementById("promoStatus").value = p.status;
+document.getElementById("promoDesc").value = p.desc;
+document.getElementById("promoRules").value = p.rules.join(",");
 
-editIndex=index
+// ✅ SHOW EXISTING IMAGE
+if(p.image){
+  preview.style.display = "block";
+  previewImg.src = p.image;
+}else{
+  preview.style.display = "none";
+}
 
-openModal()
+editIndex = index;
+openModal();
 
 }
 
+/* ===============================
+DELETE PROMO
+================================ */
 function deletePromo(index){
-
-promos.splice(index,1)
-
-localStorage.setItem("promos",JSON.stringify(promos))
-
-renderPromos()
-
+promos.splice(index,1);
+localStorage.setItem("promos",JSON.stringify(promos));
+renderPromos();
 }
 
-renderPromos()
+/* ===============================
+IMAGE PREVIEW
+================================ */
+promoImageInput.addEventListener("change", function(){
+
+const file = this.files[0];
+
+if(file){
+const reader = new FileReader();
+
+reader.onload = function(e){
+preview.style.display = "block";
+previewImg.src = e.target.result;
+};
+
+reader.readAsDataURL(file);
+}
+
+});
+
+/* INIT */
+renderPromos();
 
 </script>
 
