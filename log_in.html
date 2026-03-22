@@ -84,11 +84,11 @@
       color:#fff; font-weight:800; letter-spacing:.6px; text-transform:uppercase;
     }
     .brand .logo{
-      width:44px; height:44px; border-radius:14px;
-      display:grid; place-items:center;
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.18);
-    }
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  overflow:hidden;
+}
     .menu{
       margin-left:auto;
       display:flex;
@@ -428,6 +428,13 @@
       .btn{ width: 100%; min-width: 0; }
       .actions{ flex-direction: column; }
     }
+
+    .logo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+}
   </style>
 </head>
 
@@ -450,10 +457,13 @@
 
 <!-- NAVBAR -->
 <header class="navbar">
-  <div class="brand">
-    <div class="logo" aria-hidden="true">🌿</div>
-    <span>BASIT</span>
+
+<div class="brand">
+  <div class="logo">
+    <img src="images/logo.png" alt="Logo">
   </div>
+  <span>Zai Trinette Wellness Spa</span>
+</div>
 
   <nav class="menu" aria-label="Primary">
     <a href="index.html">Home</a>

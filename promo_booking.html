@@ -400,6 +400,26 @@ display:block;
 
 }
 
+/* QR BUTTONS */
+.qrButtons{
+display:flex;
+gap:12px;
+margin-top:15px;
+}
+
+.qrButtons button{
+flex:1;
+padding:12px;
+font-size:13px;
+border-radius:10px;
+}
+
+@media(max-width:600px){
+.qrButtons{
+flex-direction:column;
+}
+}
+
 </style>
 </head>
 
@@ -419,7 +439,7 @@ display:block;
 
 <div class="brand">
 <div class="logo">🌿</div>
-<span>BASIT</span>
+<span>Zai Trinette Wellness Spa</span>
 </div>
 
 <nav class="menu">
@@ -472,12 +492,9 @@ display:block;
 </div>
 
 <div class="row">
-<span>Promo Price</span>
-<strong id="promoPrice"></strong>
+  <span>Promo Price</span>
+  <strong id="promoPrice"></strong>
 </div>
-
-</div>
-
 
 <!-- SCHEDULE -->
 
@@ -490,12 +507,16 @@ display:block;
 
 <label>Time</label>
 <select id="time">
-<option>9:00 AM</option>
-<option>10:00 AM</option>
-<option>11:00 AM</option>
-<option>1:00 PM</option>
-<option>2:00 PM</option>
-<option>4:00 PM</option>
+  <option>9:00 AM</option>
+  <option>10:00 AM</option>
+  <option>11:00 AM</option>
+  <option>12:00 PM</option>
+  <option>1:00 PM</option>
+  <option>2:00 PM</option>
+  <option>3:00 PM</option>
+  <option>4:00 PM</option>
+  <option>5:00 PM</option>
+  <option>6:00 PM</option>
 </select>
 
 </div>
@@ -528,13 +549,17 @@ display:block;
 </div>
 
 <div class="row">
-<span>Promo Price</span>
-<strong id="promoPrice"></strong>
+<span>Downpayment (10%)</span>
+<strong id="promoDown"></strong>
 </div>
 
-</div>
+<div class="qrButtons">
 
-<button id="showQR">View GCash QR Code</button>
+<button id="gcashBtn">GCash QR</button>
+<button id="bpiBtn">BPI QR</button>
+<button id="mayaBtn">Maya QR</button>
+
+</div>
 
 <label>Upload Proof of Payment</label>
 <input type="file" id="receipt">
@@ -552,17 +577,17 @@ display:block;
 
 <div id="qrModal" class="qrModal">
 
-<div class="qrCard">
+  <div class="qrCard">
 
-<h3>Scan to Pay (GCash)</h3>
+    <h3 id="qrTitle">Scan to Pay</h3>
 
-<img id="gcashQRImage" src="gcash_qr.png">
+    <img id="qrImage" src="" alt="QR Code">
 
-<p>Send the required 10% downpayment.</p>
+    <p id="qrDesc">Send the required 10% downpayment.</p>
 
-<button id="closeQR">Close</button>
+    <button id="closeQR">Close</button>
 
-</div>
+  </div>
 
 </div>
 
@@ -590,14 +615,67 @@ return;
 }
 
 /* ===============================
-LOAD ADMIN GCASH QR
+LOAD QR FROM ADMIN
 ================================ */
 
-const savedQR = localStorage.getItem("gcashQR");
+const gcashQR = localStorage.getItem("gcashQR") || "gcash_qr.png";
+const bpiQR   = localStorage.getItem("bpiQR")   || "bpi_qr.png";
+const mayaQR  = localStorage.getItem("mayaQR")  || "maya_qr.png";
 
-if(savedQR){
-document.getElementById("gcashQRImage").src = savedQR;
+/* ===============================
+QR MODAL CONTROLS
+================================ */
+
+const qrModal = document.getElementById("qrModal");
+const closeQR = document.getElementById("closeQR");
+
+const qrImage = document.getElementById("qrImage");
+const qrTitle = document.getElementById("qrTitle");
+const qrDesc  = document.getElementById("qrDesc");
+
+/* BUTTONS */
+const gcashBtn = document.getElementById("gcashBtn");
+const bpiBtn = document.getElementById("bpiBtn");
+const mayaBtn = document.getElementById("mayaBtn");
+
+/* FUNCTION */
+function openQR(type){
+
+qrModal.style.display = "flex";
+
+if(type === "gcash"){
+qrImage.src = gcashQR;
+qrTitle.textContent = "Scan to Pay (GCash)";
+qrDesc.textContent = "Send the 10% downpayment via GCash.";
 }
+
+if(type === "bpi"){
+qrImage.src = bpiQR;
+qrTitle.textContent = "Scan to Pay (BPI)";
+qrDesc.textContent = "Send the 10% downpayment via BPI.";
+}
+
+if(type === "maya"){
+qrImage.src = mayaQR;
+qrTitle.textContent = "Scan to Pay (Maya)";
+qrDesc.textContent = "Send the 10% downpayment via Maya.";
+}
+
+}
+
+/* EVENTS */
+gcashBtn.onclick = () => openQR("gcash");
+bpiBtn.onclick   = () => openQR("bpi");
+mayaBtn.onclick  = () => openQR("maya");
+
+/* CLOSE */
+closeQR.onclick = () => qrModal.style.display = "none";
+
+qrModal.onclick = (e)=>{
+if(e.target === qrModal){
+qrModal.style.display = "none";
+}
+};
 
 /* ===============================
 GET PROMO
@@ -619,19 +697,33 @@ setText("promoName", promo.title);
 setText("promoType", promo.type);
 setText("promoValidity", promo.validity);
 setText("promoOld", "₱" + promo.oldPrice);
-setText("promoPrice", "₱" + promo.dealPrice);
 
 /* ===============================
 PRICE COMPUTATION
 ================================ */
 
-const total = Number(promo.dealPrice);
+// Ensure numbers are valid
+const total = Number(promo.dealPrice || 0);
+
+// ✅ 10% DOWNPAYMENT
 const down = total * 0.10;
 const remain = total - down;
 
-setText("total", "₱" + total);
-setText("down", "₱" + down.toFixed(2));
-setText("remain", "₱" + remain.toFixed(2));
+/* ===============================
+DISPLAY VALUES
+================================ */
+
+// Format function (adds commas + 2 decimals)
+function peso(val){
+  return "₱" + val.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+// ✅ NOW SAFE (down already computed)
+setText("promoPrice", peso(total));
+setText("promoDown", peso(down));
 
 /* ===============================
 UPLOAD RECEIPT PREVIEW
@@ -643,58 +735,42 @@ const receiptInput = document.getElementById("receipt");
 
 if(receiptInput){
 
-receiptInput.addEventListener("change", function(){
+  receiptInput.addEventListener("change", function(){
 
-const file = this.files[0];
-if(!file) return;
+    const file = this.files[0];
+    if(!file) return;
 
-const reader = new FileReader();
+    // ✅ Validate image only
+    if(!file.type.startsWith("image/")){
+      alert("Please upload an image file.");
+      return;
+    }
 
-reader.onload = function(e){
+    // ✅ Limit file size (optional: 2MB)
+    if(file.size > 2 * 1024 * 1024){
+      alert("Image must be below 2MB.");
+      return;
+    }
 
-receiptImage = e.target.result;
+    const reader = new FileReader();
 
-const preview = document.getElementById("preview");
+    reader.onload = function(e){
 
-if(preview){
-preview.src = receiptImage;
-preview.style.display = "block";
-}
+      receiptImage = e.target.result;
 
-};
+      const preview = document.getElementById("preview");
 
-reader.readAsDataURL(file);
+      if(preview){
+        preview.src = receiptImage;
+        preview.style.display = "block";
+      }
 
-});
+    };
 
-}
+    reader.readAsDataURL(file);
 
-/* ===============================
-QR POPUP
-================================ */
+  });
 
-const qrModal = document.getElementById("qrModal");
-const showQR = document.getElementById("showQR");
-const closeQR = document.getElementById("closeQR");
-
-if(showQR){
-showQR.onclick = function(){
-qrModal.style.display = "flex";
-};
-}
-
-if(closeQR){
-closeQR.onclick = function(){
-qrModal.style.display = "none";
-};
-}
-
-if(qrModal){
-qrModal.onclick = function(e){
-if(e.target === qrModal){
-qrModal.style.display = "none";
-}
-};
 }
 
 /* ===============================

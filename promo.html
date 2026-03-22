@@ -85,11 +85,11 @@
       color:#fff; font-weight:800; letter-spacing:.6px; text-transform:uppercase;
     }
     .brand .logo{
-      width:44px; height:44px; border-radius:14px;
-      display:grid; place-items:center;
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.18);
-    }
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  overflow:hidden;
+}
     .menu{
       margin-left:auto;
       display:flex;
@@ -494,6 +494,30 @@
 
       .modalBack{ padding: 12px; }
     }
+
+    .logo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+}
+
+.cardImage{
+  height:160px;
+  width:100%;
+  overflow:hidden;
+}
+
+.cardImage img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.modalFoot{
+  justify-content: center;
+}
   </style>
 </head>
 
@@ -521,9 +545,12 @@
 <header class="navbar">
 
 <div class="brand">
-<div class="logo" aria-hidden="true">🌿</div>
-<span>BASIT</span>
+  <div class="logo">
+    <img src="images/logo.png" alt="Logo">
+  </div>
+  <span>Zai Trinette Wellness Spa</span>
 </div>
+
 
 <nav class="menu" aria-label="Primary">
 
@@ -669,12 +696,26 @@ Rules / Inclusions
 
 <button class="btn btnOutline" id="mClose2">Close</button>
 
-<button class="btn" id="mBook">Book this Deal</button>
-
 </div>
 
 </div>
 
+</div>
+
+<!-- IMAGE VIEW MODAL -->
+<div class="modalBack" id="imgModal">
+  <div class="modal" style="max-width:500px;">
+    
+    <div class="modalHead">
+      <h3>Promo Image</h3>
+      <button class="xbtn" id="closeImgModal">✕</button>
+    </div>
+
+    <div class="modalBody" style="padding:0;">
+      <img id="fullImage" style="width:100%;display:block;">
+    </div>
+
+  </div>
 </div>
 
 <!-- LOGIN REQUIRED MODAL -->
@@ -812,6 +853,7 @@ highlight:"-20%",
 dealPrice:399,
 oldPrice:499,
 validity:"Feb 1 – Mar 31",
+image:"images/promo1.jpg", // ✅ added
 desc:"Perfect for first-time clients. Enjoy a discounted service to start your glow-up journey.",
 rules:[
 "Valid for first-time clients only",
@@ -830,6 +872,7 @@ highlight:"Bundle",
 dealPrice:3500,
 oldPrice:4200,
 validity:"Year-round",
+image:"images/promo2.jpg", // ✅ added
 desc:"A full bridal prep package designed for your big day — calm, glow, and confidence.",
 rules:[
 "Includes: hair styling + makeup",
@@ -848,6 +891,7 @@ highlight:"2 pax",
 dealPrice:2200,
 oldPrice:2600,
 validity:"Until Mar 10",
+image:"images/promo3.jpg", // ✅ added
 desc:"Relax together with a couple massage and calming spa add-ons.",
 rules:[
 "Includes: 60-min massage (2 persons)",
@@ -891,15 +935,21 @@ const mRules=document.getElementById("mRules");
 let selected=null;
 
 
-/* ===============================
-CARD UI
-================================ */
-
 function card(p){
 
 return `
 
 <article class="card">
+
+<!-- ✅ IMAGE -->
+<div class="cardImage">
+  <img 
+    src="${p.image || 'images/default.jpg'}" 
+    alt="${p.title}"
+    style="cursor:pointer"
+    data-img="${p.image || 'images/default.jpg'}"
+  >
+</div>
 
 <div class="cardTop">
 <div>
@@ -955,6 +1005,20 @@ grid.innerHTML=list.map(card).join("");
 
 empty.style.display=list.length?"none":"block";
 
+// CLICK IMAGE → OPEN FULL VIEW
+grid.querySelectorAll(".cardImage img").forEach(img => {
+  img.addEventListener("click", () => {
+
+    const src = img.getAttribute("data-img");
+
+    document.getElementById("fullImage").src = src;
+
+    document.getElementById("imgModal").style.display = "flex";
+    document.body.style.overflow = "hidden";
+
+  });
+});
+
 
 /* VIEW DETAILS */
 
@@ -972,6 +1036,20 @@ openModal(selected);
 
 });
 
+const imgModal = document.getElementById("imgModal");
+const closeImgModal = document.getElementById("closeImgModal");
+
+closeImgModal.onclick = () => {
+  imgModal.style.display = "none";
+  document.body.style.overflow = "";
+};
+
+imgModal.addEventListener("click", (e) => {
+  if(e.target === imgModal){
+    imgModal.style.display = "none";
+    document.body.style.overflow = "";
+  }
+});
 
 /* BOOK PROMO */
 
