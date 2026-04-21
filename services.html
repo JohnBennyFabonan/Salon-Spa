@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
     :root{
@@ -505,6 +506,41 @@
   object-fit:cover;
   border-radius:14px;
 }
+
+/* FULL IMAGE MODAL */
+.imageModal{
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.imageModalContent{
+  max-width: 500px;
+  width: 100%;
+  height: auto;
+}
+
+#closeImageModal{
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 30px;
+  color: white;
+  cursor: pointer;
+}
+
+.cardImage img{
+  cursor: pointer;
+  transition: .25s;
+}
+
+.cardImage img:hover{
+  transform: scale(1.05);
+}
   </style>
 </head>
 
@@ -516,14 +552,15 @@
     <div class="pill">📞 0936 411 6193</div>
     <div class="pill">✉️ trinettebless@gmail.com</div>
     <div class="pill">🕘 Mon–Sun: 9:00am–7:00pm</div>
+    <div class="pill">Balagtas Batangas City</div>
   </div>
 
   <div class="right">
     <div class="social">
-      <a href="#" title="Facebook">f</a>
-      <a href="#" title="Twitter">t</a>
-      <a href="#" title="Instagram">⌁</a>
-    </div>
+  <a href="https://www.facebook.com/profile.php?id=61586188435663&rdid=oqQWK8JRiLEVB2am&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Bq8FFzvf6%2F#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+  <a href="https://www.instagram.com/zaitrinettewellness.btg/" target="_blank"><i class="fab fa-instagram"></i></a>
+  <a href="https://www.tiktok.com/@zai30526" target="_blank"><i class="fab fa-tiktok"></i></a>
+</div>
   </div>
 </div>
 
@@ -683,124 +720,91 @@ No services found. Try another category.
 </div>
 </div>
 
+<!-- IMAGE VIEW MODAL -->
+<div id="imageModal" class="imageModal">
+
+  <span id="closeImageModal">&times;</span>
+
+  <img class="imageModalContent" id="fullImage">
+
+</div>
+
   <script>
 
 /* ===============================
 LOGIN NAVBAR SWITCH
 ================================ */
-
 const session =
 JSON.parse(localStorage.getItem("salonSession")) ||
 JSON.parse(sessionStorage.getItem("salonSession"));
 
 if(session){
-
 document.getElementById("loginLink").style.display="none";
 document.getElementById("signupLink").style.display="none";
-
 document.getElementById("dashboardLink").style.display="inline-block";
 document.getElementById("logoutLink").style.display="inline-block";
-
 document.getElementById("mLogin").style.display="none";
 document.getElementById("mSignup").style.display="none";
-
 document.getElementById("mDashboard").style.display="block";
 document.getElementById("mLogout").style.display="block";
-
 }
 
-
 /* ===============================
-LOGOUT FUNCTION
+LOGOUT
 ================================ */
-
 document.getElementById("logoutLink")?.addEventListener("click",logout);
 document.getElementById("mLogout")?.addEventListener("click",logout);
 
 function logout(){
-
 localStorage.removeItem("salonSession");
 sessionStorage.removeItem("salonSession");
-
 window.location.href="index.html";
-
 }
 
-
 /* ===============================
-MOBILE MENU TOGGLE
+MOBILE MENU
 ================================ */
-
 const menuBtn = document.getElementById("menuBtn");
 const mobileMenuBack = document.getElementById("mobileMenuBack");
 const menuClose = document.getElementById("menuClose");
 
-function openMenu(){
-mobileMenuBack.style.display="block";
-menuBtn.setAttribute("aria-expanded","true");
-mobileMenuBack.setAttribute("aria-hidden","false");
-document.body.style.overflow="hidden";
-}
-
-function closeMenu(){
-mobileMenuBack.style.display="none";
-menuBtn.setAttribute("aria-expanded","false");
-mobileMenuBack.setAttribute("aria-hidden","true");
-document.body.style.overflow="";
-}
-
-menuBtn?.addEventListener("click",openMenu);
-menuClose?.addEventListener("click",closeMenu);
-
-mobileMenuBack?.addEventListener("click",(e)=>{
-if(e.target===mobileMenuBack) closeMenu();
-});
-
-document.addEventListener("keydown",(e)=>{
-if(e.key==="Escape") closeMenu();
-});
-
+menuBtn?.addEventListener("click",()=> mobileMenuBack.style.display="block");
+menuClose?.addEventListener("click",()=> mobileMenuBack.style.display="none");
 
 /* ===============================
-SERVICES DATA
+🔥 LOAD SERVICES
 ================================ */
+let services = [];
 
-let services = JSON.parse(localStorage.getItem("services"));
+async function loadServices(){
+  try{
+    const res = await fetch("http://localhost:5000/services");
+    services = await res.json();
 
-if(!services || services.length===0){
+    // ✅ EXTRACT UNIQUE CATEGORIES FROM DATABASE
+    const uniqueCategories = [
+      ...new Set(
+        services
+          .map(s => (s.category || "").trim())
+          .filter(c => c !== "")
+      )
+    ];
 
-services=[
+    // ✅ UPDATE FILTER LIST
+    categories = ["All", ...uniqueCategories];
 
-{
-id:"S1",
-name:"Haircut",
-desc:"Professional haircut with styling.",
-amount:350,
-duration:45,
-maxSim:1,
-category:"Hair",
-image:"https://images.unsplash.com/photo-1595475038784-bbe439ff41e6?auto=format&fit=crop&w=1200&q=80"
-},
+    buildPills(); // 🔥 rebuild filter buttons
+    render();
 
-{
-id:"S2",
-name:"Hair Color",
-desc:"Full hair coloring service.",
-amount:1200,
-duration:120,
-maxSim:2,
-category:"Hair",
-image:"https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1200&q=80"
+  }catch(err){
+    console.error("❌ FETCH ERROR:", err);
+  }
 }
 
-];
-
-localStorage.setItem("services",JSON.stringify(services));
-
-}
-
-
-const categories=["All","Hair","Nails","Spa","Packages"];
+/* ===============================
+SETUP
+================================ */
+let categories = ["All"];
 
 const grid=document.getElementById("grid");
 const empty=document.getElementById("emptyState");
@@ -809,274 +813,218 @@ const sortSelect=document.getElementById("sortSelect");
 const pillRow=document.getElementById("pillRow");
 
 let activeCategory="All";
-let selectedService=null;
 
+sortSelect.addEventListener("change", ()=>{
+  render();
+});
 
 /* ===============================
 FORMAT PRICE
 ================================ */
-
 function peso(n){
 return new Intl.NumberFormat("en-PH",{style:"currency",currency:"PHP"}).format(n);
 }
 
-
 /* ===============================
-CATEGORY FILTER BUTTONS
+CATEGORY FILTER
 ================================ */
-
 function buildPills(){
-
 pillRow.innerHTML="";
 
 categories.forEach(cat=>{
-
 const b=document.createElement("button");
 
 b.className="pillBtn"+(cat===activeCategory?" active":"");
 b.textContent=cat;
 
 b.onclick=()=>{
-
 activeCategory=cat;
-
 buildPills();
 render();
-
 };
 
 pillRow.appendChild(b);
-
 });
-
 }
 
-
 /* ===============================
-SORT SERVICES
+SORT (FINAL FIXED)
 ================================ */
-
 function sortList(list){
+  const v = sortSelect.value;
 
-const v=sortSelect.value;
-const arr=[...list];
+  // clone array
+  const arr = [...list];
 
-if(v==="popular") return arr;
+  switch(v){
 
-if(v==="priceLow") arr.sort((a,b)=>a.amount-b.amount);
+    case "popular":
+      // 🔥 newest or highest ID first (better UX)
+      return arr.sort((a,b)=>Number(b.id) - Number(a.id));
 
-if(v==="priceHigh") arr.sort((a,b)=>b.amount-a.amount);
+    case "priceLow":
+      return arr.sort((a,b)=>parseFloat(a.price) - parseFloat(b.price));
 
-if(v==="durationLow") arr.sort((a,b)=>a.duration-b.duration);
+    case "priceHigh":
+      return arr.sort((a,b)=>parseFloat(b.price) - parseFloat(a.price));
 
-if(v==="durationHigh") arr.sort((a,b)=>b.duration-a.duration);
+    case "durationLow":
+      return arr.sort((a,b)=>parseFloat(a.duration) - parseFloat(b.duration));
 
-if(v==="nameAZ") arr.sort((a,b)=>a.name.localeCompare(b.name));
+    case "durationHigh":
+      return arr.sort((a,b)=>parseFloat(b.duration) - parseFloat(a.duration));
 
-return arr;
+    case "nameAZ":
+      return arr.sort((a,b)=>
+        (a.name || "").localeCompare(b.name || "", undefined, { sensitivity: "base" })
+      );
 
+    default:
+      return arr;
+  }
 }
 
-
 /* ===============================
-FILTER SERVICES
+FILTER
 ================================ */
-
 function filterList(){
-
 return services.filter(s=>activeCategory==="All"||s.category===activeCategory);
-
 }
 
-
 /* ===============================
-SERVICE CARD
+CARD UI
 ================================ */
-
 function cardHTML(s){
-
 return `
-
 <article class="card">
 
 <div class="cardImage">
-<img src="${s.image}" alt="${s.name}">
+<img src="${s.image_url}" alt="${s.name}" class="clickableImage">
 </div>
 
 <div class="cardTop">
-
 <div>
-
 <h3 class="svcTitle">${s.name}</h3>
 
 <div class="svcMeta">
-<span class="chip">⏱️ ${s.duration} min</span>
-<span class="chip">👥 Max ${s.maxSim}</span>
+<span class="chip">⏱️ ${s.duration} mins</span>
 <span class="chip">🆔 ${s.id}</span>
 </div>
-
 </div>
 
 <div class="categoryTag">${s.category}</div>
-
 </div>
 
-<p class="desc">${s.desc}</p>
+<p class="desc">${s.description}</p>
 
 <div class="cardBottom">
-
 <div>
-<span class="price">${peso(s.amount)}</span>
-<span class="subprice">Duration: ${s.duration} minutes</span>
+<span class="price">${peso(Number(s.price))}</span>
+<span class="subprice">Duration: ${s.duration} mins</span>
 </div>
 
 <button class="btn" data-id="${s.id}">Book</button>
-
 </div>
 
 </article>
-
 `;
-
 }
-
 
 /* ===============================
-MODAL
+RENDER
 ================================ */
-
-const modalBack=document.getElementById("modalBack");
-const closeModal=document.getElementById("closeModal");
-const modalClose2=document.getElementById("modalClose2");
-const confirmBook=document.getElementById("confirmBook");
-const modalTitle=document.getElementById("modalTitle");
-const modalDesc=document.getElementById("modalDesc");
-const modalMeta=document.getElementById("modalMeta");
-
-
-function openModal(svc){
-
-selectedService=svc;
-
-modalTitle.textContent=svc.name;
-modalDesc.textContent=svc.desc;
-
-modalMeta.innerHTML=`
-
-<div class="kv"><strong>Price:</strong> ${peso(svc.amount)}</div>
-<div class="kv"><strong>Duration:</strong> ${svc.duration} min</div>
-<div class="kv"><strong>Category:</strong> ${svc.category}</div>
-<div class="kv"><strong>Max simultaneous:</strong> ${svc.maxSim}</div>
-<div class="kv"><strong>Service ID:</strong> ${svc.id}</div>
-
-`;
-
-modalBack.style.display="flex";
-document.body.style.overflow="hidden";
-
-}
-
-
-function hideModal(){
-
-modalBack.style.display="none";
-selectedService=null;
-document.body.style.overflow="";
-
-}
-
-
-/* ===============================
-RENDER SERVICES
-================================ */
-
 function render(){
 
-const filtered=sortList(filterList());
+const filtered = sortList(filterList());
 
 countText.textContent=`${filtered.length} service${filtered.length!==1?"s":""}`;
 
-grid.innerHTML=filtered.map(cardHTML).join("");
+grid.innerHTML = filtered.map(cardHTML).join("");
 
-empty.style.display=filtered.length?"none":"block";
+empty.style.display = filtered.length ? "none" : "block";
 
+// ✅ IMAGE CLICK → FULL VIEW
+grid.querySelectorAll(".clickableImage").forEach(img=>{
+  img.addEventListener("click", ()=>{
+
+    const modal = document.getElementById("imageModal");
+    const fullImg = document.getElementById("fullImage");
+
+    fullImg.src = img.src;
+    modal.style.display = "flex";
+
+  });
+});
+
+/* ===============================
+ADD SERVICE (MULTI FIX)
+================================ */
 grid.querySelectorAll("button[data-id]").forEach(btn=>{
-
 btn.addEventListener("click",()=>{
 
 const id = btn.getAttribute("data-id");
-const service = services.find(x=>x.id===id);
+const service = services.find(x=>x.id == id);
 
-/* CHECK IF USER IS LOGGED IN */
+/* LOGIN CHECK */
 const session =
 JSON.parse(localStorage.getItem("salonSession")) ||
 JSON.parse(sessionStorage.getItem("salonSession"));
 
-/* IF NOT LOGGED IN */
 if(!session){
-
-showLoginModal();
+alert("Please login first");
+window.location.href="log_in.html";
 return;
-
 }
-
-/* IF LOGGED IN */
-localStorage.setItem("selectedService",JSON.stringify(service));
-window.location.href="booking.html";
-
-});
-
-});
-
-}
-
 
 /* ===============================
-EVENTS
+🔥 MULTI-SERVICE SAVE FIX
 ================================ */
 
-closeModal.onclick=hideModal;
-modalClose2.onclick=hideModal;
+// get existing
+let selected = JSON.parse(localStorage.getItem("selectedServices")) || [];
 
-modalBack.addEventListener("click",(e)=>{
-if(e.target===modalBack) hideModal();
-});
-
-confirmBook.onclick=()=>{
-alert(`Continue booking for: ${selectedService.name}`);
-hideModal();
+// ensure number
+const cleanService = {
+  id: service.id,
+  name: service.name,
+  duration: service.duration,
+  price: Number(service.price),
+  category: service.category
 };
 
-sortSelect.addEventListener("change",render);
+// prevent duplicates
+if(!selected.some(s => s.id === service.id)){
+  selected.push(cleanService);
+}
 
+// save
+localStorage.setItem("selectedServices", JSON.stringify(selected));
+
+/* REDIRECT */
+window.location.href = "booking.html";
+
+});
+});
+
+}
+
+/* ===============================
+INIT
+================================ */
 buildPills();
-render();
+loadServices();
 
-/* ===============================
-LOGIN REQUIRED MODAL
-================================ */
-
-const loginModal = document.getElementById("loginModal");
-const closeLoginModal = document.getElementById("closeLoginModal");
-const cancelLogin = document.getElementById("cancelLogin");
-const goSignup = document.getElementById("goSignup");
-
-function showLoginModal(){
-loginModal.style.display="flex";
-document.body.style.overflow="hidden";
-}
-
-function hideLoginModal(){
-loginModal.style.display="none";
-document.body.style.overflow="";
-}
-
-closeLoginModal.onclick = hideLoginModal;
-cancelLogin.onclick = hideLoginModal;
-
-goSignup.onclick = () => {
-window.location.href = "Sign_up.html";
+// ✅ CLOSE IMAGE MODAL (X BUTTON)
+document.getElementById("closeImageModal").onclick = () => {
+  document.getElementById("imageModal").style.display = "none";
 };
+
+// ✅ CLICK OUTSIDE IMAGE = CLOSE
+document.getElementById("imageModal").addEventListener("click", (e)=>{
+  if(e.target.id === "imageModal"){
+    e.currentTarget.style.display = "none";
+  }
+});
 
 </script>
 </body>

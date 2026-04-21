@@ -210,6 +210,7 @@ cursor:pointer;
 
 <a href="admin_dashboard.html">Dashboard</a>
 <a href="admin_gallery.html">Manage Gallery</a>
+<a href="admin_walkins.html">Manage Walk-ins</a>
 <a href="admin_bookings.html">Manage Bookings</a>
 <a href="admin_promo.html">Manage Promo</a>
 <a href="admin_services.html">Manage Services</a>
@@ -275,88 +276,140 @@ cursor:pointer;
 
 <script>
 
-let users = JSON.parse(localStorage.getItem("users")) || []
+const API_BASE = "http://127.0.0.1:5000";
 
-let editIndex=null
+let users = [];
+let editId = null;
 
+/* ===============================
+   LOAD USERS FROM DATABASE
+================================ */
+async function loadUsers(){
+  try{
+    const res = await fetch(`${API_BASE}/users`);
+
+    if(!res.ok){
+      throw new Error("Failed to fetch users");
+    }
+
+    users = await res.json();
+    render();
+
+  }catch(err){
+    console.error(err);
+    alert("Cannot load users. Check server.");
+  }
+}
+
+/* ===============================
+   RENDER TABLE
+================================ */
 function render(){
 
-let body=document.getElementById("tableBody")
+  let body = document.getElementById("tableBody");
+  body.innerHTML = "";
 
-body.innerHTML=""
+  if(users.length === 0){
+    body.innerHTML = "<tr><td colspan='5'>No users found</td></tr>";
+    return;
+  }
 
-users.forEach((u,i)=>{
+  users.forEach((u)=>{
 
-body.innerHTML+=`
-
-<tr>
-
-<td>${u.name || "-"}</td>
-<td>${u.email || "-"}</td>
-<td>${u.contact || "-"}</td>
-<td>${u.role || "Customer"}</td>
-
-<td>
-
-<button class="actionBtn edit" onclick="editUser(${i})">Edit</button>
-
-<button class="actionBtn delete" onclick="deleteUser(${i})">Delete</button>
-
-</td>
-
-</tr>
-
-`
-
-})
-
+    body.innerHTML += `
+      <tr>
+        <td>${u.name || "-"}</td>
+        <td>${u.email || "-"}</td>
+        <td>${u.contact || "-"}</td>
+        <td>${u.role || "customer"}</td>
+        <td>
+          <button class="actionBtn edit" onclick="editUser(${u.id})">Edit</button>
+          <button class="actionBtn delete" onclick="deleteUser(${u.id})">Delete</button>
+        </td>
+      </tr>
+    `;
+  });
 }
 
-function editUser(i){
+/* ===============================
+   EDIT USER
+================================ */
+function editUser(id){
 
-editIndex=i
+  editId = id;
 
-let u=users[i]
+  const u = users.find(x => x.id === id);
 
-document.getElementById("name").value=u.name
-document.getElementById("email").value=u.email
-document.getElementById("contact").value=u.contact
-document.getElementById("password").value=u.password
+  document.getElementById("name").value = u.name;
+  document.getElementById("email").value = u.email;
+  document.getElementById("contact").value = u.contact;
 
-document.getElementById("modal").style.display="flex"
+  // 🔒 don't preload password (security)
+  document.getElementById("password").value = "";
 
+  document.getElementById("modal").style.display = "flex";
 }
 
-function saveAccount(){
+/* ===============================
+   SAVE USER (UPDATE)
+================================ */
+async function saveAccount(){
 
-users[editIndex].name=document.getElementById("name").value
-users[editIndex].email=document.getElementById("email").value
-users[editIndex].contact=document.getElementById("contact").value
-users[editIndex].password=document.getElementById("password").value
+  try{
 
-localStorage.setItem("users",JSON.stringify(users))
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const contact = document.getElementById("contact").value;
+    const password = document.getElementById("password").value;
 
-document.getElementById("modal").style.display="none"
+    await fetch(`${API_BASE}/users/${editId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        contact,
+        password
+      })
+    });
 
-render()
+    document.getElementById("modal").style.display = "none";
 
+    loadUsers();
+
+  }catch(err){
+    console.error(err);
+    alert("Update failed");
+  }
 }
 
-function deleteUser(i){
+/* ===============================
+   DELETE USER
+================================ */
+async function deleteUser(id){
 
-if(confirm("Delete this user account?")){
+  if(!confirm("Delete this user account?")) return;
 
-users.splice(i,1)
+  try{
 
-localStorage.setItem("users",JSON.stringify(users))
+    await fetch(`${API_BASE}/users/${id}`, {
+      method: "DELETE"
+    });
 
-render()
+    loadUsers();
 
+  }catch(err){
+    console.error(err);
+    alert("Delete failed");
+  }
 }
 
-}
-
-render()
+/* ===============================
+   INIT
+================================ */
+loadUsers();
 
 </script>
 

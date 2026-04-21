@@ -199,26 +199,6 @@ transform:scale(1.05);
 }
 
 /* MODAL */
-
-.qrModal{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.7);
-display:none;
-align-items:center;
-justify-content:center;
-z-index:999;
-}
-
-.qrModal img{
-max-width:400px;
-border-radius:10px;
-box-shadow:0 10px 40px rgba(0,0,0,0.4);
-}
-
 .serviceList{
 font-size:13px;
 line-height:1.4;
@@ -245,6 +225,58 @@ padding:20px;
 }
 
 }
+.tableWrapper{
+max-height: 520px; /* slightly taller */
+overflow: auto;
+border-radius: 12px;
+border: 1px solid var(--line);
+background: var(--card);
+
+/* smooth scrolling */
+scroll-behavior: smooth;
+}
+
+/* Sticky header (cleaner + layered properly) */
+thead th{
+position: sticky;
+top: 0;
+background: var(--card); /* better than greenSoft for readability */
+z-index: 5;
+
+/* subtle separation */
+box-shadow: 0 2px 0 var(--line);
+}
+
+/* Optional: keep header color accent */
+thead{
+background: var(--greenSoft);
+}
+
+/* Custom scrollbar (modern look) */
+.tableWrapper::-webkit-scrollbar{
+width: 8px;
+height: 8px;
+}
+
+.tableWrapper::-webkit-scrollbar-track{
+background: transparent;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb{
+background: rgba(0,0,0,0.2);
+border-radius: 10px;
+transition: 0.2s;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb:hover{
+background: rgba(0,0,0,0.35);
+}
+
+/* Firefox support */
+.tableWrapper{
+scrollbar-width: thin;
+scrollbar-color: rgba(0,0,0,0.25) transparent;
+}
 
 </style>
 
@@ -262,6 +294,7 @@ padding:20px;
 
 <a href="admin_dashboard.html">Dashboard</a>
 <a href="admin_gallery.html">Manage Gallery</a>
+<a href="admin_walkins.html">Manage Walk-ins</a>
 <a class="active">Manage Bookings</a>
 <a href="admin_promo.html">Manage Promo</a>
 <a href="admin_services.html">Manage Services</a>
@@ -301,6 +334,8 @@ outline:none;
 
 <div class="tableCard">
 
+<div class="tableWrapper">
+
 <table>
 
 <thead>
@@ -330,51 +365,81 @@ No bookings yet.
 
 </div>
 
-<!-- QR MODAL -->
-
-<div id="qrModal" class="qrModal">
-<img id="qrPreview">
-</div>
-
 <script src="session.js"></script>
 
 <script>
 
-/* LOAD BOOKINGS */
+/* ===============================
+CONFIG
+================================ */
+const API_URL = "http://localhost:5000";
 
-let bookings = JSON.parse(localStorage.getItem("salonBookings")) || [];
-
+/* ===============================
+ELEMENTS
+================================ */
 const table = document.getElementById("bookingTable");
 const empty = document.getElementById("emptyMessage");
 const searchInput = document.getElementById("searchInput");
 
-/* RENDER BOOKINGS WITH SEARCH */
+let bookings = [];
 
+/* ===============================
+FORMAT DATE
+================================ */
+function formatDate(dateString){
+  if(!dateString) return "-";
+
+  const d = new Date(dateString);
+
+  return d.toLocaleDateString("en-PH", {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  });
+}
+
+/* ===============================
+LOAD BOOKINGS
+================================ */
+async function loadBookings(){
+  try{
+    const res = await fetch(`${API_URL}/bookings`);
+    const data = await res.json();
+
+    bookings = data;
+
+    renderBookings();
+
+  }catch(err){
+    console.error("❌ Failed to load bookings:", err);
+  }
+}
+
+/* ===============================
+RENDER BOOKINGS
+================================ */
 function renderBookings(){
 
 table.innerHTML = "";
 
-/* GET SEARCH VALUE */
+/* SEARCH */
 const searchValue = (searchInput.value || "").toLowerCase();
 
-/* FILTER BOOKINGS */
+/* FILTER */
 const filtered = bookings.filter(booking => {
 
-const name =
-(booking.customer ||
- booking.name ||
- booking.user ||
- booking.email ||
- "Customer").toLowerCase();
+  const name =
+    (booking.customer ||
+     booking.email ||
+     "Customer").toLowerCase();
 
-const date = (booking.date || "").toLowerCase();
+  const formattedDate = formatDate(booking.date || booking.created_at).toLowerCase();
 
-return name.includes(searchValue) || date.includes(searchValue);
+  return name.includes(searchValue) || formattedDate.includes(searchValue);
 
 });
 
-/* EMPTY CHECK */
-
+/* EMPTY */
 if(filtered.length === 0){
 empty.style.display = "block";
 return;
@@ -382,72 +447,89 @@ return;
 
 empty.style.display = "none";
 
-/* DISPLAY FILTERED BOOKINGS */
-
+/* DISPLAY */
 filtered.forEach((booking)=>{
 
-let servicesHTML = "";
+/* SERVICE */
+let serviceName = "Booking";
+if(booking.services){
+  try{
+    const parsed =
+      typeof booking.services === "string"
+        ? JSON.parse(booking.services)
+        : booking.services;
 
-if(Array.isArray(booking.services)){
-
-booking.services.forEach(s=>{
-servicesHTML += `<div class="serviceList">• ${s.name || s.service || "-"} ${s.duration ? "(" + s.duration + ")" : ""}</div>`;
-});
-
-}else{
-servicesHTML = booking.service || "-";
+    if(Array.isArray(parsed)){
+      serviceName = parsed.map(s => s.name || s.service || "-").join(", ");
+    }
+  }catch{}
 }
 
-/* STATUS STYLE */
+/* DATE + TIME */
+const date = formatDate(booking.date || booking.created_at);
+const time = booking.time || "-";
 
+/* STATUS CLASS */
 let statusClass = "pending";
 if(booking.status === "Approved") statusClass = "approved";
 if(booking.status === "Cancelled") statusClass = "cancelled";
+if(booking.status === "Done") statusClass = "done";
 
-/* CUSTOMER NAME */
+/* NAME */
+const customerName = booking.customer || booking.email || "Customer";
 
-const customerName =
-booking.customer ||
-booking.name ||
-booking.user ||
-booking.email ||
-"Customer";
+/* QR */
+const qrImage = booking.receipt || "";
 
-/* QR IMAGE */
+/* ACTION LOGIC 🔥 */
+let actionHTML = "";
 
-const qrImage =
-booking.qr ||
-booking.receipt ||
-"";
+/* ❌ CANCELLED = NO ACTION */
+if(booking.status === "Cancelled"){
+  actionHTML = `<span style="color:#c53030;font-size:12px;font-weight:600;">Cancelled</span>`;
+}
 
-/* GET REAL INDEX (IMPORTANT FIX) */
+/* ⏳ PENDING = APPROVE / CANCEL */
+else if(booking.status === "Pending" || !booking.status){
+  actionHTML = `
+    <button class="actionBtn approve" onclick="approveBooking(${booking.id})">Approve</button>
+    <button class="actionBtn cancel" onclick="cancelBooking(${booking.id})">Cancel</button>
+  `;
+}
 
-const realIndex = bookings.indexOf(booking);
+/* ✅ APPROVED = DONE / CANCEL */
+else if(booking.status === "Approved"){
+  actionHTML = `
+    <button class="actionBtn approve" onclick="markDone(${booking.id})">Done</button>
+    <button class="actionBtn cancel" onclick="cancelBooking(${booking.id})">Cancel</button>
+  `;
+}
+
+/* ✅ DONE = NO ACTION */
+else if(booking.status === "Done"){
+  actionHTML = `<span style="color:gray;font-size:12px;font-weight:600;">Completed</span>`;
+}
 
 /* CREATE ROW */
-
 const row = document.createElement("tr");
 
 row.innerHTML = `
-<td>#B${String(realIndex+1).padStart(3,'0')}</td>
+<td>#B${String(booking.id).padStart(3,'0')}</td>
 <td>${customerName}</td>
-<td>${servicesHTML}</td>
+<td>${serviceName}</td>
 <td>${booking.staff || "No preference"}</td>
-<td>${booking.date || "-"}</td>
-<td>${booking.time || "-"}</td>
+<td>${date}</td>
+<td>${time}</td>
 <td>${booking.notes || "-"}</td>
 <td>
-${qrImage ? `<img src="${qrImage}" class="qr" onclick="openQR('${qrImage}')">` : "-"}
+${qrImage ? `<a href="${qrImage}" target="_blank" style="color:#256a52;font-weight:600;text-decoration:none;">View QR</a>` : "-"}
 </td>
 <td>
 <span class="status ${statusClass}">
 ${booking.status || "Pending"}
 </span>
 </td>
-<td>
-<button class="actionBtn approve" onclick="approveBooking(${realIndex})">Approve</button>
-<button class="actionBtn cancel" onclick="cancelBooking(${realIndex})">Cancel</button>
-</td>
+<td>${actionHTML}</td>
 `;
 
 table.appendChild(row);
@@ -456,42 +538,81 @@ table.appendChild(row);
 
 }
 
-/* SEARCH LISTENER */
-
+/* ===============================
+SEARCH
+================================ */
 searchInput.addEventListener("input", renderBookings);
 
-/* APPROVE */
+/* ===============================
+APPROVE
+================================ */
+async function approveBooking(id){
 
-function approveBooking(index){
-bookings[index].status = "Approved";
-localStorage.setItem("salonBookings", JSON.stringify(bookings));
-renderBookings();
+  const booking = bookings.find(b => b.id === id);
+
+  /* 🚫 PREVENT APPROVE IF CANCELLED */
+  if(booking?.status === "Cancelled"){
+    alert("This booking was cancelled by the customer.");
+    return;
+  }
+
+  try{
+    await fetch(`${API_URL}/bookings/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "Approved" })
+    });
+
+    loadBookings();
+
+  }catch(err){
+    console.error("❌ Approve error:", err);
+  }
 }
 
-/* CANCEL */
+/* ===============================
+CANCEL
+================================ */
+async function cancelBooking(id){
+  try{
+    await fetch(`${API_URL}/bookings/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "Cancelled" })
+    });
 
-function cancelBooking(index){
-bookings[index].status = "Cancelled";
-localStorage.setItem("salonBookings", JSON.stringify(bookings));
-renderBookings();
+    loadBookings();
+
+  }catch(err){
+    console.error("❌ Cancel error:", err);
+  }
 }
 
-/* QR MODAL */
+/* ===============================
+DONE ✅
+================================ */
+async function markDone(id){
 
-function openQR(src){
-const modal = document.getElementById("qrModal");
-const preview = document.getElementById("qrPreview");
-preview.src = src;
-modal.style.display = "flex";
+  if(!confirm("Mark this booking as DONE?")) return;
+
+  try{
+    await fetch(`${API_URL}/bookings/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "Done" })
+    });
+
+    loadBookings();
+
+  }catch(err){
+    console.error("❌ Done error:", err);
+  }
 }
 
-document.getElementById("qrModal").addEventListener("click", function(){
-this.style.display = "none";
-});
-
-/* INIT */
-
-renderBookings();
+/* ===============================
+INIT
+================================ */
+loadBookings();
 
 </script>
 

@@ -253,6 +253,7 @@ padding:20px;
 
 <a href="admin_dashboard.html">Dashboard</a>
 <a href="admin_gallery.html">Manage Gallery</a>
+<a href="admin_walkins.html">Manage Walk-ins</a>
 <a href="admin_bookings.html">Manage Bookings</a>
 <a href="admin_promo.html">Manage Promo</a>
 <a href="admin_services.html">Manage Services</a>
@@ -330,7 +331,12 @@ padding:20px;
 <script src="session.js"></script>
 
 <script>
-    const session =
+const API_URL = "http://localhost:5000/specialists";
+
+/* ===============================
+   AUTH CHECK
+================================ */
+const session =
 JSON.parse(localStorage.getItem("salonSession")) ||
 JSON.parse(sessionStorage.getItem("salonSession"));
 
@@ -338,144 +344,139 @@ if(!session || session.role !== "admin"){
   window.location.href="../log_in.html";
 }
 
-let specialists = JSON.parse(localStorage.getItem("specialists")) || []
+/* ===============================
+   GLOBAL DATA
+================================ */
+let specialists = [];
+let editId = null;
 
-let editIndex = null
+/* ===============================
+   LOAD FROM DATABASE
+================================ */
+async function loadSpecialists(){
+  try{
+    const res = await fetch(API_URL);
+    specialists = await res.json();
+    render();
+  }catch(err){
+    console.error("Error loading specialists:", err);
+  }
+}
 
-
+/* ===============================
+   RENDER TABLE
+================================ */
 function render(){
+  let body = document.getElementById("tableBody");
+  body.innerHTML = "";
 
-let body = document.getElementById("tableBody")
-
-body.innerHTML=""
-
-specialists.forEach((s,i)=>{
-
-body.innerHTML+=`
-
-<tr>
-
-<td><img src="${s.img}"></td>
-
-<td>${s.name}</td>
-
-<td>${s.role}</td>
-
-<td>${s.specialty}</td>
-
-<td>
-
-<button class="actionBtn edit" onclick="edit(${i})">Edit</button>
-<button class="actionBtn delete" onclick="remove(${i})">Delete</button>
-
-</td>
-
-</tr>
-
-`
-
-})
-
+  specialists.forEach((s)=>{
+    body.innerHTML += `
+      <tr>
+        <td><img src="${s.image_url}" /></td>
+        <td>${s.name}</td>
+        <td>${s.role}</td>
+        <td>${s.specialty}</td>
+        <td>
+          <button class="actionBtn edit" onclick="edit(${s.id})">Edit</button>
+          <button class="actionBtn delete" onclick="removeData(${s.id})">Delete</button>
+        </td>
+      </tr>
+    `;
+  });
 }
 
-
+/* ===============================
+   OPEN MODAL
+================================ */
 function openAdd(){
+  editId = null;
 
-editIndex=null
+  document.getElementById("name").value = "";
+  document.getElementById("role").value = "";
+  document.getElementById("bio").value = "";
 
-document.getElementById("modal").style.display="flex"
-
+  document.getElementById("modal").style.display="flex";
 }
 
+/* ===============================
+   SAVE (ADD / UPDATE)
+================================ */
+async function saveSpecialist(){
+  try{
+    const formData = new FormData();
 
-function saveSpecialist(){
+    formData.append("name", document.getElementById("name").value);
+    formData.append("role", document.getElementById("role").value);
+    formData.append("specialty", document.getElementById("specialty").value);
+    formData.append("bio", document.getElementById("bio").value);
 
-let photo=document.getElementById("photo").files[0]
+    const photo = document.getElementById("photo").files[0];
+    if(photo){
+      formData.append("image", photo);
+    }
 
-if(photo){
+    // ADD
+    if(!editId){
+      await fetch(API_URL, {
+        method: "POST",
+        body: formData
+      });
+    }
 
-let reader=new FileReader()
+    // UPDATE (optional if you add backend PUT)
+    else{
+      await fetch(`${API_URL}/${editId}`, {
+        method: "PUT",
+        body: formData
+      });
+    }
 
-reader.onload=function(){
+    document.getElementById("modal").style.display="none";
+    loadSpecialists();
 
-saveData(reader.result)
-
+  }catch(err){
+    console.error("Save error:", err);
+  }
 }
 
-reader.readAsDataURL(photo)
+/* ===============================
+   EDIT
+================================ */
+function edit(id){
+  editId = id;
 
-}else{
+  const s = specialists.find(x => x.id === id);
 
-saveData(null)
+  document.getElementById("name").value = s.name;
+  document.getElementById("role").value = s.role;
+  document.getElementById("specialty").value = s.specialty;
+  document.getElementById("bio").value = s.bio;
 
+  document.getElementById("modal").style.display="flex";
 }
 
+/* ===============================
+   DELETE
+================================ */
+async function removeData(id){
+  if(confirm("Delete specialist?")){
+    try{
+      await fetch(`${API_URL}/${id}`, {
+        method: "DELETE"
+      });
+
+      loadSpecialists();
+    }catch(err){
+      console.error("Delete error:", err);
+    }
+  }
 }
 
-
-function saveData(img){
-
-let data={
-
-name:document.getElementById("name").value,
-role:document.getElementById("role").value,
-specialty:document.getElementById("specialty").value,
-bio:document.getElementById("bio").value,
-img: img || (editIndex !== null ? specialists[editIndex].img : "")
-
-}
-
-if(editIndex!==null){
-
-specialists[editIndex]=data
-
-}else{
-
-specialists.push(data)
-
-}
-
-localStorage.setItem("specialists",JSON.stringify(specialists))
-
-document.getElementById("modal").style.display="none"
-
-render()
-
-}
-
-
-function edit(i){
-
-editIndex=i
-
-let s=specialists[i]
-
-document.getElementById("name").value=s.name
-document.getElementById("role").value=s.role
-document.getElementById("specialty").value=s.specialty
-document.getElementById("bio").value=s.bio
-
-document.getElementById("modal").style.display="flex"
-
-}
-
-
-function remove(i){
-
-if(confirm("Delete specialist?")){
-
-specialists.splice(i,1)
-
-localStorage.setItem("specialists",JSON.stringify(specialists))
-
-render()
-
-}
-
-}
-
-render()
-
+/* ===============================
+   INIT
+================================ */
+loadSpecialists();
 </script>
 
 </body>

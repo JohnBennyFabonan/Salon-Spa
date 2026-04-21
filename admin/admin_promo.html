@@ -220,6 +220,24 @@ width:100%;
   border:1px solid #ccc;
   border-radius:8px;
 }
+
+.closeBtn{
+  position:absolute;
+  top:10px;
+  right:10px;
+  border:none;
+  background:rgba(0,0,0,.05);
+  width:32px;
+  height:32px;
+  border-radius:8px;
+  font-size:16px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.closeBtn:hover{
+  background:rgba(0,0,0,.12);
+}
 </style>
 </head>
 
@@ -232,6 +250,7 @@ width:100%;
 <div class="nav">
 <a href="admin_dashboard.html">Dashboard</a>
 <a href="admin_gallery.html">Manage Gallery</a>
+<a href="admin_walkins.html">Manage Walk-ins</a>
 <a href="admin_bookings.html">Manage Bookings</a>
 <a class="active">Manage Promo</a>
 <a href="admin_services.html">Manage Services</a>
@@ -282,6 +301,9 @@ width:100%;
 <!-- MODAL -->
 <div class="modal" id="promoModal">
 
+  <!-- ❌ CLOSE BUTTON -->
+  <button class="closeBtn" onclick="closeModal()">✕</button>
+
 <h3>Add Promo / Package</h3>
 
 <input type="text" id="promoName" placeholder="Promo Title">
@@ -324,6 +346,16 @@ width:100%;
 <script src="session.js"></script>
 
 <script>
+
+/* ===============================
+CONFIG
+================================ */
+const API_URL = "http://localhost:5000/api";
+
+
+/* ===============================
+AUTH CHECK
+================================ */
 const session =
 JSON.parse(localStorage.getItem("salonSession")) ||
 JSON.parse(sessionStorage.getItem("salonSession"));
@@ -332,30 +364,54 @@ if(!session || session.role !== "admin"){
   window.location.href="../log_in.html";
 }
 
-let promos = JSON.parse(localStorage.getItem("promos")) || [];
-let editIndex = null;
+
+/* ===============================
+STATE
+================================ */
+let promos = [];
+let editId = null;
 
 const promoImageInput = document.getElementById("promoImage");
 const preview = document.getElementById("imagePreview");
 const previewImg = document.getElementById("previewImg");
 
+
 /* ===============================
-RENDER PROMOS
+LOAD PROMOS FROM DB
+================================ */
+async function loadPromos(){
+  try{
+    const res = await fetch(`${API_URL}/promos`);
+    const data = await res.json();
+
+    promos = data;
+    renderPromos();
+
+  }catch(err){
+    console.error("Error loading promos:", err);
+  }
+}
+
+
+/* ===============================
+RENDER TABLE
 ================================ */
 function renderPromos(){
   const table = document.getElementById("promoTable");
   table.innerHTML = "";
 
-  promos.forEach((promo,index)=>{
+  promos.forEach((promo)=>{
     table.innerHTML += `
     <tr>
       <td>${promo.title}</td>
       <td>${promo.type}</td>
-      <td>${promo.highlight}</td>
+      <td>${promo.deal_price}</td>
+      <td>${promo.old_price}</td>
+      <td>${promo.status}</td>
       <td>${promo.validity}</td>
       <td>
-        <button class="actionBtn edit" onclick="editPromo(${index})">Edit</button>
-        <button class="actionBtn delete" onclick="deletePromo(${index})">Delete</button>
+        <button class="actionBtn edit" onclick="editPromo('${promo.id}')">Edit</button>
+        <button class="actionBtn delete" onclick="deletePromo('${promo.id}')">Delete</button>
       </td>
     </tr>
     `;
@@ -368,8 +424,7 @@ OPEN MODAL
 function openModal(){
   document.getElementById("promoModal").style.display="block";
 
-  // reset form when adding new
-  if(editIndex === null){
+  if(editId === null){
     document.getElementById("promoName").value="";
     document.getElementById("promoHighlight").value="";
     document.getElementById("promoPrice").value="";
@@ -382,74 +437,60 @@ function openModal(){
   }
 }
 
-/* ===============================
-SAVE PROMO
-================================ */
-function savePromo(){
+function closeModal(){
+  document.getElementById("promoModal").style.display = "none";
+  editId = null;
+}
 
-const title = document.getElementById("promoName").value;
-const type = document.getElementById("promoType").value;
-const highlight = document.getElementById("promoHighlight").value;
-const dealPrice = document.getElementById("promoPrice").value;
-const oldPrice = document.getElementById("promoOldPrice").value;
-const validity = document.getElementById("promoDate").value;
-const status = document.getElementById("promoStatus").value;
-const desc = document.getElementById("promoDesc").value;
-const rules = document.getElementById("promoRules").value.split(",");
+/* ===============================
+SAVE PROMO (CREATE + UPDATE)
+================================ */
+async function savePromo(){
+
+const formData = new FormData();
+
+const id = editId || ("PR" + Date.now());
+
+formData.append("id", id);
+formData.append("title", document.getElementById("promoName").value);
+formData.append("type", document.getElementById("promoType").value);
+formData.append("highlight", document.getElementById("promoHighlight").value);
+formData.append("dealPrice", document.getElementById("promoPrice").value);
+formData.append("oldPrice", document.getElementById("promoOldPrice").value);
+formData.append("validity", document.getElementById("promoDate").value);
+formData.append("status", document.getElementById("promoStatus").value);
+formData.append("desc", document.getElementById("promoDesc").value);
+formData.append("rules", document.getElementById("promoRules").value);
 
 const file = promoImageInput.files[0];
-
-// ✅ ID FIX
-let id;
-if(editIndex === null){
-  id = "PR"+Math.floor(Math.random()*10000);
-}else{
-  id = promos[editIndex].id;
-}
-
-// ✅ SAVE FUNCTION
-function saveData(imageBase64){
-
-const data = {
-  id,
-  title,
-  type,
-  highlight,
-  dealPrice,
-  oldPrice,
-  validity,
-  status,
-  desc,
-  rules,
-  image: imageBase64
-};
-
-// ✅ ADD OR UPDATE
-if(editIndex === null){
-  promos.push(data);
-}else{
-  promos[editIndex] = data;
-  editIndex = null;
-}
-
-localStorage.setItem("promos", JSON.stringify(promos));
-location.reload();
-}
-
-// ✅ IMAGE HANDLING (FINAL FIX)
 if(file){
-  const reader = new FileReader();
-  reader.onload = function(e){
-    saveData(e.target.result);
-  };
-  reader.readAsDataURL(file);
+  formData.append("image", file);
+}
+
+try{
+
+if(editId){
+  // UPDATE
+  await fetch(`${API_URL}/promos/${editId}`, {
+    method: "PUT",
+    body: formData
+  });
 }else{
-  // ✅ KEEP OLD IMAGE WHEN EDITING
-  if(editIndex !== null){
-    saveData(promos[editIndex].image);
-  }else{
-    saveData(null);
-  }
+  // CREATE
+  await fetch(`${API_URL}/promos`, {
+    method: "POST",
+    body: formData
+  });
+}
+
+alert("Promo saved!");
+editId = null;
+document.getElementById("promoModal").style.display="none";
+loadPromos();
+
+}catch(err){
+  console.error(err);
+  alert("Failed to save promo");
 }
 
 }
@@ -457,29 +498,29 @@ if(file){
 /* ===============================
 EDIT PROMO
 ================================ */
-function editPromo(index){
+function editPromo(id){
 
-const p = promos[index];
+const p = promos.find(x=>x.id === id);
 
 document.getElementById("promoName").value = p.title;
 document.getElementById("promoType").value = p.type;
 document.getElementById("promoHighlight").value = p.highlight;
-document.getElementById("promoPrice").value = p.dealPrice;
-document.getElementById("promoOldPrice").value = p.oldPrice;
+document.getElementById("promoPrice").value = p.deal_price;
+document.getElementById("promoOldPrice").value = p.old_price;
 document.getElementById("promoDate").value = p.validity;
 document.getElementById("promoStatus").value = p.status;
-document.getElementById("promoDesc").value = p.desc;
-document.getElementById("promoRules").value = p.rules.join(",");
+document.getElementById("promoDesc").value = p.description;
+document.getElementById("promoRules").value = (p.rules || []).join(",");
 
-// ✅ SHOW EXISTING IMAGE
-if(p.image){
-  preview.style.display = "block";
-  previewImg.src = p.image;
+// show image
+if(p.image_url){
+  preview.style.display="block";
+  previewImg.src = p.image_url;
 }else{
-  preview.style.display = "none";
+  preview.style.display="none";
 }
 
-editIndex = index;
+editId = id;
 openModal();
 
 }
@@ -487,11 +528,25 @@ openModal();
 /* ===============================
 DELETE PROMO
 ================================ */
-function deletePromo(index){
-promos.splice(index,1);
-localStorage.setItem("promos",JSON.stringify(promos));
-renderPromos();
+async function deletePromo(id){
+
+if(!confirm("Delete this promo?")) return;
+
+try{
+
+await fetch(`${API_URL}/promos/${id}`, {
+  method: "DELETE"
+});
+
+loadPromos();
+
+}catch(err){
+console.error(err);
+alert("Failed to delete");
 }
+
+}
+
 
 /* ===============================
 IMAGE PREVIEW
@@ -513,8 +568,11 @@ reader.readAsDataURL(file);
 
 });
 
-/* INIT */
-renderPromos();
+
+/* ===============================
+INIT
+================================ */
+loadPromos();
 
 </script>
 

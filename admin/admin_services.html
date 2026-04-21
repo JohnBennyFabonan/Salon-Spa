@@ -18,7 +18,7 @@
 --card:#ffffff;
 --text:#0f172a;
 --muted:#64748b;
---line:rgba(15,23,42,.08);
+--line:rgba(15,23,42,.08);  
 --shadow:0 14px 40px rgba(2,6,23,.08);
 --radius:16px;
 --greenSoft:rgba(47,125,98,.12);
@@ -213,57 +213,142 @@ padding:20px;
 
 /* MODAL OVERLAY */
 
+/* ===============================
+MODAL OVERLAY (BACKGROUND)
+================================ */
 .modal{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-background:white;
-padding:25px;
-border-radius:16px;
-box-shadow:0 20px 50px rgba(0,0,0,.25);
-width:340px;
-display:none;
-z-index:1000;
-border:1px solid var(--line);
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+
+  display: none; /* stays hidden until opened */
+  justify-content: center;
+  align-items: center;
+
+  z-index: 1000;
 }
 
-.modal h3{
-margin-top:0;
-margin-bottom:15px;
-font-size:18px;
+.modalContent{
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.25);
+  width: 340px;
+  border: 1px solid var(--line);
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  position: relative;
+  animation: fadeIn .25s ease;
+
+  /* ✅ THIS IS THE FIX */
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
-.modal input,
-.modal select,
-.modal textarea{
-width:100%;
-padding:10px;
-margin-bottom:10px;
-border-radius:8px;
-border:1px solid #ddd;
-font-family:Poppins;
-font-size:13px;
+/* ===============================
+ANIMATION
+================================ */
+@keyframes fadeIn{
+  from{
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to{
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.modal textarea{
-resize:none;
-height:70px;
+/* ===============================
+TITLE
+================================ */
+.modalContent h3{
+  margin: 0 0 10px 0;
+  font-size: 18px;
 }
 
+/* ===============================
+INPUTS
+================================ */
+.modalContent input,
+.modalContent select,
+.modalContent textarea{
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-family: Poppins;
+  font-size: 13px;
+}
+
+.modalContent textarea{
+  resize: none;
+  height: 70px;
+}
+
+/* ===============================
+SAVE BUTTON
+================================ */
 .saveBtn{
-background:var(--green);
-color:white;
-border:none;
-padding:10px;
-border-radius:10px;
-width:100%;
-font-weight:600;
-cursor:pointer;
+  background: var(--green);
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  width: 100%;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
 .saveBtn:hover{
-background:var(--green2);
+  background: var(--green2);
+}
+
+/* ===============================
+CLOSE BUTTON ✕
+================================ */
+.modalCloseBtn{
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  border: none;
+  background: #eee;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.modalCloseBtn:hover{
+  background: #ddd;
+}
+
+/* ===============================
+TABLE SCROLL FIX
+================================ */
+.tableWrapper{
+  max-height: 400px;   /* adjust height */
+  overflow-y: auto;
+  border-radius: 12px;
+}
+
+/* Optional: smooth scrollbar */
+.tableWrapper::-webkit-scrollbar{
+  width: 8px;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb{
+  background: rgba(0,0,0,0.2);
+  border-radius: 10px;
+}
+
+.tableWrapper::-webkit-scrollbar-track{
+  background: transparent;
 }
 </style>
 
@@ -274,85 +359,105 @@ background:var(--green2);
 <!-- SIDEBAR -->
 <div class="sidebar">
 
-<div class="logo">🌿 BASIT Admin</div>
+  <div class="logo">🌿 BASIT Admin</div>
 
-<div class="nav">
-<a href="admin_dashboard.html">Dashboard</a>
-<a href="admin_gallery.html">Manage Gallery</a>
-<a href="admin_bookings.html">Manage Bookings</a>
-<a href="admin_promo.html">Manage Promo</a>
-<a class="active">Manage Services</a>
-<a href="admin_specialist.html">Manage Specialist</a>
-<a href="admin_manageaccount.html">Manage Account</a>
-<a href="admin_account.html">Account Settings</a>
-<a href="logout.html">Log Out</a>
-</div>
+  <div class="nav">
+    <a href="admin_dashboard.html">Dashboard</a>
+    <a href="admin_gallery.html">Manage Gallery</a>
+    <a href="admin_walkins.html">Manage Walk-ins</a>
+    <a href="admin_bookings.html">Manage Bookings</a>
+    <a href="admin_promo.html">Manage Promo</a>
+    <a class="active">Manage Services</a>
+    <a href="admin_specialist.html">Manage Specialist</a>
+    <a href="admin_manageaccount.html">Manage Account</a>
+    <a href="admin_account.html">Account Settings</a>
+    <a href="logout.html">Log Out</a>
+  </div>
 
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
-<div class="header">
-<h1>Manage Services</h1>
+  <div class="header">
+    <h1>Manage Services</h1>
+  </div>
+
+  <div class="tableCard">
+
+    <div class="tableHeader">
+      <h3>Services</h3>
+      <button class="addBtn" onclick="openModal()">+ Add Service</button>
+    </div>
+
+   <div class="tableWrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>Service</th>
+        <th>Price</th>
+        <th>Duration</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+
+    <tbody id="serviceTable"></tbody>
+  </table>
 </div>
 
-<div class="tableCard">
-
-<div class="tableHeader">
-<h3>Services</h3>
-<button class="addBtn" onclick="openModal()">+ Add Service</button>
-</div>
-
-<table>
-
-<thead>
-<tr>
-<th>Service</th>
-<th>Price</th>
-<th>Duration</th>
-<th>Action</th>
-</tr>
-</thead>
-
-<tbody id="serviceTable"></tbody>
-
-</table>
+  </div>
 
 </div>
 
-</div>
-
-
-<!-- SERVICE MODAL -->
+<!-- ===============================
+SERVICE MODAL (CENTERED)
+================================ -->
 <div class="modal" id="serviceModal">
 
-<h3>Add / Edit Service</h3>
+  <div class="modalContent">
 
-<input type="text" id="serviceName" placeholder="Service Name">
+    <!-- CLOSE BUTTON -->
+    <button onclick="closeModal()" class="modalCloseBtn">✕</button>
 
-<input type="number" id="servicePrice" placeholder="Price">
+    <h3 id="modalTitle">Add Service</h3>
 
-<input type="number" id="serviceDuration" placeholder="Duration (minutes)">
+    <input type="text" id="serviceName" placeholder="Service Name">
 
-<select id="serviceCategory">
-<option value="Hair">Hair</option>
-<option value="Nails">Nails</option>
-<option value="Spa">Spa</option>
-<option value="Packages">Packages</option>
-</select>
+    <input type="number" id="servicePrice" placeholder="Price">
 
-<textarea id="serviceDesc" placeholder="Description"></textarea>
+    <input type="number" id="serviceDuration" placeholder="Duration (minutes)">
 
-<input type="file" id="serviceImage">
+    <select id="serviceCategory"></select>
 
-<button class="saveBtn" onclick="saveService()">Save Service</button>
+<input 
+  type="text" 
+  id="newCategory" 
+  placeholder="Add new category"
+>
+
+<button onclick="addCategory()" class="addBtn">+ Add Category</button>
+
+    <textarea id="serviceDesc" placeholder="Description"></textarea>
+
+    <!-- IMAGE PREVIEW -->
+    <img id="previewImage" style="display:none;width:100%;border-radius:8px;margin-bottom:8px;">
+
+    <input type="file" id="serviceImage" onchange="previewImage(event)">
+
+    <button class="saveBtn" onclick="saveService()">Save Service</button>
+
+  </div>
 
 </div>
+
 <script src="session.js"></script>
 
 <script>
-    const session =
+
+/* ===============================
+ADMIN SESSION CHECK
+================================ */
+const session =
 JSON.parse(localStorage.getItem("salonSession")) ||
 JSON.parse(sessionStorage.getItem("salonSession"));
 
@@ -360,129 +465,303 @@ if(!session || session.role !== "admin"){
   window.location.href="../log_in.html";
 }
 
-let services = JSON.parse(localStorage.getItem("services")) || []
+/* ===============================
+STATE
+================================ */
+let services = [];
+let editId = null;
 
-let editIndex = null
+/* ===============================
+CATEGORY SYSTEM (DATABASE BASED)
+================================ */
+let categories = [];
 
+/* LOAD CATEGORIES FROM SERVICES */
+async function loadCategories(){
+  try{
+    const res = await fetch("http://localhost:5000/services");
+    const data = await res.json();
+
+    // ✅ extract unique categories
+    const unique = [
+      ...new Set(
+        data
+          .map(s => (s.category || "").trim())
+          .filter(c => c !== "")
+      )
+    ];
+
+    categories = unique;
+
+    renderCategories(); // update dropdown
+
+  }catch(err){
+    console.error("❌ Category load error:", err);
+  }
+}
+
+/* ===============================
+LOAD SERVICES
+================================ */
+async function loadServices(){
+  try{
+    const res = await fetch("http://localhost:5000/services");
+    services = await res.json();
+    renderServices();
+  }catch(err){
+    console.error("❌ LOAD ERROR:", err);
+  }
+}
+
+/* ===============================
+RENDER TABLE
+================================ */
 function renderServices(){
+  const table = document.getElementById("serviceTable");
+  table.innerHTML="";
 
-const table = document.getElementById("serviceTable")
-table.innerHTML=""
-
-services.forEach((service,index)=>{
-
-table.innerHTML += `
-<tr>
-<td>${service.name}</td>
-<td>₱${service.amount}</td>
-<td>${service.duration} mins</td>
-<td>
-<button class="actionBtn edit" onclick="editService(${index})">Edit</button>
-<button class="actionBtn delete" onclick="deleteService(${index})">Delete</button>
-</td>
-</tr>
-`
-
-})
-
+  services.forEach((service)=>{
+    table.innerHTML += `
+    <tr>
+      <td>${service.name}</td>
+      <td>₱${service.price}</td>
+      <td>${service.duration} mins</td>
+      <td>
+        <button class="actionBtn edit" onclick="editService(${service.id})">Edit</button>
+        <button class="actionBtn delete" onclick="deleteService(${service.id})">Delete</button>
+      </td>
+    </tr>
+    `;
+  });
 }
 
+/* ===============================
+RENDER CATEGORIES
+================================ */
+function renderCategories(){
+  const select = document.getElementById("serviceCategory");
+  select.innerHTML = "";
+
+  categories.forEach(cat => {
+    const option = document.createElement("option");
+    option.value = cat;
+    option.textContent = cat;
+    select.appendChild(option);
+  });
+}
+
+/* ===============================
+ADD CATEGORY (AUTO SELECT)
+================================ */
+function addCategory(){
+  const input = document.getElementById("newCategory");
+  let value = input.value.trim();
+
+  if(!value) return;
+
+  // Capitalize first letter
+  value = value.charAt(0).toUpperCase() + value.slice(1);
+
+  if(!categories.includes(value)){
+    categories.push(value);
+    localStorage.setItem("categories", JSON.stringify(categories));
+    renderCategories();
+  }
+
+  // Auto select newly added
+  document.getElementById("serviceCategory").value = value;
+
+  input.value = "";
+}
+
+/* ===============================
+OPEN MODAL
+================================ */
 function openModal(){
+  document.getElementById("serviceModal").style.display = "flex";
 
-document.getElementById("serviceModal").style.display="block"
-
-if(editIndex===null){
-
-document.getElementById("serviceName").value=""
-document.getElementById("servicePrice").value=""
-document.getElementById("serviceDuration").value=""
-document.getElementById("serviceDesc").value=""
-
+  if(editId === null){
+    resetForm();
+    document.querySelector(".saveBtn").textContent = "Save Service";
+    document.getElementById("modalTitle").textContent = "Add Service";
+  }
 }
 
+/* ===============================
+RESET FORM (SAFE)
+================================ */
+function resetForm(){
+  renderCategories();
+
+  document.getElementById("serviceName").value = "";
+  document.getElementById("servicePrice").value = "";
+  document.getElementById("serviceDuration").value = "";
+  document.getElementById("serviceCategory").value = categories[0] || "";
+  document.getElementById("serviceDesc").value = "";
+  document.getElementById("serviceImage").value = "";
+
+  const preview = document.getElementById("previewImage");
+  if(preview){
+    preview.style.display = "none";
+    preview.src = "";
+  }
 }
 
-function saveService(){
+/* ===============================
+SAVE / UPDATE SERVICE
+================================ */
+async function saveService(){
 
-const name=document.getElementById("serviceName").value
-const price=document.getElementById("servicePrice").value
-const duration=document.getElementById("serviceDuration").value
-const category=document.getElementById("serviceCategory").value
-const desc=document.getElementById("serviceDesc").value
+  const name = document.getElementById("serviceName").value.trim();
+  const price = document.getElementById("servicePrice").value;
+  const duration = document.getElementById("serviceDuration").value;
+  const category = document.getElementById("serviceCategory").value;
+  const description = document.getElementById("serviceDesc").value;
+  const file = document.getElementById("serviceImage").files[0];
 
-const file=document.getElementById("serviceImage").files[0]
+  if(!name || !price || !duration){
+    alert("Please fill all required fields");
+    return;
+  }
 
-const reader=new FileReader()
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("description", description);
+  formData.append("price", price);
+  formData.append("duration", duration);
+  formData.append("category", category);
 
-reader.onload=function(){
+  if(file){
+    formData.append("image", file);
+  }
 
-const image=reader.result
+  try{
 
-const data={
-id:"S"+Math.floor(Math.random()*10000),
-name,
-desc,
-amount:price,
-duration,
-category,
-image
+    if(editId !== null){
+
+      await fetch(`http://localhost:5000/services/${editId}`, {
+        method: "PUT",
+        body: formData
+      });
+
+      alert("✅ Service updated!");
+
+    }else{
+
+      if(!file){
+        alert("Please upload image");
+        return;
+      }
+
+      await fetch("http://localhost:5000/services", {
+        method: "POST",
+        body: formData
+      });
+
+      alert("✅ Service added!");
+    }
+
+    closeModal();
+    loadServices();
+
+  }catch(err){
+    console.error("❌ SAVE ERROR:", err);
+  }
 }
 
-if(editIndex===null){
+/* ===============================
+DELETE SERVICE
+================================ */
+async function deleteService(id){
 
-services.push(data)
+  if(!confirm("Delete this service?")) return;
 
-}else{
+  try{
+    await fetch(`http://localhost:5000/services/${id}`, {
+      method: "DELETE"
+    });
 
-data.id=services[editIndex].id
-services[editIndex]=data
-editIndex=null
+    loadServices();
 
+  }catch(err){
+    console.error("❌ DELETE ERROR:", err);
+  }
 }
 
-localStorage.setItem("services",JSON.stringify(services))
+/* ===============================
+EDIT SERVICE (FIXED CATEGORY BUG)
+================================ */
+function editService(id){
 
-location.reload()
+  const s = services.find(x => x.id == id);
 
+  // Ensure category exists
+  if(!categories.includes(s.category)){
+    categories.push(s.category);
+    localStorage.setItem("categories", JSON.stringify(categories));
+  }
+
+  renderCategories();
+
+  document.getElementById("serviceName").value = s.name;
+  document.getElementById("servicePrice").value = s.price;
+  document.getElementById("serviceDuration").value = s.duration;
+  document.getElementById("serviceCategory").value = s.category;
+  document.getElementById("serviceDesc").value = s.description;
+
+  editId = id;
+
+  document.querySelector(".saveBtn").textContent = "Update Service";
+  document.getElementById("modalTitle").textContent = "Edit Service";
+
+  openModal();
 }
 
-if(file){
-reader.readAsDataURL(file)
-}else{
-alert("Please upload image")
+/* ===============================
+IMAGE PREVIEW (NEW)
+================================ */
+function previewImage(event){
+  const file = event.target.files[0];
+  const preview = document.getElementById("previewImage");
+
+  if(file){
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+  }
 }
 
+/* ===============================
+CLOSE MODAL
+================================ */
+function closeModal(){
+  document.getElementById("serviceModal").style.display = "none";
+  editId = null;
+  resetForm();
 }
 
-function editService(index){
+/* CLICK OUTSIDE CLOSE */
+window.addEventListener("click", function(e){
+  const modal = document.getElementById("serviceModal");
+  if(e.target === modal){
+    closeModal();
+  }
+});
 
-const s=services[index]
+/* ===============================
+INIT
+================================ */
+loadServices();
+loadCategories();
 
-document.getElementById("serviceName").value=s.name
-document.getElementById("servicePrice").value=s.amount
-document.getElementById("serviceDuration").value=s.duration
-document.getElementById("serviceCategory").value=s.category
-document.getElementById("serviceDesc").value=s.desc
-
-editIndex=index
-
-openModal()
-
+/* ENTER KEY = ADD CATEGORY */
+const input = document.getElementById("newCategory");
+if(input){
+  input.addEventListener("keypress", function(e){
+    if(e.key === "Enter"){
+      addCategory();
+    }
+  });
 }
-
-function deleteService(index){
-
-services.splice(index,1)
-
-localStorage.setItem("services",JSON.stringify(services))
-
-renderServices()
-
-}
-
-renderServices()
 
 </script>
-
-</body>
 </html>

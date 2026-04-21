@@ -1,886 +1,1607 @@
 <!doctype html>
 <html lang="en">
 <head>
-
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Promo Booking</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
-
-<style>
-
-:root{
---green:#2f7d62;
---green2:#256a52;
---bg:#f4fbf7;
---card:#ffffff;
---line:rgba(15,23,42,.10);
---shadow:0 14px 40px rgba(2,6,23,.08);
---radius:18px;
-}
-
-*{box-sizing:border-box;}
-
-body{
-margin:0;
-font-family:Poppins;
-background:var(--bg);
-overflow-x:hidden;
-}
-
-/* TOPBAR */
-
-.topbar{
-background:var(--green);
-color:white;
-display:flex;
-gap:12px;
-padding:8px 20px;
-font-size:12px;
-flex-wrap:wrap;
-}
-
-.pill{
-padding:6px 10px;
-background:rgba(255,255,255,0.15);
-border-radius:20px;
-white-space:nowrap;
-}
-
-/* NAVBAR */
-
-.navbar{
-background:linear-gradient(180deg,var(--green),var(--green2));
-padding:14px 20px;
-display:flex;
-align-items:center;
-gap:12px;
-flex-wrap:wrap;
-}
-
-.brand{
-display:flex;
-align-items:center;
-gap:10px;
-color:white;
-font-weight:800;
-}
-
-.logo{
-width:40px;
-height:40px;
-border-radius:12px;
-background:rgba(255,255,255,0.15);
-display:flex;
-align-items:center;
-justify-content:center;
-}
-
-.menu{
-margin-left:auto;
-display:flex;
-gap:14px;
-flex-wrap:wrap;
-}
-
-.menu a{
-color:white;
-text-decoration:none;
-font-size:13px;
-font-weight:600;
-padding:8px 10px;
-border-radius:20px;
-}
-
-.menu a:hover{
-background:rgba(255,255,255,0.15);
-}
-
-/* PAGE */
-
-.container{
-max-width:900px;
-margin:auto;
-padding:30px 20px;
-}
-
-.card{
-background:white;
-border-radius:var(--radius);
-border:1px solid var(--line);
-box-shadow:var(--shadow);
-padding:20px;
-margin-bottom:20px;
-}
-
-h2{
-margin-top:0;
-font-size:18px;
-}
-
-.row{
-display:flex;
-justify-content:space-between;
-padding:10px 0;
-border-bottom:1px solid rgba(0,0,0,0.05);
-}
-
-.row:last-child{
-border-bottom:none;
-}
-
-label{
-font-size:13px;
-font-weight:600;
-margin-top:12px;
-display:block;
-}
-
-input,select{
-width:100%;
-padding:12px;
-border-radius:12px;
-border:1px solid #ccc;
-margin-top:5px;
-font-family:Poppins;
-}
-
-.totalBox{
-margin-top:12px;
-padding:12px;
-border-radius:14px;
-background:rgba(47,125,98,.10);
-border:1px solid rgba(47,125,98,.25);
-display:flex;
-justify-content:space-between;
-font-weight:700;
-}
-
-button{
-background:var(--green);
-color:white;
-border:none;
-padding:14px;
-width:100%;
-border-radius:12px;
-cursor:pointer;
-font-weight:700;
-margin-top:15px;
-font-family:Poppins;
-}
-
-button:hover{
-background:var(--green2);
-}
-
-.preview{
-margin-top:10px;
-display:none;
-border-radius:12px;
-max-width:100%;
-}
-
-/* QR POPUP */
-
-.qrModal{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.6);
-display:none;
-align-items:center;
-justify-content:center;
-z-index:1000;
-padding:20px;
-}
-
-.qrCard{
-background:white;
-padding:25px;
-border-radius:16px;
-text-align:center;
-max-width:320px;
-width:100%;
-}
-
-.qrCard img{
-width:220px;
-margin:15px 0;
-max-width:100%;
-}
-
-.qrCard button{
-width:auto;
-padding:10px 16px;
-}
-
-/* ===============================
-TABLET
-================================ */
-
-@media (max-width:900px){
-
-.topbar{
-display:none;
-}
-
-.navbar{
-flex-wrap:wrap;
-}
-
-.menu{
-width:100%;
-justify-content:center;
-margin-top:10px;
-}
-
-.container{
-padding:22px 16px;
-}
-
-}
-
-/* ===============================
-MOBILE
-================================ */
-
-@media (max-width:600px){
-
-.container{
-padding:16px;
-}
-
-.navbar{
-flex-direction:column;
-align-items:flex-start;
-}
-
-.menu{
-width:100%;
-flex-direction:column;
-align-items:flex-start;
-gap:6px;
-margin-top:10px;
-}
-
-.menu a{
-width:100%;
-}
-
-.row{
-flex-direction:column;
-align-items:flex-start;
-gap:4px;
-}
-
-.card{
-padding:18px;
-}
-
-h2{
-font-size:16px;
-}
-
-input,select{
-font-size:14px;
-}
-
-button{
-font-size:14px;
-}
-
-.qrCard img{
-width:180px;
-}
-
-}
-
-/* ===============================
-SMALL PHONES
-================================ */
-
-@media (max-width:420px){
-
-.container{
-padding:14px;
-}
-
-.card{
-padding:16px;
-}
-
-button{
-padding:12px;
-}
-
-.row{
-font-size:14px;
-}
-
-}
-
-.menuBtn{
-display:none;
-margin-left:auto;
-border:1px solid rgba(255,255,255,.2);
-background:rgba(255,255,255,.1);
-color:white;
-width:42px;
-height:42px;
-border-radius:12px;
-font-size:20px;
-cursor:pointer;
-}
-
-.mobileMenuBack{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.6);
-display:none;
-z-index:999;
-}
-
-.mobileMenu{
-position:absolute;
-top:10px;
-right:10px;
-width:280px;
-background:white;
-border-radius:14px;
-overflow:hidden;
-}
-
-.mobileMenuHead{
-display:flex;
-justify-content:space-between;
-padding:14px;
-border-bottom:1px solid #eee;
-}
-
-.mobileLinks{
-display:flex;
-flex-direction:column;
-padding:12px;
-gap:8px;
-}
-
-.mobileLinks a{
-text-decoration:none;
-color:#111;
-font-weight:600;
-padding:10px;
-border-radius:8px;
-background:#f4f4f4;
-}
-
-.menuClose{
-border:none;
-background:#eee;
-width:36px;
-height:36px;
-border-radius:10px;
-cursor:pointer;
-}
-
-/* MOBILE */
-
-@media(max-width:720px){
-
-.menu{
-display:none;
-}
-
-.menuBtn{
-display:block;
-}
-
-}
-
-/* QR BUTTONS */
-.qrButtons{
-display:flex;
-gap:12px;
-margin-top:15px;
-}
-
-.qrButtons button{
-flex:1;
-padding:12px;
-font-size:13px;
-border-radius:10px;
-}
-
-@media(max-width:600px){
-.qrButtons{
-flex-direction:column;
-}
-}
-
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Promo Booking | Zai Trinette Wellness Spa</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --green:#2f7d62;
+      --green2:#256a52;
+      --bg:#f4fbf7;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(15,23,42,.10);
+      --shadow:0 14px 40px rgba(2,6,23,.08);
+      --radius:18px;
+      --soft:rgba(47,125,98,.10);
+      --soft-border:rgba(47,125,98,.20);
+      --danger:#b91c1c;
+      --danger-soft:rgba(239,68,68,.10);
+      --warning:#b45309;
+      --warning-soft:rgba(245,158,11,.12);
+    }
+
+    *{box-sizing:border-box;}
+
+    body{
+      margin:0;
+      font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      overflow-x:hidden;
+    }
+
+    .topbar{
+      background:var(--green);
+      color:white;
+      display:flex;
+      gap:12px;
+      padding:8px 20px;
+      font-size:12px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .pill{
+      padding:6px 10px;
+      background:rgba(255,255,255,.12);
+      border-radius:999px;
+      white-space:nowrap;
+      border:1px solid rgba(255,255,255,.14);
+    }
+
+    .navbar{
+      background:linear-gradient(180deg,var(--green),var(--green2));
+      padding:14px 20px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      position:relative;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      color:white;
+      font-weight:800;
+      letter-spacing:.3px;
+    }
+
+    .logo{
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      overflow:hidden;
+      background:rgba(255,255,255,.15);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-shrink:0;
+    }
+
+    .logo img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .menu{
+      margin-left:auto;
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .menu a{
+      color:white;
+      text-decoration:none;
+      font-size:13px;
+      font-weight:600;
+      padding:8px 10px;
+      border-radius:999px;
+    }
+
+    .menu a:hover,
+    .menu a.active{
+      background:rgba(255,255,255,.15);
+    }
+
+    .menuBtn{
+      display:none;
+      margin-left:auto;
+      border:1px solid rgba(255,255,255,.2);
+      background:rgba(255,255,255,.1);
+      color:white;
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      font-size:20px;
+      cursor:pointer;
+    }
+
+    .mobileMenuBack{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.6);
+      display:none;
+      z-index:999;
+      padding:10px;
+    }
+
+    .mobileMenu{
+      position:absolute;
+      top:10px;
+      right:10px;
+      width:min(300px,calc(100% - 20px));
+      background:white;
+      border-radius:16px;
+      overflow:hidden;
+      box-shadow:0 24px 60px rgba(0,0,0,.25);
+    }
+
+    .mobileMenuHead{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:14px;
+      border-bottom:1px solid #eee;
+    }
+
+    .mobileTitle{font-weight:800;}
+
+    .mobileLinks{
+      display:flex;
+      flex-direction:column;
+      padding:12px;
+      gap:8px;
+    }
+
+    .mobileLinks a{
+      text-decoration:none;
+      color:#111;
+      font-weight:600;
+      padding:10px 12px;
+      border-radius:10px;
+      background:#f4f4f4;
+    }
+
+    .mobileLinks a.active{
+      background:rgba(47,125,98,.12);
+      color:var(--green2);
+      border:1px solid rgba(47,125,98,.18);
+    }
+
+    .menuClose{
+      border:none;
+      background:#eee;
+      width:36px;
+      height:36px;
+      border-radius:10px;
+      cursor:pointer;
+    }
+
+    .container{
+      max-width:1180px;
+      margin:0 auto;
+      padding:24px 18px 64px;
+    }
+
+    .pageHead{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:16px;
+      margin-bottom:18px;
+    }
+
+    .headText h1{
+      margin:0;
+      font-size:clamp(24px,3vw,34px);
+    }
+
+    .headText p{
+      margin:8px 0 0;
+      font-size:13px;
+      color:var(--muted);
+      max-width:760px;
+      line-height:1.7;
+    }
+
+    .backLink{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      text-decoration:none;
+      color:var(--green2);
+      font-weight:700;
+      background:rgba(47,125,98,.10);
+      border:1px solid rgba(47,125,98,.16);
+      padding:10px 14px;
+      border-radius:999px;
+      white-space:nowrap;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:18px;
+      align-items:start;
+    }
+
+    .stack{
+      display:grid;
+      gap:18px;
+    }
+
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .cardHead{
+      padding:16px 18px;
+      border-bottom:1px solid rgba(15,23,42,.08);
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      background:linear-gradient(180deg,rgba(47,125,98,.08),rgba(47,125,98,.02));
+    }
+
+    .cardHead h2{
+      margin:0;
+      font-size:17px;
+    }
+
+    .cardHead p{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.6;
+    }
+
+    .cardBody{
+      padding:18px;
+    }
+
+    .promoHero{
+      display:grid;
+      grid-template-columns:180px 1fr;
+      gap:16px;
+      align-items:start;
+    }
+
+    .promoImageWrap{
+      width:100%;
+      aspect-ratio:1 / 1;
+      border-radius:18px;
+      overflow:hidden;
+      background:#eef6f1;
+      border:1px solid rgba(15,23,42,.08);
+    }
+
+    .promoImageWrap img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .promoTitleRow{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .promoTitle{
+      margin:0;
+      font-size:24px;
+      line-height:1.2;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:7px 11px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(15,23,42,.03);
+      font-size:12px;
+      font-weight:800;
+      color:#334155;
+    }
+
+    .chip.active{
+      background:var(--soft);
+      border-color:var(--soft-border);
+      color:var(--green2);
+    }
+
+    .chip.soon{
+      background:var(--warning-soft);
+      border-color:rgba(245,158,11,.22);
+      color:var(--warning);
+    }
+
+    .promoMeta{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+    }
+
+    .metaBox{
+      background:#f8fbf9;
+      border:1px solid rgba(15,23,42,.06);
+      border-radius:14px;
+      padding:12px;
+    }
+
+    .metaBox span{
+      display:block;
+      color:var(--muted);
+      font-size:11px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.4px;
+      margin-bottom:6px;
+    }
+
+    .metaBox strong{
+      font-size:15px;
+      line-height:1.4;
+    }
+
+    .promoDesc{
+      margin:14px 0 0;
+      color:#334155;
+      font-size:13px;
+      line-height:1.8;
+    }
+
+    .rulesWrap{
+      margin-top:14px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .rule{
+      padding:8px 10px;
+      border-radius:12px;
+      background:rgba(15,23,42,.03);
+      border:1px solid rgba(15,23,42,.08);
+      font-size:12px;
+      font-weight:700;
+      color:#334155;
+    }
+
+    .fieldGrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+
+    .fieldFull{grid-column:1 / -1;}
+
+    label{
+      display:block;
+      font-size:13px;
+      font-weight:700;
+      margin-bottom:7px;
+      color:#0f172a;
+    }
+
+    input,select{
+      width:100%;
+      padding:13px 14px;
+      border-radius:12px;
+      border:1px solid #d8dee8;
+      font-family:inherit;
+      font-size:14px;
+      outline:none;
+      background:white;
+    }
+
+    input:focus,select:focus{
+      border-color:rgba(47,125,98,.55);
+      box-shadow:0 0 0 4px rgba(47,125,98,.10);
+    }
+
+    .helper{
+      margin-top:7px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.6;
+    }
+
+    .summaryList{
+      display:grid;
+      gap:10px;
+    }
+
+    .summaryRow{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-start;
+      padding:12px 0;
+      border-bottom:1px solid rgba(15,23,42,.07);
+    }
+
+    .summaryRow:last-child{border-bottom:none;}
+
+    .summaryRow span{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .summaryRow strong{
+      text-align:right;
+      font-size:14px;
+      line-height:1.5;
+    }
+
+    .totalBox{
+      margin-top:14px;
+      border-radius:16px;
+      padding:16px;
+      background:var(--soft);
+      border:1px solid var(--soft-border);
+      display:grid;
+      gap:10px;
+    }
+
+    .totalRow{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      font-size:14px;
+    }
+
+    .totalRow strong{
+      font-size:18px;
+    }
+
+    .paymentNotice{
+      margin-bottom:14px;
+      padding:12px 14px;
+      border-radius:14px;
+      background:rgba(15,23,42,.03);
+      border:1px solid rgba(15,23,42,.08);
+      font-size:12px;
+      line-height:1.7;
+      color:#334155;
+    }
+
+    .qrGrid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+    }
+
+    .qrBtn{
+      border:1px solid rgba(47,125,98,.16);
+      background:white;
+      border-radius:16px;
+      padding:14px 12px;
+      cursor:pointer;
+      text-align:left;
+      transition:.15s ease;
+      min-height:108px;
+    }
+
+    .qrBtn:hover,
+    .qrBtn.active{
+      border-color:rgba(47,125,98,.45);
+      background:rgba(47,125,98,.07);
+      transform:translateY(-1px);
+    }
+
+    .qrBtn small{
+      display:block;
+      color:var(--muted);
+      font-size:11px;
+      margin-top:4px;
+      line-height:1.5;
+    }
+
+    .qrBtn strong{
+      font-size:15px;
+      display:block;
+      color:#0f172a;
+    }
+
+    .qrState{
+      margin-top:14px;
+      padding:14px;
+      border-radius:14px;
+      background:#f8fbf9;
+      border:1px dashed rgba(47,125,98,.22);
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.7;
+    }
+
+    .qrState.ready{
+      color:#334155;
+      background:rgba(47,125,98,.06);
+      border-style:solid;
+    }
+
+    .uploadBox{
+      margin-top:14px;
+      padding:14px;
+      border-radius:16px;
+      border:1px dashed rgba(15,23,42,.18);
+      background:#fbfdfb;
+    }
+
+    .previewWrap{
+      margin-top:12px;
+      display:none;
+      border-radius:16px;
+      overflow:hidden;
+      border:1px solid rgba(15,23,42,.08);
+      background:#fff;
+    }
+
+    .previewWrap img{
+      width:100%;
+      max-height:280px;
+      object-fit:cover;
+      display:block;
+    }
+
+    .ctaBtn{
+      width:100%;
+      border:none;
+      background:var(--green);
+      color:white;
+      padding:15px 16px;
+      border-radius:14px;
+      font-family:inherit;
+      font-size:14px;
+      font-weight:800;
+      cursor:pointer;
+      margin-top:16px;
+    }
+
+    .ctaBtn:hover{background:var(--green2);}
+    .ctaBtn:disabled{opacity:.6;cursor:not-allowed;}
+
+    .subBtn{
+      width:100%;
+      border:1px solid rgba(47,125,98,.24);
+      background:white;
+      color:var(--green2);
+      padding:13px 16px;
+      border-radius:14px;
+      font-family:inherit;
+      font-size:14px;
+      font-weight:700;
+      cursor:pointer;
+      margin-top:10px;
+    }
+
+    .subBtn:hover{background:rgba(47,125,98,.06);}
+
+    .errorBox{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:14px;
+      background:var(--danger-soft);
+      color:var(--danger);
+      border:1px solid rgba(239,68,68,.18);
+      font-size:12px;
+      display:none;
+      line-height:1.6;
+    }
+
+    .qrModal{
+      position:fixed;
+      inset:0;
+      background:rgba(2,6,23,.65);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:1000;
+      padding:18px;
+    }
+
+    .qrCard{
+      background:white;
+      width:min(420px,100%);
+      border-radius:22px;
+      overflow:hidden;
+      box-shadow:0 30px 90px rgba(0,0,0,.30);
+    }
+
+    .qrCardHead{
+      padding:16px 18px;
+      border-bottom:1px solid rgba(15,23,42,.08);
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+    }
+
+    .qrCardHead h3{
+      margin:0;
+      font-size:18px;
+    }
+
+    .qrCardHead p{
+      margin:6px 0 0;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.6;
+    }
+
+    .iconBtn{
+      width:40px;
+      height:40px;
+      border:none;
+      border-radius:12px;
+      background:rgba(15,23,42,.06);
+      cursor:pointer;
+      font-size:18px;
+    }
+
+    .qrContent{
+      padding:18px;
+    }
+
+    .qrImageWrap{
+      width:100%;
+      aspect-ratio:1 / 1;
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid rgba(15,23,42,.08);
+      background:#f8fafc;
+      display:grid;
+      place-items:center;
+    }
+
+    .qrImageWrap img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      display:block;
+      background:white;
+    }
+
+    .qrInfo{
+      margin-top:14px;
+      padding:14px;
+      border-radius:16px;
+      background:rgba(47,125,98,.08);
+      border:1px solid rgba(47,125,98,.16);
+      font-size:12px;
+      color:#334155;
+      line-height:1.8;
+    }
+
+    .qrInfo strong{
+      color:#0f172a;
+    }
+
+    .qrActions{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .emptyState{
+      text-align:center;
+      padding:42px 18px;
+      background:white;
+      border:1px dashed rgba(47,125,98,.26);
+      border-radius:20px;
+      box-shadow:var(--shadow);
+      display:none;
+    }
+
+    .emptyState h2{
+      margin:0 0 8px;
+      font-size:22px;
+    }
+
+    .emptyState p{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.7;
+    }
+
+    @media (max-width:980px){
+      .layout{grid-template-columns:1fr;}
+    }
+
+    @media (max-width:720px){
+      .topbar{display:none;}
+      .menu{display:none;}
+      .menuBtn{display:block;}
+      .navbar{padding:12px;}
+      .container{padding:18px 14px 50px;}
+      .pageHead{flex-direction:column;align-items:flex-start;}
+      .promoHero{grid-template-columns:1fr;}
+      .promoMeta,.fieldGrid,.qrGrid,.qrActions{grid-template-columns:1fr;}
+      .cardBody,.cardHead{padding:16px;}
+      .promoTitle{font-size:22px;}
+      .summaryRow{align-items:flex-start;}
+      .summaryRow strong{text-align:left;}
+    }
+
+    @media (max-width:420px){
+      .container{padding:16px 12px 44px;}
+      .cardBody,.cardHead{padding:14px;}
+      .promoTitle{font-size:20px;}
+      .ctaBtn,.subBtn{font-size:13px;}
+    }
+  </style>
 </head>
-
 <body>
 
-<!-- TOPBAR -->
-
-<div class="topbar">
-<div class="pill">📞 0936 411 6193</div>
-<div class="pill">✉️ trinettebless@gmail.com</div>
-<div class="pill">🕘 Mon–Sun: 9:00am–7:00pm</div>
-</div>
-
-<!-- NAVBAR -->
-
-<header class="navbar">
-
-<div class="brand">
-<div class="logo">🌿</div>
-<span>Zai Trinette Wellness Spa</span>
-</div>
-
-<nav class="menu">
-<a href="index.html">Home</a>
-<a href="services.html">Service</a>
-<a href="gallery.html">Gallery</a>
-<a href="specialist.html">Specialist</a>
-<a href="promo.html">Promos</a>
-</nav>
-
-<!-- Hamburger Button -->
-<button class="menuBtn" id="menuBtn">☰</button>
-
-</header>
-
-
-<!-- MOBILE MENU -->
-<div class="mobileMenuBack" id="mobileMenuBack">
-
-<div class="mobileMenu">
-
-<div class="mobileMenuHead">
-<span class="mobileTitle">Menu</span>
-<button class="menuClose" id="menuClose">✕</button>
-</div>
-
-<nav class="mobileLinks">
-<a href="index.html">Home</a>
-<a href="services.html">Service</a>
-<a href="gallery.html">Gallery</a>
-<a href="specialist.html">Specialist</a>
-<a href="promo.html">Promos</a>
-</nav>
-
-</div>
-</div>
-
-
-<div class="container">
-
-<!-- PROMO DETAILS -->
-
-<div class="card">
-
-<h2>Promo Summary</h2>
-
-<div class="row">
-<span>Promo Deal</span>
-<strong id="promoName"></strong>
-</div>
-
-<div class="row">
-  <span>Promo Price</span>
-  <strong id="promoPrice"></strong>
-</div>
-
-<!-- SCHEDULE -->
-
-<div class="card">
-
-<h2>Schedule</h2>
-
-<label>Date</label>
-<input type="date" id="date">
-
-<label>Time</label>
-<select id="time">
-  <option>9:00 AM</option>
-  <option>10:00 AM</option>
-  <option>11:00 AM</option>
-  <option>12:00 PM</option>
-  <option>1:00 PM</option>
-  <option>2:00 PM</option>
-  <option>3:00 PM</option>
-  <option>4:00 PM</option>
-  <option>5:00 PM</option>
-  <option>6:00 PM</option>
-</select>
-
-</div>
-
-
-<!-- PAYMENT -->
-
-<div class="card">
-
-<h2>Promo Details</h2>
-
-<div class="row">
-<span>Promo Deal</span>
-<strong id="promoName"></strong>
-</div>
-
-<div class="row">
-<span>Promo Type</span>
-<strong id="promoType"></strong>
-</div>
-
-<div class="row">
-<span>Promo Validity</span>
-<strong id="promoValidity"></strong>
-</div>
-
-<div class="row">
-<span>Original Price</span>
-<strong id="promoOld"></strong>
-</div>
-
-<div class="row">
-<span>Downpayment (10%)</span>
-<strong id="promoDown"></strong>
-</div>
-
-<div class="qrButtons">
-
-<button id="gcashBtn">GCash QR</button>
-<button id="bpiBtn">BPI QR</button>
-<button id="mayaBtn">Maya QR</button>
-
-</div>
-
-<label>Upload Proof of Payment</label>
-<input type="file" id="receipt">
-
-<img id="preview" class="preview" width="100%">
-
-<button id="confirm">Confirm Booking</button>
-
-</div>
-
-</div>
-
-
-<!-- QR MODAL -->
-
-<div id="qrModal" class="qrModal">
-
-  <div class="qrCard">
-
-    <h3 id="qrTitle">Scan to Pay</h3>
-
-    <img id="qrImage" src="" alt="QR Code">
-
-    <p id="qrDesc">Send the required 10% downpayment.</p>
-
-    <button id="closeQR">Close</button>
-
+  <div class="topbar">
+    <div class="pill">📞 0936 411 6193</div>
+    <div class="pill">✉️ trinettebless@gmail.com</div>
+    <div class="pill">🕘 Mon–Sun: 9:00am–7:00pm</div>
+    <div class="pill">Balagtas Batangas City</div>
   </div>
 
-</div>
+  <header class="navbar">
+    <div class="brand">
+      <div class="logo">
+        <img src="images/logo.png" alt="Logo" onerror="this.style.display='none';this.parentNode.textContent='🌿';">
+      </div>
+      <span>Zai Trinette Wellness Spa</span>
+    </div>
 
+    <nav class="menu">
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="specialist.html">Specialist</a>
+      <a href="promo.html" class="active">Promos</a>
+    </nav>
 
-<script>
+    <button class="menuBtn" id="menuBtn" aria-label="Open menu">☰</button>
+  </header>
 
-/* ===============================
-WAIT UNTIL PAGE LOADS
-================================ */
+  <div class="mobileMenuBack" id="mobileMenuBack">
+    <div class="mobileMenu">
+      <div class="mobileMenuHead">
+        <span class="mobileTitle">Menu</span>
+        <button class="menuClose" id="menuClose">✕</button>
+      </div>
+      <nav class="mobileLinks">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="specialist.html">Specialist</a>
+        <a href="promo.html" class="active">Promos</a>
+      </nav>
+    </div>
+  </div>
 
-document.addEventListener("DOMContentLoaded", function(){
+  <main class="container">
+    <div class="pageHead">
+      <div class="headText">
+        <h1>Promo Booking</h1>
+        <p>Review your selected promo, choose a schedule, pay the required downpayment, then upload your receipt to complete your booking request.</p>
+      </div>
+      <a class="backLink" href="promo.html">← Back to Promos</a>
+    </div>
 
-/* ===============================
-CHECK LOGIN
-================================ */
+    <section class="emptyState" id="emptyState">
+      <h2>No promo selected</h2>
+      <p>Please return to the promos page and choose a promo package first.</p>
+      <button class="ctaBtn" id="backToPromosBtn" type="button">Go to Promos</button>
+    </section>
 
-const session =
-JSON.parse(localStorage.getItem("salonSession")) ||
-JSON.parse(sessionStorage.getItem("salonSession"));
+    <section class="layout" id="bookingLayout" style="display:none;">
+      <div class="stack">
+        <article class="card">
+          <div class="cardHead">
+            <div>
+              <h2>Selected Promo</h2>
+              <p>This section is automatically connected to the promo you selected from <code>promo.html</code>.</p>
+            </div>
+            <span class="chip" id="promoStatusChip">Promo</span>
+          </div>
+          <div class="cardBody">
+            <div class="promoHero">
+              <div class="promoImageWrap">
+                <img id="promoImage" src="images/default.jpg" alt="Promo image">
+              </div>
 
-if(!session){
-alert("Please log in first.");
-window.location.href = "log_in.html";
-return;
-}
+              <div>
+                <div class="promoTitleRow">
+                  <h3 class="promoTitle" id="promoTitle">Promo Title</h3>
+                  <span class="chip" id="promoTypeChip">Promo</span>
+                </div>
 
-/* ===============================
-LOAD QR FROM ADMIN
-================================ */
+                <div class="promoMeta">
+                  <div class="metaBox">
+                    <span>Deal Price</span>
+                    <strong id="promoPrice">₱0.00</strong>
+                  </div>
+                  <div class="metaBox">
+                    <span>Original Price</span>
+                    <strong id="promoOldPrice">₱0.00</strong>
+                  </div>
+                  <div class="metaBox">
+                    <span>Validity</span>
+                    <strong id="promoValidity">Not specified</strong>
+                  </div>
+                  <div class="metaBox">
+                    <span>Highlight</span>
+                    <strong id="promoHighlight">Special promo offer</strong>
+                  </div>
+                </div>
 
-const gcashQR = localStorage.getItem("gcashQR") || "gcash_qr.png";
-const bpiQR   = localStorage.getItem("bpiQR")   || "bpi_qr.png";
-const mayaQR  = localStorage.getItem("mayaQR")  || "maya_qr.png";
+                <p class="promoDesc" id="promoDesc">Promo description will appear here.</p>
+                <div class="rulesWrap" id="promoRules"></div>
+              </div>
+            </div>
+          </div>
+        </article>
 
-/* ===============================
-QR MODAL CONTROLS
-================================ */
+        <article class="card">
+          <div class="cardHead">
+            <div>
+              <h2>Schedule Your Visit</h2>
+              <p>Choose your preferred date and time for this promo booking.</p>
+            </div>
+          </div>
+          <div class="cardBody">
+            <div class="fieldGrid">
+              <div>
+                <label for="date">Preferred Date</label>
+                <input type="date" id="date">
+                <div class="helper">Select your desired visit date.</div>
+              </div>
+              <div>
+                <label for="time">Preferred Time</label>
+                <select id="time">
+                  <option value="9:00 AM">9:00 AM</option>
+                  <option value="10:00 AM">10:00 AM</option>
+                  <option value="11:00 AM">11:00 AM</option>
+                  <option value="12:00 PM">12:00 PM</option>
+                  <option value="1:00 PM">1:00 PM</option>
+                  <option value="2:00 PM">2:00 PM</option>
+                  <option value="3:00 PM">3:00 PM</option>
+                  <option value="4:00 PM">4:00 PM</option>
+                  <option value="5:00 PM">5:00 PM</option>
+                  <option value="6:00 PM">6:00 PM</option>
+                </select>
+                <div class="helper">Time slots may still be subject to final confirmation.</div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
 
-const qrModal = document.getElementById("qrModal");
-const closeQR = document.getElementById("closeQR");
+      <div class="stack">
+        <article class="card">
+          <div class="cardHead">
+            <div>
+              <h2>Payment Summary</h2>
+              <p>Promo bookings require a <strong>10% downpayment</strong> to be marked as pending confirmation.</p>
+            </div>
+          </div>
+          <div class="cardBody">
+            <div class="summaryList">
+              <div class="summaryRow">
+                <span>Promo Deal</span>
+                <strong id="summaryName">Promo Title</strong>
+              </div>
+              <div class="summaryRow">
+                <span>Promo Type</span>
+                <strong id="summaryType">Promo</strong>
+              </div>
+              <div class="summaryRow">
+                <span>Total Promo Price</span>
+                <strong id="summaryTotal">₱0.00</strong>
+              </div>
+            </div>
 
-const qrImage = document.getElementById("qrImage");
-const qrTitle = document.getElementById("qrTitle");
-const qrDesc  = document.getElementById("qrDesc");
+            <div class="totalBox">
+              <div class="totalRow">
+                <span>Required Downpayment</span>
+                <strong id="summaryDown">₱0.00</strong>
+              </div>
+              <div class="totalRow">
+                <span>Remaining Balance</span>
+                <strong id="summaryRemain">₱0.00</strong>
+              </div>
+            </div>
+          </div>
+        </article>
 
-/* BUTTONS */
-const gcashBtn = document.getElementById("gcashBtn");
-const bpiBtn = document.getElementById("bpiBtn");
-const mayaBtn = document.getElementById("mayaBtn");
+        <article class="card">
+          <div class="cardHead">
+            <div>
+              <h2>Choose Payment QR</h2>
+              <p>The QR codes below open in a larger preview so the customer can scan clearly.</p>
+            </div>
+          </div>
+          <div class="cardBody">
+            <div class="paymentNotice">
+              Tap one payment method below to open the QR code. After sending the payment, upload your proof of payment image before confirming.
+            </div>
 
-/* FUNCTION */
-function openQR(type){
+            <div class="qrGrid">
+              <button class="qrBtn" type="button" data-type="gcash">
+                <strong>GCash</strong>
+                <small>Mobile wallet payment</small>
+              </button>
+              <button class="qrBtn" type="button" data-type="bpi">
+                <strong>BPI</strong>
+                <small>Bank transfer / scan</small>
+              </button>
+              <button class="qrBtn" type="button" data-type="maya">
+                <strong>Maya</strong>
+                <small>E-wallet payment</small>
+              </button>
+            </div>
 
-qrModal.style.display = "flex";
+            <div class="qrState" id="qrState">
+              Select a payment method to preview its QR code.
+            </div>
 
-if(type === "gcash"){
-qrImage.src = gcashQR;
-qrTitle.textContent = "Scan to Pay (GCash)";
-qrDesc.textContent = "Send the 10% downpayment via GCash.";
-}
+            <div class="uploadBox">
+              <label for="receipt">Upload Proof of Payment</label>
+              <input type="file" id="receipt" accept="image/*">
+              <div class="helper">Accepted file types: image only. Max file size: 2MB.</div>
 
-if(type === "bpi"){
-qrImage.src = bpiQR;
-qrTitle.textContent = "Scan to Pay (BPI)";
-qrDesc.textContent = "Send the 10% downpayment via BPI.";
-}
+              <div class="previewWrap" id="previewWrap">
+                <img id="preview" alt="Receipt preview">
+              </div>
+            </div>
 
-if(type === "maya"){
-qrImage.src = mayaQR;
-qrTitle.textContent = "Scan to Pay (Maya)";
-qrDesc.textContent = "Send the 10% downpayment via Maya.";
-}
+            <div class="errorBox" id="errorBox"></div>
 
-}
+            <button class="ctaBtn" id="confirm" type="button">Confirm Promo Booking</button>
+            <button class="subBtn" id="changePromo" type="button">Choose Another Promo</button>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
 
-/* EVENTS */
-gcashBtn.onclick = () => openQR("gcash");
-bpiBtn.onclick   = () => openQR("bpi");
-mayaBtn.onclick  = () => openQR("maya");
+  <div id="qrModal" class="qrModal">
+    <div class="qrCard">
+      <div class="qrCardHead">
+        <div>
+          <h3 id="qrTitle">Scan to Pay</h3>
+          <p id="qrDesc">Send the required downpayment using your selected payment method.</p>
+        </div>
+        <button class="iconBtn" id="closeQR" type="button">✕</button>
+      </div>
+      <div class="qrContent">
+        <div class="qrImageWrap">
+          <img id="qrImage" src="" alt="QR Code">
+        </div>
+        <div class="qrInfo">
+          <strong>Reminder:</strong> make sure the amount matches the required downpayment shown in the payment summary. Upload your receipt afterward.
+        </div>
+        <div class="qrActions">
+          <button class="subBtn" id="closeQR2" type="button">Close</button>
+          <button class="ctaBtn" id="useThisMethod" type="button" style="margin-top:0;">Use This Method</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-/* CLOSE */
-closeQR.onclick = () => qrModal.style.display = "none";
+  <script>
+document.addEventListener("DOMContentLoaded", function () {
+  const SERVER_URL = "http://localhost:5000";
+  const BOOKINGS_API_URL = `${SERVER_URL}/api`;
+  const QR_BASE_URL = `${SERVER_URL}/payment-qrs`;
 
-qrModal.onclick = (e)=>{
-if(e.target === qrModal){
-qrModal.style.display = "none";
-}
-};
+  const session =
+    JSON.parse(localStorage.getItem("salonSession")) ||
+    JSON.parse(sessionStorage.getItem("salonSession"));
 
-/* ===============================
-GET PROMO
-================================ */
+  if (!session) {
+    alert("Please log in first.");
+    window.location.href = "log_in.html";
+    return;
+  }
 
-const promo = JSON.parse(localStorage.getItem("selectedPromo"));
+  const selectedPromo = JSON.parse(localStorage.getItem("selectedPromo") || "null");
 
-if(!promo){
-alert("No promo selected");
-window.location.href = "promo.html";
-return;
-}
+  const bookingLayout = document.getElementById("bookingLayout");
+  const emptyState = document.getElementById("emptyState");
+  const backToPromosBtn = document.getElementById("backToPromosBtn");
+  const errorBox = document.getElementById("errorBox");
+  const qrState = document.getElementById("qrState");
+  const confirmBtn = document.getElementById("confirm");
+  const receiptInput = document.getElementById("receipt");
+  const previewWrap = document.getElementById("previewWrap");
+  const preview = document.getElementById("preview");
+  const dateInput = document.getElementById("date");
+  const timeInput = document.getElementById("time");
+  const changePromoBtn = document.getElementById("changePromo");
+  const qrButtons = Array.from(document.querySelectorAll(".qrBtn"));
 
-/* ===============================
-DISPLAY PROMO DETAILS
-================================ */
+  const qrModal = document.getElementById("qrModal");
+  const qrImage = document.getElementById("qrImage");
+  const qrTitle = document.getElementById("qrTitle");
+  const qrDesc = document.getElementById("qrDesc");
+  const closeQR = document.getElementById("closeQR");
+  const closeQR2 = document.getElementById("closeQR2");
+  const useThisMethod = document.getElementById("useThisMethod");
 
-setText("promoName", promo.title);
-setText("promoType", promo.type);
-setText("promoValidity", promo.validity);
-setText("promoOld", "₱" + promo.oldPrice);
+  const peso = (n) =>
+    new Intl.NumberFormat("en-PH", {
+      style: "currency",
+      currency: "PHP",
+    }).format(Number(n || 0));
 
-/* ===============================
-PRICE COMPUTATION
-================================ */
+  const qrMeta = {
+    gcash: {
+      title: "Scan to Pay via GCash",
+      desc: "Send the required 10% downpayment using GCash.",
+      label: "GCash",
+    },
+    bpi: {
+      title: "Scan to Pay via BPI",
+      desc: "Send the required 10% downpayment using BPI.",
+      label: "BPI",
+    },
+    maya: {
+      title: "Scan to Pay via Maya",
+      desc: "Send the required 10% downpayment using Maya.",
+      label: "Maya",
+    },
+  };
 
-// Ensure numbers are valid
-const total = Number(promo.dealPrice || 0);
+  let receiptFile = null;
+  let receiptUrl = "";
+  let selectedPaymentMethod = "";
+  let computedTotal = 0;
+  let computedDown = 0;
+  let computedRemain = 0;
+  let qrModalOpen = false;
 
-// ✅ 10% DOWNPAYMENT
-const down = total * 0.10;
-const remain = total - down;
+  if (dateInput) {
+    dateInput.min = new Date().toISOString().split("T")[0];
+  }
 
-/* ===============================
-DISPLAY VALUES
-================================ */
+  if (backToPromosBtn) {
+    backToPromosBtn.addEventListener("click", () => {
+      window.location.href = "promo.html";
+    });
+  }
 
-// Format function (adds commas + 2 decimals)
-function peso(val){
-  return "₱" + val.toLocaleString(undefined, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
-}
+  if (changePromoBtn) {
+    changePromoBtn.addEventListener("click", () => {
+      window.location.href = "promo.html";
+    });
+  }
 
-// ✅ NOW SAFE (down already computed)
-setText("promoPrice", peso(total));
-setText("promoDown", peso(down));
+  if (!selectedPromo) {
+    if (emptyState) emptyState.style.display = "block";
+    if (bookingLayout) bookingLayout.style.display = "none";
+    setupMobileMenu();
+    return;
+  }
 
-/* ===============================
-UPLOAD RECEIPT PREVIEW
-================================ */
+  if (emptyState) emptyState.style.display = "none";
+  if (bookingLayout) bookingLayout.style.display = "grid";
 
-let receiptImage = "";
+  ensureQRFallbackNode();
+  populatePromo(selectedPromo);
+  bindQRActions();
+  bindReceiptUpload();
+  bindConfirm();
+  setupMobileMenu();
 
-const receiptInput = document.getElementById("receipt");
+  function normalizeRules(rules) {
+    if (Array.isArray(rules)) return rules.filter(Boolean);
+    if (typeof rules === "string") {
+      return rules
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean);
+    }
+    return [];
+  }
 
-if(receiptInput){
+  function populatePromo(promo) {
+    const total = Number(promo.dealPrice ?? promo.deal_price ?? 0);
+    const oldPrice = Number(promo.oldPrice ?? promo.old_price ?? 0);
 
-  receiptInput.addEventListener("change", function(){
+    computedTotal = total;
+    computedDown = Number((total * 0.1).toFixed(2));
+    computedRemain = Number((total - computedDown).toFixed(2));
 
-    const file = this.files[0];
-    if(!file) return;
+    const rules = normalizeRules(promo.rules);
+    const status = (promo.status || "Active").trim();
 
-    // ✅ Validate image only
-    if(!file.type.startsWith("image/")){
-      alert("Please upload an image file.");
+    setText("promoTitle", promo.title || "Promo");
+    setText("promoPrice", peso(total));
+    setText("promoOldPrice", peso(oldPrice));
+    setText("promoValidity", promo.validity || "Not specified");
+    setText("promoHighlight", promo.highlight || "Special promo offer");
+    setText(
+      "promoDesc",
+      promo.desc || promo.description || "Enjoy this selected promo package."
+    );
+    setText("summaryName", promo.title || "Promo");
+    setText("summaryType", promo.type || "Promo");
+    setText("summaryTotal", peso(total));
+    setText("summaryDown", peso(computedDown));
+    setText("summaryRemain", peso(computedRemain));
+    setText("promoTypeChip", promo.type || "Promo");
+
+    const statusChip = document.getElementById("promoStatusChip");
+    if (statusChip) {
+      statusChip.textContent = status;
+      statusChip.className = "chip" + (status === "Ending Soon" ? " soon" : " active");
+    }
+
+    const image = promo.image || promo.image_url || "images/default.jpg";
+    const promoImage = document.getElementById("promoImage");
+    if (promoImage) {
+      promoImage.src = image;
+      promoImage.onerror = function () {
+        this.src = "images/default.jpg";
+      };
+    }
+
+    const rulesWrap = document.getElementById("promoRules");
+    if (rulesWrap) {
+      rulesWrap.innerHTML = rules.length
+        ? rules
+            .map((rule) => `<span class="rule">${escapeHtml(rule)}</span>`)
+            .join("")
+        : '<span class="rule">Promo rules will be confirmed by the spa.</span>';
+    }
+  }
+
+  function bindQRActions() {
+    qrButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const type = btn.dataset.type;
+        if (!type) return;
+        openQR(type);
+      });
+    });
+
+    if (closeQR) closeQR.addEventListener("click", closeQRModal);
+    if (closeQR2) closeQR2.addEventListener("click", closeQRModal);
+
+    if (qrModal) {
+      qrModal.addEventListener("click", (e) => {
+        if (e.target === qrModal) {
+          closeQRModal();
+        }
+      });
+    }
+
+    if (useThisMethod) {
+      useThisMethod.addEventListener("click", () => {
+        closeQRModal();
+
+        if (selectedPaymentMethod) {
+          showError("");
+          qrState.classList.add("ready");
+          qrState.innerHTML = `<strong>${qrMeta[selectedPaymentMethod].label}</strong> selected. Please upload your receipt after payment.`;
+        }
+      });
+    }
+  }
+
+  function getQRCandidates(type) {
+    return [
+      `${QR_BASE_URL}/${type}`,
+      `${SERVER_URL}/api/payment-qrs/${type}`
+    ];
+  }
+
+  function tryLoadImage(url) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+
+      img.onload = function () {
+        resolve(url);
+      };
+
+      img.onerror = function () {
+        reject(new Error(`Failed to load: ${url}`));
+      };
+
+      img.src = addCacheBuster(url);
+    });
+  }
+
+  async function resolveQRSource(type) {
+    const candidates = getQRCandidates(type);
+
+    for (const candidate of candidates) {
+      try {
+        const workingUrl = await tryLoadImage(candidate);
+        return workingUrl;
+      } catch (err) {
+        console.warn("QR source failed:", candidate, err);
+      }
+    }
+
+    throw new Error(`No QR source available for ${type}`);
+  }
+
+  async function openQR(type) {
+    const meta = qrMeta[type];
+    if (!meta) return;
+
+    selectedPaymentMethod = type;
+
+    qrButtons.forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.type === type);
+    });
+
+    if (qrModal) {
+      qrModal.style.display = "flex";
+    }
+
+    qrModalOpen = true;
+    document.body.style.overflow = "hidden";
+
+    setQRLoading(meta);
+
+    qrState.classList.add("ready");
+    qrState.innerHTML = `<strong>${meta.label}</strong> selected. Scan the QR, then upload your payment receipt.`;
+
+    try {
+      const src = await resolveQRSource(type);
+
+      if (!qrModalOpen) return;
+
+      qrImage.onerror = function () {
+        if (!qrModalOpen) return;
+        setQRError(meta);
+      };
+
+      qrImage.onload = function () {
+        if (!qrModalOpen) return;
+        setQRReady(meta);
+      };
+
+      qrImage.src = addCacheBuster(src);
+    } catch (err) {
+      console.error(err);
+      if (!qrModalOpen) return;
+      setQRError(meta);
+    }
+  }
+
+  function closeQRModal() {
+    qrModalOpen = false;
+
+    if (qrModal) {
+      qrModal.style.display = "none";
+    }
+
+    if (qrImage) {
+      qrImage.onload = null;
+      qrImage.onerror = null;
+      qrImage.removeAttribute("src");
+      qrImage.style.display = "none";
+    }
+
+    const fallback = document.getElementById("qrFallbackText");
+    if (fallback) {
+      fallback.style.display = "block";
+      fallback.textContent = "QR preview will appear here.";
+    }
+
+    if (
+      !document.getElementById("mobileMenuBack") ||
+      document.getElementById("mobileMenuBack").style.display !== "block"
+    ) {
+      document.body.style.overflow = "";
+    }
+  }
+
+  function setQRLoading(meta) {
+    if (qrImage) {
+      qrImage.style.display = "none";
+    }
+
+    const fallback = document.getElementById("qrFallbackText");
+    if (fallback) {
+      fallback.style.display = "block";
+      fallback.innerHTML = `
+        <div style="padding:24px 14px; text-align:center; color:#64748b; font-size:13px; line-height:1.7;">
+          Loading ${escapeHtml(meta.label)} QR code...
+        </div>
+      `;
+    }
+
+    if (qrTitle) qrTitle.textContent = meta.title;
+    if (qrDesc) qrDesc.textContent = "Please wait while the QR code is loading.";
+  }
+
+  function setQRReady(meta) {
+    if (qrImage) {
+      qrImage.style.display = "block";
+    }
+
+    const fallback = document.getElementById("qrFallbackText");
+    if (fallback) {
+      fallback.style.display = "none";
+    }
+
+    if (qrTitle) qrTitle.textContent = meta.title;
+    if (qrDesc) qrDesc.textContent = meta.desc;
+  }
+
+  function setQRError(meta) {
+    if (qrImage) {
+      qrImage.style.display = "none";
+      qrImage.removeAttribute("src");
+    }
+
+    const fallback = document.getElementById("qrFallbackText");
+    if (fallback) {
+      fallback.style.display = "block";
+      fallback.innerHTML = `
+        <div style="padding:24px 14px; text-align:center; color:#b91c1c; font-size:13px; line-height:1.8;">
+          <strong>${escapeHtml(meta.label)} QR is unavailable.</strong><br>
+          Please try again later or ask the admin to re-upload the QR code.
+        </div>
+      `;
+    }
+
+    if (qrTitle) qrTitle.textContent = `${meta.label} QR Unavailable`;
+    if (qrDesc) {
+      qrDesc.textContent = `The ${meta.label} QR code could not be loaded right now.`;
+    }
+
+    showError(
+      `${meta.label} QR code was not found. Please update the saved QR image for this payment method.`
+    );
+
+    qrState.classList.remove("ready");
+    qrState.textContent = `${meta.label} QR code is currently unavailable.`;
+  }
+
+  function ensureQRFallbackNode() {
+    if (!qrImage) return;
+
+    let fallback = document.getElementById("qrFallbackText");
+    if (fallback) return;
+
+    fallback = document.createElement("div");
+    fallback.id = "qrFallbackText";
+    fallback.style.fontSize = "13px";
+    fallback.style.color = "#64748b";
+    fallback.style.textAlign = "center";
+    fallback.style.lineHeight = "1.7";
+    fallback.style.padding = "24px 14px";
+    fallback.textContent = "QR preview will appear here.";
+
+    qrImage.style.display = "none";
+    qrImage.insertAdjacentElement("afterend", fallback);
+  }
+
+  function bindReceiptUpload() {
+    if (!receiptInput) return;
+
+    receiptInput.addEventListener("change", function () {
+  showError("");
+
+  const file = this.files[0];
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) {
+    this.value = "";
+    receiptFile = null;
+    previewWrap.style.display = "none";
+    showError("Please upload an image file only.");
+    return;
+  }
+
+  if (file.size > 2 * 1024 * 1024) {
+    this.value = "";
+    receiptFile = null;
+    previewWrap.style.display = "none";
+    showError("Image must be below 2MB.");
+    return;
+  }
+
+  receiptFile = file;
+
+  // preview only (still allowed)
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    preview.src = e.target.result;
+    previewWrap.style.display = "block";
+  };
+  reader.readAsDataURL(file);
+});
+  }
+
+function bindConfirm() {
+  if (!confirmBtn) return;
+
+  confirmBtn.addEventListener("click", async function () {
+    showError("");
+
+    const date = dateInput ? dateInput.value : "";
+    const time = timeInput ? timeInput.value : "";
+
+    if (!date) {
+      showError("Please select your preferred booking date.");
       return;
     }
 
-    // ✅ Limit file size (optional: 2MB)
-    if(file.size > 2 * 1024 * 1024){
-      alert("Image must be below 2MB.");
+    if (!selectedPaymentMethod) {
+      showError("Please choose a payment QR method first.");
       return;
     }
 
-    const reader = new FileReader();
+    if (!receiptFile) {
+      showError("Please upload your proof of payment image.");
+      return;
+    }
 
-    reader.onload = function(e){
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = "Saving Booking...";
 
-      receiptImage = e.target.result;
+    let uploadedReceiptUrl = "";
 
-      const preview = document.getElementById("preview");
+    try {
+      const formData = new FormData();
+      formData.append("image", receiptFile);
 
-      if(preview){
-        preview.src = receiptImage;
-        preview.style.display = "block";
+      const uploadRes = await fetch(`${SERVER_URL}/upload-receipt`, {
+        method: "POST",
+        body: formData
+      });
+
+      if (!uploadRes.ok) {
+        throw new Error("Failed to upload receipt");
       }
 
-    };
+      const uploadData = await uploadRes.json();
+      uploadedReceiptUrl = uploadData.imageUrl;
 
-    reader.readAsDataURL(file);
+      const booking = {
+        id: "PR-" + Math.random().toString(16).slice(2, 8),
+        type: "promo",
+        bookingType: "promo",
+        email: session.email,
+        customerName: session.name || session.fullname || session.email,
+        promoId: selectedPromo.id || null,
+        promo: selectedPromo.title,
+        promoTitle: selectedPromo.title,
+        promoType: selectedPromo.type || "Promo",
+        price: computedTotal,
+        totalAmount: computedTotal,
+        downpayment: computedDown,
+        remaining: computedRemain,
+        paymentMethod: selectedPaymentMethod,
+        date,
+        time,
+        receipt: uploadedReceiptUrl,
+        status: "Pending",
+        createdAt: new Date().toISOString(),
+      };
 
+      const res = await fetch(`${BOOKINGS_API_URL}/bookings`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(booking),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to save booking to server.");
+      }
+
+      localStorage.removeItem("selectedPromo");
+      alert("Promo booking confirmed!");
+      window.location.href = "customer_dashboard.html";
+    } catch (err) {
+      console.error(err);
+      showError(err.message || "Failed to save booking. Please try again.");
+    } finally {
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = "Confirm Promo Booking";
+    }
   });
-
 }
 
-/* ===============================
-CONFIRM BOOKING
-================================ */
+  function showError(message) {
+    if (!errorBox) return;
 
-const confirmBtn = document.getElementById("confirm");
+    if (!message) {
+      errorBox.style.display = "none";
+      errorBox.textContent = "";
+      return;
+    }
 
-if(confirmBtn){
+    errorBox.style.display = "block";
+    errorBox.textContent = message;
+  }
 
-confirmBtn.onclick = function(){
+  function setupMobileMenu() {
+    const menuBtn = document.getElementById("menuBtn");
+    const mobileMenuBack = document.getElementById("mobileMenuBack");
+    const menuClose = document.getElementById("menuClose");
 
-const date = document.getElementById("date").value;
-const time = document.getElementById("time").value;
+    function openMenu() {
+      if (mobileMenuBack) {
+        mobileMenuBack.style.display = "block";
+      }
+      document.body.style.overflow = "hidden";
+    }
 
-if(!date){
-alert("Please select a date.");
-return;
-}
+    function closeMenu() {
+      if (mobileMenuBack) {
+        mobileMenuBack.style.display = "none";
+      }
 
-if(!receiptImage){
-alert("Please upload proof of payment.");
-return;
-}
+      if (!qrModalOpen) {
+        document.body.style.overflow = "";
+      }
+    }
 
-const booking = {
+    if (menuBtn) menuBtn.addEventListener("click", openMenu);
+    if (menuClose) menuClose.addEventListener("click", closeMenu);
 
-type:"promo",
+    if (mobileMenuBack) {
+      mobileMenuBack.addEventListener("click", (e) => {
+        if (e.target === mobileMenuBack) {
+          closeMenu();
+        }
+      });
+    }
+  }
 
-email: session.email,
+  function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.textContent = value;
+    }
+  }
 
-promo:promo.title,
-price:total,
+  function addCacheBuster(url) {
+    const separator = url.includes("?") ? "&" : "?";
+    return `${url}${separator}t=${Date.now()}`;
+  }
 
-date:date,
-time:time,
-
-downpayment:down,
-remaining:remain,
-
-receipt:receiptImage,
-status:"Pending",
-
-id:"PR-" + Math.random().toString(16).slice(2,8)
-
-};
-
-const bookings = JSON.parse(localStorage.getItem("salonBookings") || "[]");
-
-bookings.push(booking);
-
-localStorage.setItem("salonBookings", JSON.stringify(bookings));
-
-alert("Promo booking confirmed!");
-
-window.location.href = "customer_dashboard.html";
-
-};
-
-}
-
-/* ===============================
-SAFE TEXT FUNCTION
-================================ */
-
-function setText(id, value){
-
-const el = document.getElementById(id);
-
-if(el){
-el.textContent = value;
-}
-
-}
-
+  function escapeHtml(text) {
+    return String(text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
 });
-
-/* ===============================
-MOBILE MENU
-================================ */
-
-const menuBtn = document.getElementById("menuBtn");
-const mobileMenuBack = document.getElementById("mobileMenuBack");
-const menuClose = document.getElementById("menuClose");
-
-menuBtn.onclick = function(){
-
-mobileMenuBack.style.display = "block";
-document.body.style.overflow = "hidden";
-
-};
-
-menuClose.onclick = closeMenu;
-
-mobileMenuBack.onclick = function(e){
-
-if(e.target === mobileMenuBack){
-closeMenu();
-}
-
-};
-
-function closeMenu(){
-
-mobileMenuBack.style.display = "none";
-document.body.style.overflow = "";
-
-}
-
 </script>
-
 </body>
 </html>

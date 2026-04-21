@@ -223,6 +223,7 @@ padding:20px;
 
 <a href="admin_dashboard.html">Dashboard</a>
 <a class="active">Manage Gallery</a>
+<a href="admin_walkins.html">Manage Walk-ins</a>
 <a href="admin_bookings.html">Manage Bookings</a>
 <a href="admin_promo.html">Manage Promo</a>
 <a href="admin_services.html">Manage Services</a>
@@ -267,7 +268,16 @@ padding:20px;
 <script src="session.js"></script>
 
 <script>
-    const session =
+
+/* ===============================
+   CONFIG
+================================ */
+const API_BASE = "http://127.0.0.1:5000";
+
+/* ===============================
+   🔒 ADMIN SESSION CHECK
+================================ */
+const session =
 JSON.parse(localStorage.getItem("salonSession")) ||
 JSON.parse(sessionStorage.getItem("salonSession"));
 
@@ -275,121 +285,211 @@ if(!session || session.role !== "admin"){
   window.location.href="../log_in.html";
 }
 
-/* CATEGORY SYSTEM */
-
-let categories = JSON.parse(localStorage.getItem("categories")) || [
-"Hair",
-"Spa",
-"Nails",
-"Interior",
-"Products"
-];
-
+/* ===============================
+   📂 CATEGORY SYSTEM (DATABASE)
+================================ */
 const categorySelect = document.getElementById("categorySelect");
 
-function loadCategories(){
+/* LOAD CATEGORIES FROM BACKEND */
+async function loadCategories(){
+  try{
+    const res = await fetch(`${API_BASE}/categories`);
 
-categorySelect.innerHTML="";
+    if(!res.ok){
+      throw new Error("Failed to fetch categories");
+    }
 
-categories.forEach(cat=>{
-categorySelect.innerHTML += `<option value="${cat}">${cat}</option>`;
-});
+    const data = await res.json();
 
+    categorySelect.innerHTML = "";
+
+    // ✅ clean + unique
+    const unique = [
+      ...new Set(
+        data.map(c => (c.category || "").trim()).filter(c => c !== "")
+      )
+    ];
+
+    unique.forEach(cat=>{
+      categorySelect.innerHTML += `<option value="${cat}">${cat}</option>`;
+    });
+
+  }catch(err){
+    console.error("❌ Failed to load categories", err);
+  }
 }
 
-function addCategory(){
+/* ADD CATEGORY (OPTIONAL ONLY) */
+async function addCategory(){
+  const input = document.getElementById("newCategory");
+  const name = input.value.trim();
 
-const input=document.getElementById("newCategory");
+  if(!name) return;
 
-const newCat=input.value.trim();
+  // ⚠️ NOTE:
+  // Since you don’t have a categories table,
+  // this only adds it TEMPORARILY in dropdown
 
-if(!newCat) return;
+  const option = document.createElement("option");
+  option.value = name;
+  option.textContent = name;
 
-categories.push(newCat);
+  categorySelect.appendChild(option);
+  categorySelect.value = name;
 
-localStorage.setItem("categories",JSON.stringify(categories));
-
-loadCategories();
-
-input.value="";
-
+  input.value = "";
 }
 
-/* GALLERY SYSTEM */
-
-let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
+/* ===============================
+   🖼 GALLERY SYSTEM
+================================ */
+let gallery = [];
 
 const grid = document.getElementById("galleryGrid");
 const uploadInput = document.getElementById("uploadInput");
 
+/* ===============================
+   🔧 SAFE JSON PARSER
+================================ */
+async function safeFetchJSON(res){
+  const text = await res.text();
+
+  try{
+    return JSON.parse(text);
+  }catch{
+    throw new Error("Invalid JSON:\n" + text);
+  }
+}
+
+/* ===============================
+   📥 LOAD GALLERY
+================================ */
+async function loadGallery(){
+  try{
+    const res = await fetch(`${API_BASE}/gallery`);
+
+    if(!res.ok){
+      throw new Error("Server not responding");
+    }
+
+    const data = await safeFetchJSON(res);
+
+    gallery = data;
+    renderGallery();
+
+  }catch(err){
+    console.error("❌ Load error:", err);
+    alert("Cannot connect to server.");
+  }
+}
+
+/* ===============================
+   🧱 RENDER GALLERY
+================================ */
 function renderGallery(){
+  grid.innerHTML = "";
 
-grid.innerHTML="";
+  if(gallery.length === 0){
+    grid.innerHTML = "<p>No images found.</p>";
+    return;
+  }
 
-gallery.forEach((item,index)=>{
+  gallery.forEach(item=>{
+    grid.innerHTML += `
+      <div class="galleryCard">
+        <img src="${item.image_url}" 
+             onerror="this.src='https://via.placeholder.com/300?text=Image+Error'">
 
-grid.innerHTML += `
-
-<div class="galleryCard">
-
-<img src="${item.url}">
-
-<div class="cardFooter">
-
-<span>${item.category}</span>
-
-<button class="deleteBtn" onclick="deleteImage(${index})">
-Delete
-</button>
-
-</div>
-
-</div>
-
-`;
-
-});
-
+        <div class="cardFooter">
+          <span>${item.category || "Uncategorized"}</span>
+          <button class="deleteBtn" onclick="deleteImage(${item.id})">
+            Delete
+          </button>
+        </div>
+      </div>
+    `;
+  });
 }
 
-uploadInput.addEventListener("change",function(){
+/* ===============================
+   ⬆ UPLOAD IMAGE
+================================ */
+uploadInput.addEventListener("change", async function(){
 
-const file=this.files[0];
+  const file = this.files[0];
+  if(!file) return;
 
-if(!file) return;
+  const selectedCategory = categorySelect.value;
 
-const reader=new FileReader();
+  if(!selectedCategory){
+    alert("Please select a category first");
+    return;
+  }
 
-reader.onload=function(e){
+  const formData = new FormData();
+  formData.append("image", file);
+  formData.append("title", "Salon Image");
+  formData.append("category", selectedCategory);
 
-gallery.push({
-title:"Salon Image",
-category:categorySelect.value,
-url:e.target.result
+  try{
+    const res = await fetch(`${API_BASE}/gallery`, {
+      method: "POST",
+      body: formData
+    });
+
+    if(!res.ok){
+      throw new Error("Upload failed");
+    }
+
+    await safeFetchJSON(res);
+
+    alert("✅ Upload successful");
+
+    uploadInput.value = "";
+
+    await loadGallery();
+    await loadCategories(); // 🔥 update categories after upload
+
+  }catch(err){
+    console.error("❌ Upload error:", err);
+    alert("Upload failed.");
+  }
 });
 
-localStorage.setItem("gallery",JSON.stringify(gallery));
+/* ===============================
+   🗑 DELETE IMAGE
+================================ */
+async function deleteImage(id){
 
-renderGallery();
+  if(!confirm("Delete this image?")) return;
 
-};
+  try{
+    const res = await fetch(`${API_BASE}/gallery/${id}`, {
+      method: "DELETE"
+    });
 
-reader.readAsDataURL(file);
+    if(!res.ok){
+      throw new Error("Delete failed");
+    }
 
-});
+    await safeFetchJSON(res);
 
-function deleteImage(index){
+    alert("🗑 Deleted successfully");
 
-gallery.splice(index,1);
+    await loadGallery();
+    await loadCategories(); // 🔥 update categories after delete
 
-localStorage.setItem("gallery",JSON.stringify(gallery));
-
-renderGallery();
-
+  }catch(err){
+    console.error("❌ Delete error:", err);
+    alert("Delete failed.");
+  }
 }
 
+/* ===============================
+   🚀 INIT
+================================ */
 loadCategories();
-renderGallery();
+loadGallery();
 
 </script>
 

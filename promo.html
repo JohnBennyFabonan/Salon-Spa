@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
     :root{
@@ -529,13 +530,14 @@
 <div class="pill">📞 0936 411 6193</div>
 <div class="pill">✉️ trinettebless@gmail.com</div>
 <div class="pill">🕘 Mon–Sun: 9:00am–7:00pm</div>
+<div class="pill">Balagtas Batangas City</div>
 </div>
 
 <div class="right">
 <div class="social">
-<a href="#" title="Facebook">f</a>
-<a href="#" title="Twitter">t</a>
-<a href="#" title="Instagram">⌁</a>
+  <a href="https://www.facebook.com/profile.php?id=61586188435663&rdid=oqQWK8JRiLEVB2am&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Bq8FFzvf6%2F#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+  <a href="https://www.instagram.com/zaitrinettewellness.btg/" target="_blank"><i class="fab fa-instagram"></i></a>
+  <a href="https://www.tiktok.com/@zai30526" target="_blank"><i class="fab fa-tiktok"></i></a>
 </div>
 </div>
 </div>
@@ -683,7 +685,7 @@ No promos found. Try another filter.
 <div>
 
 <div style="font-weight:900;margin:8px 0 6px;color:#0f172a;">
-Rules / Inclusions
+Benefits
 </div>
 
 <ul id="mRules"></ul>
@@ -743,6 +745,12 @@ Rules / Inclusions
   <script>
 
 /* ===============================
+CONFIG (IMPORTANT)
+================================ */
+const API_URL = "http://localhost:5000/api"; // change if deployed
+
+
+/* ===============================
 LOGIN NAVBAR SWITCH
 ================================ */
 
@@ -773,54 +781,37 @@ if(mSignup) mSignup.style.display="none";
 
 if(mDashboard) mDashboard.style.display="block";
 if(mLogout) mLogout.style.display="block";
-
 }
 
 
 /* ===============================
 LOGOUT
 ================================ */
-
 function logout(){
-
 localStorage.removeItem("salonSession");
 sessionStorage.removeItem("salonSession");
-
 window.location.href="index.html";
-
 }
 
 document.getElementById("logoutLink")?.addEventListener("click",logout);
 document.getElementById("mLogout")?.addEventListener("click",logout);
 
 
-
 /* ===============================
 MOBILE MENU
 ================================ */
-
 const menuBtn=document.getElementById("menuBtn");
 const mobileMenuBack=document.getElementById("mobileMenuBack");
 const menuClose=document.getElementById("menuClose");
 
 function openMenu(){
-
 mobileMenuBack.style.display="block";
-menuBtn.setAttribute("aria-expanded","true");
-mobileMenuBack.setAttribute("aria-hidden","false");
-
 document.body.style.overflow="hidden";
-
 }
 
 function closeMenu(){
-
 mobileMenuBack.style.display="none";
-menuBtn.setAttribute("aria-expanded","false");
-mobileMenuBack.setAttribute("aria-hidden","true");
-
 document.body.style.overflow="";
-
 }
 
 menuBtn?.addEventListener("click",openMenu);
@@ -830,89 +821,47 @@ mobileMenuBack?.addEventListener("click",(e)=>{
 if(e.target===mobileMenuBack) closeMenu();
 });
 
-document.addEventListener("keydown",(e)=>{
-if(e.key==="Escape") closeMenu();
-});
-
 
 /* ===============================
-PROMOS SYSTEM
+PROMOS (FROM DATABASE)
 ================================ */
 
 const peso=n=>new Intl.NumberFormat("en-PH",{style:"currency",currency:"PHP"}).format(n);
 
+let promos = [];
 
-const defaultPromos=[
+/* LOAD FROM BACKEND */
+async function loadPromos(){
+  try{
 
-{
-id:"PR1",
-title:"New Client Welcome Deal",
-type:"Promo",
-status:"Active",
-highlight:"-20%",
-dealPrice:399,
-oldPrice:499,
-validity:"Feb 1 – Mar 31",
-image:"images/promo1.jpg", // ✅ added
-desc:"Perfect for first-time clients. Enjoy a discounted service to start your glow-up journey.",
-rules:[
-"Valid for first-time clients only",
-"Choose 1: Haircut OR basic facial",
-"Appointment required",
-"Cannot be combined with other promos"
-]
-},
+    const res = await fetch(`${API_URL}/promos`);
+    const data = await res.json();
 
-{
-id:"PR2",
-title:"Bridal Beauty Package",
-type:"Package",
-status:"Active",
-highlight:"Bundle",
-dealPrice:3500,
-oldPrice:4200,
-validity:"Year-round",
-image:"images/promo2.jpg", // ✅ added
-desc:"A full bridal prep package designed for your big day — calm, glow, and confidence.",
-rules:[
-"Includes: hair styling + makeup",
-"Includes: mani + pedi",
-"Trial session available (add-on)",
-"Book at least 7 days before event"
-]
-},
+    promos = data.map(p => ({
+      id: p.id,
+      title: p.title,
+      type: p.type,
+      status: p.status,
+      highlight: p.highlight,
+      dealPrice: p.deal_price,
+      oldPrice: p.old_price,
+      validity: p.validity,
+      image: p.image_url, // ✅ AWS image
+      desc: p.description,
+      rules: p.rules || []
+    }));
 
-{
-id:"PR3",
-title:"Couple Spa Weekend",
-type:"Package",
-status:"Ending Soon",
-highlight:"2 pax",
-dealPrice:2200,
-oldPrice:2600,
-validity:"Until Mar 10",
-image:"images/promo3.jpg", // ✅ added
-desc:"Relax together with a couple massage and calming spa add-ons.",
-rules:[
-"Includes: 60-min massage (2 persons)",
-"Free aromatherapy upgrade",
-"Available Fri–Sun only",
-"Limited slots per day"
-]
+    render();
+
+  }catch(err){
+    console.error("Failed to load promos:", err);
+  }
 }
 
-];
 
-
-let promos=JSON.parse(localStorage.getItem("promos"));
-
-if(!promos||promos.length===0){
-
-promos=defaultPromos;
-localStorage.setItem("promos",JSON.stringify(promos));
-
-}
-
+/* ===============================
+ELEMENTS
+================================ */
 
 const type=document.getElementById("type");
 const status=document.getElementById("status");
@@ -925,8 +874,6 @@ const modalBack=document.getElementById("modalBack");
 const mClose=document.getElementById("mClose");
 const mClose2=document.getElementById("mClose2");
 
-const mBook=document.getElementById("mBook");
-
 const mTitle=document.getElementById("mTitle");
 const mDesc=document.getElementById("mDesc");
 const mKVs=document.getElementById("mKVs");
@@ -935,16 +882,17 @@ const mRules=document.getElementById("mRules");
 let selected=null;
 
 
+/* ===============================
+CARD UI
+================================ */
+
 function card(p){
-
 return `
-
 <article class="card">
 
-<!-- ✅ IMAGE -->
 <div class="cardImage">
   <img 
-    src="${p.image || 'images/default.jpg'}" 
+    src="${p.image || 'images/default.jpg'}"
     alt="${p.title}"
     style="cursor:pointer"
     data-img="${p.image || 'images/default.jpg'}"
@@ -959,130 +907,99 @@ return `
 </div>
 
 <div class="body">
-
 <div class="dealRow">
 <div class="deal">${peso(p.dealPrice)}</div>
 <div class="old">${peso(p.oldPrice)}</div>
 </div>
 
 <p class="desc">${p.desc}</p>
-
 </div>
 
 <div class="cardFoot">
-
 <button class="btn btnOutline" data-view="${p.id}">View Details</button>
-
 <button class="btn" data-book="${p.id}">Book</button>
-
 </div>
 
 </article>
-
 `;
-
 }
 
 
 /* ===============================
-RENDER PROMOS
+RENDER
 ================================ */
 
 function render(){
 
 const list=promos.filter(p=>{
-
 const matchType=type.value==="All"||p.type===type.value;
 const matchStatus=status.value==="All"||p.status===status.value;
-
 return matchType&&matchStatus;
-
 });
 
 countText.textContent=list.length+" promos";
-
 grid.innerHTML=list.map(card).join("");
-
 empty.style.display=list.length?"none":"block";
 
-// CLICK IMAGE → OPEN FULL VIEW
-grid.querySelectorAll(".cardImage img").forEach(img => {
-  img.addEventListener("click", () => {
-
-    const src = img.getAttribute("data-img");
-
-    document.getElementById("fullImage").src = src;
-
-    document.getElementById("imgModal").style.display = "flex";
-    document.body.style.overflow = "hidden";
-
-  });
+/* IMAGE CLICK */
+grid.querySelectorAll(".cardImage img").forEach(img=>{
+img.addEventListener("click",()=>{
+document.getElementById("fullImage").src=img.dataset.img;
+document.getElementById("imgModal").style.display="flex";
 });
-
+});
 
 /* VIEW DETAILS */
-
 grid.querySelectorAll("[data-view]").forEach(btn=>{
+btn.addEventListener("click",()=>{
+selected=promos.find(x=>x.id===btn.dataset.view);
+openModal(selected);
+});
+});
 
+/* BOOK */
+grid.querySelectorAll("[data-book]").forEach(btn=>{
 btn.addEventListener("click",()=>{
 
-const id=btn.getAttribute("data-view");
+const promo = promos.find(x=>x.id===btn.dataset.book);
 
-selected=promos.find(x=>x.id===id);
+const session =
+JSON.parse(localStorage.getItem("salonSession")) ||
+JSON.parse(sessionStorage.getItem("salonSession"));
 
-openModal(selected);
+if(!session){
+showLoginModal();
+return;
+}
+
+localStorage.setItem("selectedPromo",JSON.stringify(promo));
+window.location.href="promo_booking.html";
 
 });
-
 });
+
+}
+
+/* ===============================
+IMAGE MODAL FIX
+================================ */
 
 const imgModal = document.getElementById("imgModal");
 const closeImgModal = document.getElementById("closeImgModal");
 
+// X button
 closeImgModal.onclick = () => {
   imgModal.style.display = "none";
   document.body.style.overflow = "";
 };
 
+// click outside image
 imgModal.addEventListener("click", (e) => {
   if(e.target === imgModal){
     imgModal.style.display = "none";
     document.body.style.overflow = "";
   }
 });
-
-/* BOOK PROMO */
-
-grid.querySelectorAll("[data-book]").forEach(btn=>{
-
-btn.addEventListener("click",()=>{
-
-const id = btn.getAttribute("data-book");
-const promo = promos.find(x=>x.id===id);
-
-/* CHECK LOGIN */
-const session =
-JSON.parse(localStorage.getItem("salonSession")) ||
-JSON.parse(sessionStorage.getItem("salonSession"));
-
-/* NOT LOGGED IN */
-if(!session){
-
-showLoginModal();
-return;
-
-}
-
-/* LOGGED IN */
-localStorage.setItem("selectedPromo",JSON.stringify(promo));
-
-window.location.href="promo_booking.html";
-
-});
-
-});
-
-}
 
 
 /* ===============================
@@ -1100,18 +1017,13 @@ mKVs.innerHTML=`
 <div class="kv">Validity: ${p.validity}</div>
 `;
 
-mRules.innerHTML=p.rules.map(r=>`<li>${r}</li>`).join("");
+mRules.innerHTML=(p.rules||[]).map(r=>`<li>${r}</li>`).join("");
 
 modalBack.style.display="flex";
-document.body.style.overflow="hidden";
-
 }
 
 function closeModal(){
-
 modalBack.style.display="none";
-document.body.style.overflow="";
-
 }
 
 mClose.onclick=closeModal;
@@ -1121,40 +1033,42 @@ modalBack.addEventListener("click",(e)=>{
 if(e.target===modalBack) closeModal();
 });
 
+
 /* ===============================
-LOGIN REQUIRED MODAL
+LOGIN MODAL
 ================================ */
 
-const loginModal = document.getElementById("loginModal");
-const closeLoginModal = document.getElementById("closeLoginModal");
-const cancelLogin = document.getElementById("cancelLogin");
-const goSignup = document.getElementById("goSignup");
+const loginModal=document.getElementById("loginModal");
 
 function showLoginModal(){
 loginModal.style.display="flex";
-document.body.style.overflow="hidden";
 }
 
 function hideLoginModal(){
 loginModal.style.display="none";
-document.body.style.overflow="";
 }
 
-closeLoginModal.onclick = hideLoginModal;
-cancelLogin.onclick = hideLoginModal;
+document.getElementById("closeLoginModal").onclick=hideLoginModal;
+document.getElementById("cancelLogin").onclick=hideLoginModal;
 
-goSignup.onclick = () => {
-window.location.href = "Sign_up.html";
+document.getElementById("goSignup").onclick=()=>{
+window.location.href="log_in.html";
 };
 
+
 /* ===============================
-FILTER EVENTS
+FILTER
 ================================ */
 
 type.addEventListener("change",render);
 status.addEventListener("change",render);
 
-render();
+
+/* ===============================
+INIT
+================================ */
+
+loadPromos(); // 🔥 LOAD FROM DATABASE
 
 </script>
 </body>

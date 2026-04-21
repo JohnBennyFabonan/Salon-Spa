@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
     :root{
@@ -435,13 +436,14 @@
       <div class="pill">📞 +451236981</div>
       <div class="pill">✉️ example@gmail.com</div>
       <div class="pill">🕘 Mon–Fri: 8:00am–5:00pm</div>
+      <div class="pill">Balagtas Batangas City</div>
     </div>
     <div class="right">
       <div class="social">
-        <a href="#" title="Facebook">f</a>
-        <a href="#" title="Twitter">t</a>
-        <a href="#" title="Instagram">⌁</a>
-      </div>
+  <a href="https://www.facebook.com/profile.php?id=61586188435663&rdid=oqQWK8JRiLEVB2am&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Bq8FFzvf6%2F#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+  <a href="https://www.instagram.com/zaitrinettewellness.btg/" target="_blank"><i class="fab fa-instagram"></i></a>
+  <a href="https://www.tiktok.com/@zai30526" target="_blank"><i class="fab fa-tiktok"></i></a>
+</div>
     </div>
   </div>
 
@@ -536,9 +538,24 @@
         <form id="signupForm" novalidate>
   <div class="grid2">
     <div class="field" style="grid-column: 1 / -1;">
-      <label for="name">Customer Name</label>
-      <input class="input" id="name" name="name" type="text" placeholder="Juan Dela Cruz" autocomplete="name" required />
+      <label for="name">Name</label>
+      <input class="input" id="name" name="name" type="text" placeholder="Example, Juan Dela Cruz" autocomplete="name" required />
     </div>
+
+    <!-- ✅ OTP SECTION -->
+<div class="field" style="grid-column: 1 / -1;">
+  <label>Verification Code</label>
+
+  <div style="display:flex; gap:10px;">
+    <input class="input" id="otp" type="text" placeholder="Enter OTP" disabled />
+    <button type="button" class="btnOutline" id="sendOtpBtn">Send OTP</button>
+  </div>
+
+  <div style="display:flex; gap:10px; margin-top:8px;">
+    <button type="button" class="btnOutline" id="verifyOtpBtn" disabled>Verify OTP</button>
+    <span id="otpStatus" style="font-size:12px; font-weight:700;"></span>
+  </div>
+</div>
 
     <div class="field">
       <label for="contact">Contact Number</label>
@@ -609,22 +626,24 @@
 
   <script>
 
-// ===== Mobile menu toggle =====
+/* ===============================
+   CONFIG
+================================ */
+const API_BASE = "http://127.0.0.1:5000";
+
+/* ===============================
+   MOBILE MENU
+================================ */
 const menuBtn = document.getElementById("menuBtn");
 const mobileMenuBack = document.getElementById("mobileMenuBack");
 const menuClose = document.getElementById("menuClose");
 
 function openMenu(){
   mobileMenuBack.style.display="block";
-  menuBtn.setAttribute("aria-expanded","true");
-  mobileMenuBack.setAttribute("aria-hidden","false");
   document.body.style.overflow="hidden";
 }
-
 function closeMenu(){
   mobileMenuBack.style.display="none";
-  menuBtn.setAttribute("aria-expanded","false");
-  mobileMenuBack.setAttribute("aria-hidden","true");
   document.body.style.overflow="";
 }
 
@@ -635,12 +654,9 @@ mobileMenuBack?.addEventListener("click",(e)=>{
   if(e.target===mobileMenuBack) closeMenu();
 });
 
-document.addEventListener("keydown",(e)=>{
-  if(e.key==="Escape") closeMenu();
-});
-
-
-// ===== Sign-up behavior =====
+/* ===============================
+   FORM ELEMENTS
+================================ */
 const form = document.getElementById("signupForm");
 const errBox = document.getElementById("errBox");
 
@@ -650,18 +666,31 @@ const emailEl = document.getElementById("email");
 const passEl = document.getElementById("password");
 const agreeEl = document.getElementById("agree");
 
-// ✅ NEW (security question)
 const secQEl = document.getElementById("securityQuestion");
 const secAEl = document.getElementById("securityAnswer");
 
 const togglePass = document.getElementById("togglePass");
 
+// OTP elements
+const otpInput = document.getElementById("otp");
+const sendOtpBtn = document.getElementById("sendOtpBtn");
+const verifyOtpBtn = document.getElementById("verifyOtpBtn");
+const otpStatus = document.getElementById("otpStatus");
+
+let isVerified = false;
+
+/* ===============================
+   TOGGLE PASSWORD
+================================ */
 togglePass.addEventListener("click",()=>{
   const isPass = passEl.type==="password";
   passEl.type = isPass ? "text" : "password";
   togglePass.textContent = isPass ? "Hide" : "Show";
 });
 
+/* ===============================
+   HELPERS
+================================ */
 function showError(msg){
   errBox.textContent=msg;
   errBox.style.display="block";
@@ -673,13 +702,89 @@ function clearError(){
 }
 
 function isValidPHMobile(v){
-  const s=(v||"").trim();
-  return /^09\d{9}$/.test(s) || /^\+639\d{9}$/.test(s);
+  return /^09\d{9}$/.test(v) || /^\+639\d{9}$/.test(v);
 }
 
+/* ===============================
+   SEND OTP
+================================ */
+sendOtpBtn.addEventListener("click", async () => {
+  const email = emailEl.value.trim();
 
-// ===== SIGN UP =====
-form.addEventListener("submit",(e)=>{
+  if (!email) return showError("Enter email first");
+
+  try {
+    const res = await fetch(`${API_BASE}/send-otp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) return showError(data.error || "Failed to send OTP");
+
+    otpInput.disabled = false;
+    verifyOtpBtn.disabled = false;
+
+    otpStatus.textContent = "OTP sent 📧";
+    otpStatus.style.color = "green";
+
+  } catch (err) {
+    console.error(err);
+    showError("Cannot send OTP");
+  }
+});
+
+/* ===============================
+   VERIFY OTP
+================================ */
+verifyOtpBtn.addEventListener("click", async () => {
+  const email = emailEl.value.trim();
+  const otp = otpInput.value.trim();
+
+  if (!otp) return showError("Enter OTP");
+
+  try {
+    const res = await fetch(`${API_BASE}/verify-otp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, otp })
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      otpStatus.textContent = data.message;
+      otpStatus.style.color = "red";
+      return;
+    }
+
+    isVerified = true;
+
+    otpStatus.textContent = "Verified ✅";
+    otpStatus.style.color = "green";
+
+    // Lock email after verification
+    emailEl.disabled = true;
+    sendOtpBtn.disabled = true;
+    verifyOtpBtn.disabled = true;
+    otpInput.disabled = true;
+
+  } catch (err) {
+    console.error(err);
+    showError("Verification failed");
+  }
+});
+
+/* ===============================
+   SIGNUP (WITH OTP CHECK)
+================================ */
+form.addEventListener("submit", async (e)=>{
 
   e.preventDefault();
   clearError();
@@ -689,13 +794,12 @@ form.addEventListener("submit",(e)=>{
   const email = emailEl.value.trim();
   const pass = passEl.value;
 
-  // ✅ NEW
   const secQ = secQEl.value;
   const secA = secAEl.value.trim();
 
-  // ===== VALIDATION =====
+  /* VALIDATION */
   if(!name || !contact || !email || !pass || !secQ || !secA){
-    return showError("Please fill out all fields including the security question.");
+    return showError("Please fill out all fields.");
   }
 
   if(!isValidPHMobile(contact)){
@@ -703,7 +807,7 @@ form.addEventListener("submit",(e)=>{
   }
 
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-    return showError("Please enter a valid email.");
+    return showError("Invalid email.");
   }
 
   if(pass.length < 8){
@@ -711,44 +815,51 @@ form.addEventListener("submit",(e)=>{
   }
 
   if(!agreeEl.checked){
-    return showError("Please accept the Terms & Privacy Policy.");
+    return showError("Please accept Terms & Policy.");
   }
 
-  // ===== Load existing users =====
-  let users = JSON.parse(localStorage.getItem("users")) || [];
-
-  // ===== Check duplicate email =====
-  if(users.some(u => u.email.toLowerCase() === email.toLowerCase())){
-    return showError("Email already registered.");
+  // 🔒 OTP CHECK
+  if(!isVerified){
+    return showError("Please verify your email first.");
   }
 
-  // ===== Save new user =====
-  const newUser = {
-    id: "U" + Math.floor(Math.random()*100000),
-    name,
-    contact,
-    email,
-    password: pass,
+  try{
+    const res = await fetch(`${API_BASE}/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name,
+        contact,
+        email,
+        password: pass,
+        securityQuestion: secQ,
+        securityAnswer: secA
+      })
+    });
 
-    // ✅ NEW (security fields)
-    securityQuestion: secQ,
-    securityAnswer: secA.toLowerCase(),
+    const data = await res.json();
 
-    role: "customer",
-    createdAt: Date.now()
-  };
+    if(!res.ok){
+      return showError(data.error || "Registration failed");
+    }
 
-  users.push(newUser);
-  localStorage.setItem("users", JSON.stringify(users));
+    alert("✅ Account created successfully!");
+    window.location.href = "log_in.html";
 
-  alert("Account created successfully!");
-
-  window.location.href="log_in.html";
-
+  }catch(err){
+    console.error(err);
+    showError("Cannot connect to server.");
+  }
 });
 
-form.addEventListener("reset",()=>{
+/* ===============================
+   RESET
+================================ */
+form.addEventListener("reset", ()=>{
   clearError();
+  isVerified = false;
 });
 
 </script>

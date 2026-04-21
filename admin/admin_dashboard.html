@@ -231,6 +231,7 @@ padding:20px;
 <div class="nav">
 <a class="active">Dashboard</a>
 <a href="admin_gallery.html">Manage Gallery</a>
+<a href="admin_walkins.html">Manage Walk-ins</a>
 <a href="admin_bookings.html">Manage Bookings</a>
 <a href="admin_promo.html">Manage Promo</a>
 <a href="admin_services.html">Manage Services</a>
@@ -284,7 +285,11 @@ Upload Maya QR
 <p id="totalRevenue">₱0</p>
 </div>
 
-<!-- ✅ NEW -->
+<div class="card">
+  <h4>This Month Revenue</h4>
+  <p id="monthlyRevenue">₱0</p>
+</div>
+
 <div class="card">
 <h4>Today's Revenue</h4>
 <p id="todayRevenue">₱0</p>
@@ -313,6 +318,18 @@ Upload Maya QR
 
 <h3>Daily Revenue</h3>
 
+<!-- ✅ SEARCH DATE -->
+<input type="date" id="searchDate" style="
+margin-bottom:12px;
+padding:8px 10px;
+border-radius:8px;
+border:1px solid #ccc;
+font-size:13px;
+">
+
+<!-- ✅ SCROLLABLE TABLE -->
+<div style="max-height:300px; overflow-y:auto;">
+
 <table>
 
 <thead>
@@ -326,6 +343,8 @@ Upload Maya QR
 <tbody id="dailyRevenueTable"></tbody>
 
 </table>
+
+</div>
 
 </div>
 
@@ -383,276 +402,458 @@ Upload Maya QR
 <script>
 
 /* ===============================
-ADMIN SESSION CHECK FUNCTION
-================================ */
-
+🔒 ADMIN SESSION SECURITY
+=============================== */
 function checkAdminSession(){
+  const session =
+    JSON.parse(localStorage.getItem("salonSession")) ||
+    JSON.parse(sessionStorage.getItem("salonSession"));
 
-const session =
-JSON.parse(localStorage.getItem("salonSession")) ||
-JSON.parse(sessionStorage.getItem("salonSession"));
-
-if(!session || session.role !== "admin"){
-window.location.replace("../log_in.html");
+  if(!session || session.role !== "admin"){
+    window.location.replace("../log_in.html");
+  }
 }
-
-}
-
-/* Run session check immediately */
-
 checkAdminSession();
 
+/* ===============================
+CONFIG
+=============================== */
+const API_URL = "http://localhost:5000";
 
 /* ===============================
-PREVENT BACK BUTTON CACHE
-================================ */
-
-window.addEventListener("pageshow", function(event){
-
-if(event.persisted){
-location.reload();
-}
-
-checkAdminSession();
-
-});
-
-
-/* ===============================
-CHECK SESSION WHEN PAGE VISIBLE
-================================ */
-
-document.addEventListener("visibilitychange", function(){
-
-if(document.visibilityState === "visible"){
-checkAdminSession();
-}
-
-});
-
-
-/* ===============================
-LOAD BOOKINGS
-================================ */
-
-const bookings = JSON.parse(localStorage.getItem("salonBookings") || "[]");
-
-document.getElementById("totalBookings").textContent = bookings.length;
-
-const today = new Date().toISOString().split("T")[0];
-
-let todayCount = 0;
-let upcoming = 0;
-let revenue = 0;
-let todayRevenue = 0; // ✅ NEW
-
+STATE
+=============================== */
+let bookings = [];
+let walkIns = JSON.parse(localStorage.getItem("walkIns") || "[]");
 let revenueByDate = {};
 let serviceCount = {};
 
 /* ===============================
-PROCESS BOOKINGS
-================================ */
+HELPERS
+=============================== */
+function normalizeStatus(status){
+  return String(status || "Pending").trim().toLowerCase();
+}
 
-bookings.forEach(b => {
+function isDone(status){
+  return normalizeStatus(status) === "done";
+}
 
-if(b.date === today){
-  todayCount++;
+function isCancelled(status){
+  return normalizeStatus(status) === "cancelled";
+}
 
-  // ✅ Only count DONE bookings for today's revenue
-  if(b.status === "Done"){
-    todayRevenue += b.totalPrice || 0;
+/* ===============================
+LOAD DASHBOARD DATA
+=============================== */
+async function loadDashboard(){
+  try{
+    const res = await fetch(`${API_URL}/bookings`);
+    bookings = await res.json();
+
+    /* reload walk-ins too */
+    walkIns = JSON.parse(localStorage.getItem("walkIns") || "[]");
+
+    processDashboard();
+  }catch(err){
+    console.error("❌ Dashboard load error:", err);
   }
 }
 
-if(b.date > today) upcoming++;
-
-// ✅ Total revenue (ONLY Done)
-if(b.status === "Done"){
-  revenue += b.totalPrice || 0;
-}
-
-// ✅ Initialize date group
-if(!revenueByDate[b.date]){
-  revenueByDate[b.date] = {count:0,total:0};
-}
-
-// ✅ Count bookings (all bookings)
-revenueByDate[b.date].count++;
-
-// ❗ ONLY add revenue if DONE
-if(b.status === "Done"){
-  revenueByDate[b.date].total += b.totalPrice || 0;
-}
-
-// ✅ Top services (you can keep this as all bookings OR only Done)
-if(b.services){
-  b.services.forEach(s=>{
-
-    // (Optional) Only count Done services:
-    // if(b.status !== "Done") return;
-
-    if(!serviceCount[s.name]) serviceCount[s.name] = 0;
-    serviceCount[s.name]++;
-  });
-}
-
-});
-
-
 /* ===============================
-UPDATE DASHBOARD CARDS
-================================ */
+PROCESS DATA
+=============================== */
+function processDashboard(){
 
-document.getElementById("todayBookings").textContent = todayCount;
-document.getElementById("upcomingBookings").textContent = upcoming;
-document.getElementById("totalRevenue").textContent = "₱" + revenue.toLocaleString();
-document.getElementById("todayRevenue").textContent = "₱" + todayRevenue.toLocaleString();
+  const today = new Date().toISOString().split("T")[0];
 
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  let todayCount = 0;
+  let upcoming = 0;
+  let revenue = 0;
+  let todayRevenue = 0;
+  let monthlyRevenue = 0;
+
+  revenueByDate = {};
+  serviceCount = {};
+
+  bookings.forEach(b => {
+
+    if(!b.date) return;
+
+    const date = b.date.split("T")[0];
+    const bookingDate = new Date(b.date);
+    const status = normalizeStatus(b.status);
+
+    /* TODAY */
+    if(date === today){
+      todayCount++;
+
+      if(isDone(status)){
+        todayRevenue += Number(b.total_price || 0);
+      }
+    }
+
+    /* UPCOMING */
+    if(
+      date > today &&
+      !isCancelled(status) &&
+      !isDone(status)
+    ){
+      upcoming++;
+    }
+
+    /* TOTAL REVENUE */
+    if(isDone(status)){
+      revenue += Number(b.total_price || 0);
+    }
+
+    /* MONTHLY REVENUE */
+    if(
+      isDone(status) &&
+      bookingDate.getMonth() === currentMonth &&
+      bookingDate.getFullYear() === currentYear
+    ){
+      monthlyRevenue += Number(b.total_price || 0);
+    }
+
+    /* DAILY GROUP */
+    if(!revenueByDate[date]){
+      revenueByDate[date] = { count: 0, total: 0 };
+    }
+
+    revenueByDate[date].count++;
+
+    if(isDone(status)){
+      revenueByDate[date].total += Number(b.total_price || 0);
+    }
+
+    /* SERVICES */
+    if(b.services){
+      try{
+        const parsed = typeof b.services === "string"
+          ? JSON.parse(b.services)
+          : b.services;
+
+        parsed.forEach(s => {
+          const name = s.name || s.service || "Service";
+          if(!serviceCount[name]) serviceCount[name] = 0;
+          serviceCount[name]++;
+        });
+      }catch(err){
+        console.error("❌ Service parse error:", err);
+      }
+    }
+
+  });
+
+  /* WALK-IN REVENUE */
+  walkIns.forEach(w => {
+
+    if(!w.date) return;
+
+    const date = w.date;
+    const walkAmount = Number(w.amount || 0);
+    const walkDate = new Date(w.date);
+
+    /* TOTAL REVENUE */
+    revenue += walkAmount;
+
+    /* TODAY REVENUE */
+    if(date === today){
+      todayRevenue += walkAmount;
+    }
+
+    /* MONTHLY REVENUE */
+    if(
+      walkDate.getMonth() === currentMonth &&
+      walkDate.getFullYear() === currentYear
+    ){
+      monthlyRevenue += walkAmount;
+    }
+
+    /* DAILY GROUP */
+    if(!revenueByDate[date]){
+      revenueByDate[date] = { count: 0, total: 0 };
+    }
+
+    revenueByDate[date].count++;
+    revenueByDate[date].total += walkAmount;
+
+    /* OPTIONAL: count walk-in service in Top Services */
+    if(w.service){
+      const serviceName = String(w.service).trim();
+      if(serviceName){
+        if(!serviceCount[serviceName]) serviceCount[serviceName] = 0;
+        serviceCount[serviceName]++;
+      }
+    }
+
+  });
+
+  document.getElementById("totalBookings").textContent = bookings.length;
+  document.getElementById("todayBookings").textContent = todayCount;
+  document.getElementById("upcomingBookings").textContent = upcoming;
+  document.getElementById("totalRevenue").textContent = "₱" + revenue.toLocaleString();
+  document.getElementById("todayRevenue").textContent = "₱" + todayRevenue.toLocaleString();
+  document.getElementById("monthlyRevenue").textContent = "₱" + monthlyRevenue.toLocaleString();
+
+  const monthName = now.toLocaleString("en-PH", { month: "long" });
+  const monthlyLabel = document.getElementById("monthlyLabel");
+  if(monthlyLabel){
+    monthlyLabel.textContent = monthName + " Revenue";
+  }
+
+  renderRevenueTable();
+  renderTopServices();
+  renderTodayBookings();
+}
 
 /* ===============================
 DAILY REVENUE TABLE
-================================ */
+=============================== */
+function renderRevenueTable(filterDate = null){
+  const table = document.getElementById("dailyRevenueTable");
+  table.innerHTML = "";
 
-const revenueTable = document.getElementById("dailyRevenueTable");
+  let html = "";
 
-Object.keys(revenueByDate).forEach(date => {
+  Object.keys(revenueByDate)
+    .sort()
+    .forEach(date => {
 
-let r = revenueByDate[date];
+      if(filterDate && date !== filterDate) return;
 
-revenueTable.innerHTML += `
-<tr>
-<td>${date}</td>
-<td>${r.count}</td>
-<td>₱${r.total.toLocaleString()}</td>
-</tr>
-`;
+      const r = revenueByDate[date];
 
-});
+      html += `
+        <tr>
+          <td>${date}</td>
+          <td>${r.count}</td>
+          <td>₱${r.total.toLocaleString()}</td>
+        </tr>
+      `;
+    });
 
+  table.innerHTML = html;
+}
+
+/* SEARCH DATE */
+const searchInput = document.getElementById("searchDate");
+if(searchInput){
+  searchInput.addEventListener("change", function(){
+    renderRevenueTable(this.value);
+  });
+}
 
 /* ===============================
 TOP SERVICES
-================================ */
+=============================== */
+function renderTopServices(){
+  const table = document.getElementById("topServiceTable");
+  table.innerHTML = "";
 
-const serviceTable = document.getElementById("topServiceTable");
+  let html = "";
 
-Object.keys(serviceCount)
-.sort((a,b)=>serviceCount[b]-serviceCount[a])
-.forEach(service=>{
+  Object.keys(serviceCount)
+    .sort((a, b) => serviceCount[b] - serviceCount[a])
+    .slice(0, 3)
+    .forEach(service => {
+      html += `
+        <tr>
+          <td>${service}</td>
+          <td>${serviceCount[service]}</td>
+        </tr>
+      `;
+    });
 
-serviceTable.innerHTML += `
-<tr>
-<td>${service}</td>
-<td>${serviceCount[service]}</td>
-</tr>
-`;
-
-});
-
-
-/* ===============================
-TODAY BOOKINGS TABLE
-================================ */
-
-const todayTable = document.getElementById("todayBookingTable");
-
-todayTable.innerHTML = ""; // clear first
-
-bookings.forEach(b=>{
-
-if(b.date === today){
-
-let services = b.services ? b.services.map(s=>s.name).join(", ") : "";
-
-todayTable.innerHTML += `
-<tr>
-<td>${b.id}</td>
-<td>${services}</td>
-<td>${b.staff || "-"}</td>
-<td>${b.time}</td>
-<td>₱${(b.downpayment || 0).toLocaleString()}</td>
-<td>₱${(b.remaining || 0).toLocaleString()}</td>
-
-<td>
-  <span class="status ${b.status === 'Done' ? 'done' : 'pending'}">
-    ${b.status || "Pending"}
-  </span>
-</td>
-
-<td>
-  ${b.status !== "Done" 
-    ? `<button onclick="markDone('${b.id}')" style="padding:6px 10px; border:none; background:#2f7d62; color:white; border-radius:6px; cursor:pointer;">Done</button>` 
-    : "—"}
-</td>
-
-</tr>
-`;
-
+  table.innerHTML = html;
 }
 
-});
+/* ===============================
+TODAY BOOKINGS
+=============================== */
+function renderTodayBookings(){
+  const table = document.getElementById("todayBookingTable");
+  table.innerHTML = "";
+
+  const today = new Date().toISOString().split("T")[0];
+  let html = "";
+
+  bookings.forEach(b => {
+
+    if(!b.date) return;
+
+    const date = b.date.split("T")[0];
+    const status = normalizeStatus(b.status);
+
+    if(date === today){
+
+      let services = "";
+
+      try{
+        const parsed = typeof b.services === "string"
+          ? JSON.parse(b.services)
+          : b.services;
+
+        services = parsed.map(s => s.name || s.service).join(", ");
+      }catch(err){
+        console.error("❌ Today booking service parse error:", err);
+      }
+
+      html += `
+        <tr>
+          <td>${b.id}</td>
+          <td>${services}</td>
+          <td>${b.staff || "-"}</td>
+          <td>${b.time || "-"}</td>
+          <td>₱${Number(b.downpayment || 0).toLocaleString()}</td>
+          <td>₱${Number(b.remaining || 0).toLocaleString()}</td>
+          <td>${b.status || "Pending"}</td>
+          <td>
+            ${
+              !isDone(status) && !isCancelled(status)
+                ? `<button onclick="markDone(${b.id})" style="padding:6px 10px; border:none; background:#2f7d62; color:white; border-radius:6px; cursor:pointer;">Done</button>`
+                : "—"
+            }
+          </td>
+        </tr>
+      `;
+    }
+  });
+
+  table.innerHTML = html;
+}
 
 /* ===============================
-UPLOAD QR CODES (GCash, BPI, Maya)
-================================ */
+MARK DONE
+=============================== */
+async function markDone(id){
+  if(!confirm("Mark as DONE?")) return;
 
-const gcashBtn = document.getElementById("uploadGCashBtn");
-const bpiBtn = document.getElementById("uploadBPIBtn");
-const mayaBtn = document.getElementById("uploadMayaBtn");
+  try{
+    await fetch(`${API_URL}/bookings/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "Done" })
+    });
+
+    loadDashboard();
+  }catch(err){
+    console.error("❌ Mark done error:", err);
+  }
+}
+
+/* ===============================
+QR UPLOAD TO BACKEND
+=============================== */
+const MAX_UPLOAD_MB = 5;
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
+function validateImageFile(file){
+  if(!file){
+    throw new Error("No file selected.");
+  }
+
+  if(!ALLOWED_IMAGE_TYPES.includes(file.type)){
+    throw new Error("Only JPG, PNG, and WEBP images are allowed.");
+  }
+
+  const maxBytes = MAX_UPLOAD_MB * 1024 * 1024;
+  if(file.size > maxBytes){
+    throw new Error(`Image must be smaller than ${MAX_UPLOAD_MB}MB.`);
+  }
+}
+
+function setUploadButtonState(button, disabled, text){
+  if(!button) return;
+  button.disabled = disabled;
+  button.textContent = text;
+  button.style.opacity = disabled ? "0.7" : "1";
+}
+
+async function uploadQRCode(file, paymentType){
+  validateImageFile(file);
+
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const res = await fetch(`${API_URL}/payment-qrs/${paymentType}`, {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if(!res.ok){
+    throw new Error(data.error || `Failed to upload ${paymentType} QR`);
+  }
+
+  return data;
+}
+
+function handleQRUpload(input, paymentType, label, button){
+  if(!input) return;
+
+  input.onchange = async function(){
+    const file = this.files?.[0];
+    if(!file) return;
+
+    try{
+      setUploadButtonState(button, true, `Uploading ${label}...`);
+
+      const result = await uploadQRCode(file, paymentType);
+
+      console.log(`✅ ${label} uploaded:`, result);
+      alert(`${label} QR updated successfully!`);
+
+    }catch(err){
+      console.error(`❌ ${label} upload error:`, err);
+      alert(err.message || `Failed to upload ${label} QR.`);
+    }finally{
+      setUploadButtonState(button, false, `Upload ${label} QR`);
+      input.value = "";
+    }
+  };
+}
+
+const uploadGCashBtn = document.getElementById("uploadGCashBtn");
+const uploadBPIBtn = document.getElementById("uploadBPIBtn");
+const uploadMayaBtn = document.getElementById("uploadMayaBtn");
 
 const gcashInput = document.getElementById("gcashInput");
 const bpiInput = document.getElementById("bpiInput");
 const mayaInput = document.getElementById("mayaInput");
 
-/* BUTTON CLICK */
-gcashBtn.onclick = () => gcashInput.click();
-bpiBtn.onclick = () => bpiInput.click();
-mayaBtn.onclick = () => mayaInput.click();
+handleQRUpload(gcashInput, "gcash", "GCash", uploadGCashBtn);
+handleQRUpload(bpiInput, "bpi", "BPI", uploadBPIBtn);
+handleQRUpload(mayaInput, "maya", "Maya", uploadMayaBtn);
 
-/* REUSABLE FUNCTION */
-function handleQRUpload(input, storageKey, message){
-
-input.onchange = function(){
-
-const file = this.files[0];
-if(!file) return;
-
-const reader = new FileReader();
-
-reader.onload = function(e){
-
-localStorage.setItem(storageKey, e.target.result);
-alert(message);
-
-};
-
-reader.readAsDataURL(file);
-
-};
-
+if(uploadGCashBtn && gcashInput){
+  uploadGCashBtn.onclick = () => gcashInput.click();
 }
 
-/* APPLY TO ALL QR TYPES */
-handleQRUpload(gcashInput, "gcashQR", "GCash QR updated successfully!");
-handleQRUpload(bpiInput, "bpiQR", "BPI QR updated successfully!");
-handleQRUpload(mayaInput, "mayaQR", "Maya QR updated successfully!");
-
-function markDone(id){
-
-let bookings = JSON.parse(localStorage.getItem("salonBookings")) || [];
-
-const index = bookings.findIndex(b => b.id === id);
-
-if(index === -1) return;
-
-bookings[index].status = "Done";
-
-localStorage.setItem("salonBookings", JSON.stringify(bookings));
-
-location.reload();
-
+if(uploadBPIBtn && bpiInput){
+  uploadBPIBtn.onclick = () => bpiInput.click();
 }
+
+if(uploadMayaBtn && mayaInput){
+  uploadMayaBtn.onclick = () => mayaInput.click();
+}
+
+/* ===============================
+AUTO REFRESH
+=============================== */
+setInterval(loadDashboard, 10000);
+
+/* ===============================
+INIT
+=============================== */
+loadDashboard();
+
 </script>
-
 </body>
 </html>

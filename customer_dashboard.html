@@ -437,6 +437,36 @@ align-items:flex-start;
 
 }
 
+.star {
+  cursor: pointer;
+  color: #ccc;
+  transition: 0.2s;
+}
+
+.star.active {
+  color: gold;
+}
+
+.cancelBtn {
+  background: #fdeaea;
+  color: #c53030;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.rateBtn {
+  background: #e6f7f2;
+  color: #1f7a63;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
 </style>
 </head>
 
@@ -448,17 +478,9 @@ align-items:flex-start;
 
 <div class="left">
 
-<div class="pill">
-📞 0936 411 6193
-</div>
-
-<div class="pill">
-✉️ trinettebless@gmail.com
-</div>
-
-<div class="pill">
-🕘 Mon–Sun: 9:00am–7:00pm
-</div>
+<div class="pill">📞 0936 411 6193</div>
+<div class="pill">✉️ trinettebless@gmail.com</div>
+<div class="pill">🕘 Mon–Sun: 9:00am–7:00pm</div>
 
 </div>
 
@@ -584,7 +606,6 @@ align-items:flex-start;
 <table>
 
 <thead>
-
 <tr>
 <th>Booking ID</th>
 <th>Service / Promo</th>
@@ -594,7 +615,6 @@ align-items:flex-start;
 <th>Status</th>
 <th>Action</th>
 </tr>
-
 </thead>
 
 <tbody id="upcomingTable"></tbody>
@@ -617,7 +637,6 @@ align-items:flex-start;
 <table>
 
 <thead>
-
 <tr>
 <th>Booking ID</th>
 <th>Service / Promo</th>
@@ -625,8 +644,8 @@ align-items:flex-start;
 <th>Time</th>
 <th>Remaining</th>
 <th>Status</th>
+<th>Action</th> <!-- ✅ ADDED FOR RATING -->
 </tr>
-
 </thead>
 
 <tbody id="historyTable"></tbody>
@@ -639,57 +658,296 @@ align-items:flex-start;
 
 </div>
 
+<!-- ===============================
+RATING MODAL ⭐
+================================ -->
+<div id="ratingModal" style="
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+">
+
+  <div style="
+    background:#fff;
+    padding:25px;
+    border-radius:12px;
+    width:320px;
+    text-align:center;
+    position:relative;
+  ">
+
+    <!-- CLOSE BUTTON -->
+    <button onclick="document.getElementById('ratingModal').style.display='none'" 
+      style="
+        position:absolute;
+        top:10px;
+        right:10px;
+        border:none;
+        background:none;
+        font-size:18px;
+        cursor:pointer;
+      ">
+      ✕
+    </button>
+
+    <h3 style="margin-bottom:10px;">Rate Your Experience</h3>
+
+    <!-- STARS -->
+    <div style="font-size:30px; margin:15px 0;">
+      <span class="star">★</span>
+      <span class="star">★</span>
+      <span class="star">★</span>
+      <span class="star">★</span>
+      <span class="star">★</span>
+    </div>
+
+    <!-- FEEDBACK -->
+    <textarea 
+      id="feedback" 
+      placeholder="Write your feedback..."
+      style="
+        width:100%;
+        height:80px;
+        padding:10px;
+        border-radius:8px;
+        border:1px solid #ccc;
+        resize:none;
+      ">
+    </textarea>
+
+    <!-- SUBMIT -->
+    <button onclick="submitRating()" style="
+      margin-top:12px;
+      width:100%;
+      padding:10px;
+      background:#1f7a63;
+      color:white;
+      border:none;
+      border-radius:8px;
+      font-weight:600;
+      cursor:pointer;
+    ">
+      Submit Rating
+    </button>
+
+  </div>
+</div>
+
 </body>
 
 <script>
 
 /* ===============================
-WAIT FOR PAGE LOAD
+FORMAT DATE
 ================================ */
+function formatDate(dateString){
+  if(!dateString) return "-";
+
+  const date = new Date(dateString);
+
+  return date.toLocaleDateString("en-PH", {
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  });
+}
 
 document.addEventListener("DOMContentLoaded", () => {
 
 /* ===============================
 CHECK LOGIN
 ================================ */
-
 const session =
 JSON.parse(localStorage.getItem("salonSession")) ||
 JSON.parse(sessionStorage.getItem("salonSession"));
 
 if(!session){
-window.location.href="log_in.html";
-return;
+  window.location.href="log_in.html";
+  return;
 }
 
-
 /* ===============================
-LOAD BOOKINGS
+LOGOUT
 ================================ */
-
-const allBookings = JSON.parse(localStorage.getItem("salonBookings") || "[]");
-
-/* show bookings of logged user */
-
-const bookings = allBookings.filter(b =>
-b.email === session.email ||
-b.customer === session.name
-);
-
+const logoutBtn = document.getElementById("logoutBtn");
+if(logoutBtn){
+  logoutBtn.onclick = () => {
+    localStorage.removeItem("salonSession");
+    sessionStorage.removeItem("salonSession");
+    window.location.href="log_in.html";
+  };
+}
 
 /* ===============================
 ELEMENTS
 ================================ */
-
 const upcomingTable = document.getElementById("upcomingTable");
 const historyTable = document.getElementById("historyTable");
 
+let bookings = [];
 
 /* ===============================
-STATS
+LOAD BOOKINGS
 ================================ */
+async function loadBookings(){
+  try{
+    const res = await fetch("http://localhost:5000/bookings");
+    const data = await res.json();
 
-let totalBookings = bookings.length;
+    bookings = data.filter(b => b.email === session.email);
+
+    renderBookings();
+
+  }catch(err){
+    console.error("❌ LOAD ERROR:", err);
+  }
+}
+
+/* ===============================
+CANCEL
+================================ */
+async function cancelBooking(id){
+  if(!confirm("Are you sure you want to cancel this booking?")) return;
+
+  try{
+    await fetch(`http://localhost:5000/bookings/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "Cancelled" })
+    });
+
+    alert("Booking cancelled!");
+    loadBookings();
+
+  }catch(err){
+    console.error("❌ Cancel error:", err);
+  }
+}
+
+/* ===============================
+RATING SYSTEM ⭐ (UPDATED)
+================================ */
+function openRating(id){
+  const modal = document.getElementById("ratingModal");
+  modal.style.display = "flex";
+  modal.dataset.id = id;
+
+  /* RESET UI EVERY OPEN */
+  document.getElementById("feedback").value = "";
+  document.querySelectorAll(".star").forEach(s => s.classList.remove("active"));
+}
+
+/* ===============================
+SUBMIT RATING (FULL FIX)
+================================ */
+async function submitRating(){
+
+  const modal = document.getElementById("ratingModal");
+  const id = modal.dataset.id;
+
+  const stars = document.querySelectorAll(".star.active").length;
+  const feedback = document.getElementById("feedback").value.trim();
+
+  const submitBtn = document.querySelector("#ratingModal button:last-of-type");
+
+  /* 🔐 GET SESSION SAFELY */
+  const session =
+    JSON.parse(localStorage.getItem("salonSession")) ||
+    JSON.parse(sessionStorage.getItem("salonSession"));
+
+  if(!session){
+    alert("Session expired. Please login again.");
+    window.location.href = "log_in.html";
+    return;
+  }
+
+  /* ✅ VALIDATION */
+  if(stars === 0){
+    alert("Please select a star rating.");
+    return;
+  }
+
+  /* 🚫 PREVENT DOUBLE CLICK */
+  submitBtn.disabled = true;
+  submitBtn.innerText = "Submitting...";
+
+  try{
+
+    const res = await fetch("http://localhost:5000/ratings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        booking_id: id,
+        email: session.email,
+        stars: stars,
+        feedback: feedback
+      })
+    });
+
+    const data = await res.json();
+
+    /* ❌ BACKEND ERROR (like duplicate) */
+    if(!res.ok){
+      alert(data.error || "Failed to submit rating");
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Submit Rating";
+      return;
+    }
+
+    /* ✅ SUCCESS */
+    alert("⭐ Thank you for your feedback!");
+
+    modal.style.display = "none";
+
+  }catch(err){
+    console.error("❌ Rating error:", err);
+    alert("Network error. Try again.");
+  }
+
+  /* RESET BUTTON */
+  submitBtn.disabled = false;
+  submitBtn.innerText = "Submit Rating";
+}
+
+/* 🔥 VERY IMPORTANT (FIXES YOUR BUTTON ERROR) */
+window.submitRating = submitRating;
+
+
+/* ===============================
+STAR CLICK ⭐
+================================ */
+document.querySelectorAll(".star").forEach((star, index)=>{
+  star.addEventListener("click", ()=>{
+    document.querySelectorAll(".star").forEach((s,i)=>{
+      s.classList.toggle("active", i <= index);
+    });
+  });
+});
+
+
+/* ===============================
+CLOSE MODAL
+================================ */
+const modal = document.getElementById("ratingModal");
+
+modal.addEventListener("click", function(e){
+  if(e.target === this){
+    this.style.display = "none";
+  }
+});
+
+/* ===============================
+RENDER BOOKINGS
+================================ */
+function renderBookings(){
+
 let today = new Date().toISOString().split("T")[0];
 
 let upcoming = 0;
@@ -697,220 +955,115 @@ let completed = 0;
 let cancelled = 0;
 let totalPaid = 0;
 
-setText("totalBookings", totalBookings);
-
-
-/* ===============================
-CLEAR TABLES
-================================ */
-
 upcomingTable.innerHTML="";
 historyTable.innerHTML="";
 
+bookings.forEach((b)=>{
 
-/* ===============================
-RENDER BOOKINGS
-================================ */
-
-bookings.forEach((b,index)=>{
-
-let serviceName="Booking";
-
+/* SERVICES */
+let serviceName = "Booking";
 if(b.services){
-serviceName=b.services.map(s=>s.name).join(", ");
+  try{
+    const parsed = typeof b.services === "string"
+      ? JSON.parse(b.services)
+      : b.services;
+
+    if(Array.isArray(parsed)){
+      serviceName = parsed.map(s=>s.name || s.service).join(", ");
+    }
+  }catch{}
 }
 
-if(b.promo){
-serviceName=b.promo;
+const status = b.status || "Pending";
+
+/* PAYMENT */
+if(status !== "Cancelled"){
+  totalPaid += Number(b.downpayment || 0);
+  if(status === "Done"){
+    totalPaid += Number(b.remaining || 0);
+  }
 }
 
-totalPaid+=b.downpayment||0;
+/* UPCOMING */
+if(b.date >= today && status !== "Cancelled" && status !== "Done"){
 
-const status=b.status||"Pending";
+  upcoming++;
 
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td>${b.id}</td>
+    <td>${serviceName}</td>
+    <td>${formatDate(b.date)}</td>
+    <td>${b.time}</td>
+    <td>₱${Number(b.downpayment||0).toLocaleString()}</td>
+    <td>${status}</td>
+    <td><button class="cancelBtn">Cancel</button></td>
+  `;
 
-/* ===============================
-UPCOMING BOOKINGS
-================================ */
+  row.querySelector(".cancelBtn").addEventListener("click", () => {
+    cancelBooking(b.id);
+  });
 
-if(b.date>=today && status!=="Cancelled"){
+  upcomingTable.appendChild(row);
 
-upcoming++;
-
-upcomingTable.innerHTML+=`
-<tr>
-<td>${b.id||"-"}</td>
-<td>${serviceName}</td>
-<td>${b.date||"-"}</td>
-<td>${b.time||"-"}</td>
-<td>₱${(b.downpayment||0).toLocaleString()}</td>
-<td><span class="status">${status}</span></td>
-<td>
-<button onclick="cancelBooking(${index})"
-style="padding:6px 10px;border:none;border-radius:8px;background:#fdeaea;color:#c53030;font-weight:600;cursor:pointer;">
-Cancel
-</button>
-</td>
-</tr>
-`;
-
-}
-
-
-/* ===============================
-HISTORY BOOKINGS
-================================ */
-
-else{
-
-if(status==="Cancelled"){
-cancelled++;
 }else{
-completed++;
+
+  if(status==="Cancelled") cancelled++;
+  else completed++;
+
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td>${b.id}</td>
+    <td>${serviceName}</td>
+    <td>${formatDate(b.date)}</td>
+    <td>${b.time}</td>
+    <td>${status==="Done" ? "Paid" : "₱"+Number(b.remaining||0).toLocaleString()}</td>
+    <td>${status}</td>
+    <td>
+  ${
+    status === "Done"
+      ? `<button class="rateBtn">Rate</button>`
+      : status === "Cancelled"
+      ? `<span style="color:#c53030; font-weight:600;">Cancelled</span>`
+      : `<span style="color:#64748b;">Not Available</span>`
+  }
+</td>
+  `;
+
+  const rateBtn = row.querySelector(".rateBtn");
+if(rateBtn){
+  rateBtn.addEventListener("click", () => {
+    openRating(b.id);
+  });
 }
 
-historyTable.innerHTML+=`
-<tr>
-<td>${b.id||"-"}</td>
-<td>${serviceName}</td>
-<td>${b.date||"-"}</td>
-<td>${b.time||"-"}</td>
-<td>₱${(b.remaining||0).toLocaleString()}</td>
-<td><span class="status">${status}</span></td>
-</tr>
-`;
-
+  historyTable.appendChild(row);
 }
 
 });
 
-
-/* ===============================
-EMPTY STATES
-================================ */
-
+/* EMPTY STATES */
 if(upcomingTable.innerHTML===""){
-upcomingTable.innerHTML=
-`<tr><td colspan="7">No upcoming bookings.</td></tr>`;
+  upcomingTable.innerHTML=`<tr><td colspan="7">No upcoming bookings.</td></tr>`;
 }
 
 if(historyTable.innerHTML===""){
-historyTable.innerHTML=
-`<tr><td colspan="6">No booking history.</td></tr>`;
+  historyTable.innerHTML=`<tr><td colspan="7">No booking history.</td></tr>`;
 }
 
-
-/* ===============================
-UPDATE DASHBOARD CARDS
-================================ */
-
-setText("upcomingBookings",upcoming);
-setText("completedBookings",completed);
-setText("cancelledBookings",cancelled);
-setText("totalPaid","₱"+totalPaid.toLocaleString());
-
-
-/* ===============================
-SAFE TEXT FUNCTION
-================================ */
-
-function setText(id,value){
-
-const el=document.getElementById(id);
-
-if(el){
-el.textContent=value;
-}
+/* CARDS */
+document.getElementById("totalBookings").textContent = bookings.length;
+document.getElementById("upcomingBookings").textContent = upcoming;
+document.getElementById("completedBookings").textContent = completed;
+document.getElementById("cancelledBookings").textContent = cancelled;
+document.getElementById("totalPaid").textContent = "₱"+totalPaid.toLocaleString();
 
 }
 
-
-/* ===============================
-CANCEL BOOKING
-================================ */
-
-window.cancelBooking=function(index){
-
-if(!confirm("Are you sure you want to cancel this booking?")) return;
-
-allBookings[index].status="Cancelled";
-
-localStorage.setItem("salonBookings",JSON.stringify(allBookings));
-
-location.reload();
-
-}
-
-
-/* ===============================
-NAVBAR MOBILE MENU
-================================ */
-
-const menuBtn=document.getElementById("menuBtn");
-const mobileMenuBack=document.getElementById("mobileMenuBack");
-const menuClose=document.getElementById("menuClose");
-
-if(menuBtn){
-
-menuBtn.onclick=()=>{
-
-mobileMenuBack.style.display="block";
-document.body.style.overflow="hidden";
-
-};
-
-}
-
-if(menuClose){
-menuClose.onclick=closeMenu;
-}
-
-if(mobileMenuBack){
-
-mobileMenuBack.onclick=(e)=>{
-
-if(e.target===mobileMenuBack){
-closeMenu();
-}
-
-};
-
-}
-
-function closeMenu(){
-
-mobileMenuBack.style.display="none";
-document.body.style.overflow="";
-
-}
-
-
-/* ===============================
-LOGOUT
-================================ */
-
-const logoutBtn=document.getElementById("logoutBtn");
-const mLogout=document.getElementById("mLogout");
-
-if(logoutBtn){
-logoutBtn.onclick=logout;
-}
-
-if(mLogout){
-mLogout.onclick=logout;
-}
-
-function logout(){
-
-localStorage.removeItem("salonSession");
-sessionStorage.removeItem("salonSession");
-
-window.location.href="index.html";
-
-}
+/* INIT */
+loadBookings();
 
 });
-
 </script>
 
 </body>

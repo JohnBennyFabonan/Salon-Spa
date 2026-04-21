@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
     :root{
@@ -445,13 +446,14 @@
       <div class="pill">📞 +451236981</div>
       <div class="pill">✉️ example@gmail.com</div>
       <div class="pill">🕘 Mon–Fri: 8:00am–5:00pm</div>
+      <div class="pill">Balagtas Batangas City</div>
     </div>
     <div class="right">
       <div class="social">
-        <a href="#" title="Facebook">f</a>
-        <a href="#" title="Twitter">t</a>
-        <a href="#" title="Instagram">⌁</a>
-      </div>
+  <a href="https://www.facebook.com/profile.php?id=61586188435663&rdid=oqQWK8JRiLEVB2am&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Bq8FFzvf6%2F#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+  <a href="https://www.instagram.com/zaitrinettewellness.btg/" target="_blank"><i class="fab fa-instagram"></i></a>
+  <a href="https://www.tiktok.com/@zai30526" target="_blank"><i class="fab fa-tiktok"></i></a>
+</div>
     </div>
   </div>
 
@@ -589,30 +591,26 @@
   </main>
 
 <script>
-// ===== Mobile menu toggle =====
+
+/* ===============================
+   CONFIG (IMPORTANT)
+================================ */
+const API_BASE = "http://127.0.0.1:5000";
+
+/* ===============================
+   MOBILE MENU
+================================ */
 const menuBtn = document.getElementById("menuBtn");
 const mobileMenuBack = document.getElementById("mobileMenuBack");
 const menuClose = document.getElementById("menuClose");
 
 function openMenu(){
-  if(!mobileMenuBack) return;
-
   mobileMenuBack.style.display = "block";
-
-  if(menuBtn) menuBtn.setAttribute("aria-expanded","true");
-  mobileMenuBack.setAttribute("aria-hidden","false");
-
   document.body.style.overflow = "hidden";
 }
 
 function closeMenu(){
-  if(!mobileMenuBack) return;
-
   mobileMenuBack.style.display = "none";
-
-  if(menuBtn) menuBtn.setAttribute("aria-expanded","false");
-  mobileMenuBack.setAttribute("aria-hidden","true");
-
   document.body.style.overflow = "";
 }
 
@@ -620,19 +618,12 @@ menuBtn?.addEventListener("click", openMenu);
 menuClose?.addEventListener("click", closeMenu);
 
 mobileMenuBack?.addEventListener("click",(e)=>{
-  if(e.target === mobileMenuBack){
-    closeMenu();
-  }
+  if(e.target === mobileMenuBack) closeMenu();
 });
 
-document.addEventListener("keydown",(e)=>{
-  if(e.key === "Escape"){
-    closeMenu();
-  }
-});
-
-
-// ===== Login behavior =====
+/* ===============================
+   LOGIN ELEMENTS
+================================ */
 const form = document.getElementById("loginForm");
 const errBox = document.getElementById("errBox");
 const okBox = document.getElementById("okBox");
@@ -641,20 +632,20 @@ const emailEl = document.getElementById("email");
 const passEl = document.getElementById("password");
 const rememberEl = document.getElementById("remember");
 
-
-// ===== Toggle Password =====
 const togglePass = document.getElementById("togglePass");
 
-if(togglePass && passEl){
-  togglePass.addEventListener("click",()=>{
-    const isPass = passEl.type === "password";
+/* ===============================
+   TOGGLE PASSWORD
+================================ */
+togglePass?.addEventListener("click",()=>{
+  const isPass = passEl.type === "password";
+  passEl.type = isPass ? "text" : "password";
+  togglePass.textContent = isPass ? "Hide" : "Show";
+});
 
-    passEl.type = isPass ? "text" : "password";
-    togglePass.textContent = isPass ? "Hide" : "Show";
-  });
-}
-
-// ===== Message helpers =====
+/* ===============================
+   MESSAGE HELPERS
+================================ */
 function clearMsg(){
   errBox.style.display="none";
   errBox.textContent="";
@@ -674,105 +665,84 @@ function ok(msg){
   errBox.style.display="none";
 }
 
-
-// ===== Create default admin account =====
-if(!localStorage.getItem("adminAccount")){
-  localStorage.setItem("adminAccount",JSON.stringify({
-    id:1,
-    name:"Administrator",
-    email:"admin@basit.com",
-    password:"admin123",
-    role:"admin"
-  }));
-}
-
-
-// ===== Login form =====
-form.addEventListener("submit",(e)=>{
+/* ===============================
+   LOGIN (UPDATED TO API)
+================================ */
+form.addEventListener("submit", async (e)=>{
 
   e.preventDefault();
   clearMsg();
 
-  const email=emailEl.value.trim();
-  const pass=passEl.value;
+  const email = emailEl.value.trim();
+  const pass = passEl.value;
 
   if(!email || !pass){
     return err("Please enter your email and password.");
   }
 
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-    return err("Please enter a valid email address.");
+    return err("Invalid email format.");
   }
 
+  try{
 
-  // ===== ADMIN LOGIN =====
-const admin = JSON.parse(localStorage.getItem("adminAccount"));
+    const res = await fetch(`${API_BASE}/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email,
+        password: pass
+      })
+    });
 
-if(
-  admin &&
-  email.toLowerCase() === admin.email.toLowerCase() &&
-  pass === admin.password
-){
+    const data = await res.json();
 
-  const session = {
-    id: admin.id || 1,
-    name: admin.name || "Administrator",
-    email: admin.email,
-    role: "admin",
-    when: Date.now()
-  };
+    if(!res.ok){
+      return err(data.error || "Login failed");
+    }
 
-  localStorage.setItem("salonSession", JSON.stringify(session));
-  sessionStorage.removeItem("salonSession");
+    /* ===============================
+       SAVE SESSION
+    ================================= */
+    const sessionData = {
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      role: data.role,
+      when: Date.now()
+    };
 
-  ok("Admin login successful! Redirecting...");
+    if(rememberEl.checked){
+      localStorage.setItem("salonSession", JSON.stringify(sessionData));
+      sessionStorage.removeItem("salonSession");
+    } else {
+      sessionStorage.setItem("salonSession", JSON.stringify(sessionData));
+    }
 
-  setTimeout(() => {
-    window.location.href = "admin/admin_dashboard.html";
-  }, 700);
+    ok("Login successful! Redirecting...");
 
-  return;
-}
+    /* ===============================
+       ROLE-BASED REDIRECT
+    ================================= */
+    setTimeout(()=>{
 
-  // ===== CUSTOMER LOGIN =====
-  const users=JSON.parse(localStorage.getItem("users")) || [];
+      if(data.role === "admin"){
+        window.location.href = "admin/admin_dashboard.html";
+      } else {
+        window.location.href = "customer_dashboard.html";
+      }
 
-  const user=users.find(u =>
-    u.email.toLowerCase()===email.toLowerCase() &&
-    u.password===pass
-  );
+    }, 700);
 
-  if(!user){
-    return err("Invalid email or password.");
+  }catch(err){
+    console.error(err);
+    err("Cannot connect to server.");
   }
-
-
-  // ===== Save session =====
-const session = {
-  id: user.id || null,
-  email: user.email,
-  name: user.name,
-  role: "customer",
-  when: Date.now()
-};
-
-if(rememberEl.checked){
-  // persistent login
-  localStorage.setItem("salonSession", JSON.stringify(session));
-  sessionStorage.removeItem("salonSession");
-}else{
-  // session only (clears when browser closes)
-  sessionStorage.setItem("salonSession", JSON.stringify(session));
-}
-
-ok("Login successful! Redirecting...");
-
-  // ✅ FIXED REDIRECT
-  setTimeout(()=>{
-    window.location.href="customer_dashboard.html";
-  },700);
 
 });
+
 </script>
 </body>
 </html>

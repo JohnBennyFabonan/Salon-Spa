@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
     :root{
@@ -428,6 +429,110 @@
   border-radius:50%;
   overflow:hidden;
 }
+
+/* FOOTER */
+.footer{
+background:#1e5e49;
+color:white;
+padding:50px 10% 20px;
+margin-top:60px;
+}
+
+.footer-container{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:30px;
+max-width:1180px;
+margin:auto;
+}
+
+.footer-col h3{
+margin-bottom:10px;
+}
+
+.footer-col h4{
+margin-bottom:12px;
+font-size:14px;
+}
+
+.footer-col p{
+font-size:13px;
+color:rgba(255,255,255,.8);
+line-height:1.6;
+}
+
+.footer-col a{
+display:block;
+color:rgba(255,255,255,.85);
+text-decoration:none;
+font-size:13px;
+margin-bottom:6px;
+}
+
+.footer-col a:hover{
+color:white;
+}
+
+.footer-bottom{
+text-align:center;
+margin-top:30px;
+font-size:12px;
+color:rgba(255,255,255,.7);
+border-top:1px solid rgba(255,255,255,.15);
+padding-top:15px;
+}
+
+/* FEEDBACK SECTION */
+
+.feedback{
+background:#ffffff;
+color:#0f172a;
+padding:60px 10%;
+}
+
+.feedback h2{
+text-align:center;
+margin-bottom:30px;
+color:#1e5e49;
+}
+
+/* scrollable container */
+.feedback-container{
+max-width:900px;
+margin:auto;
+max-height:300px; /* ✅ scroll limit */
+overflow-y:auto;
+display:flex;
+flex-direction:column;
+gap:16px;
+padding-right:6px;
+}
+
+/* feedback card */
+.feedback-item{
+background:#f9fdfb;
+border:1px solid rgba(0,0,0,.05);
+border-radius:12px;
+padding:16px;
+box-shadow:0 6px 20px rgba(0,0,0,.05);
+}
+
+.feedback-item .stars{
+color:#facc15;
+font-weight:700;
+margin-bottom:6px;
+}
+
+.feedback-item .text{
+font-size:13px;
+color:#555;
+font-style:italic;
+}
+
+.pill:hover{
+cursor:pointer;
+background:rgba(255, 255, 255, 0.15);
+}
   </style>
 </head>
 
@@ -440,14 +545,16 @@
 <div class="pill">📞 0936 411 6193</div>
 <div class="pill">✉️ trinettebless@gmail.com</div>
 <div class="pill">🕘 Mon–Sun: 9:00am–7:00pm</div>
-
+<a href="https://www.google.com/maps/@13.7984827,121.0713464,3a,75y,307.55h,93.35t/data=!3m7!1e1!3m5!1sq_ifoGk9Alk_67epvWQHsg!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D-3.3500189292161053%26panoid%3Dq_ifoGk9Alk_67epvWQHsg%26yaw%3D307.5475773200728!7i16384!8i8192?entry=ttu&g_ep=EgoyMDI2MDMyMy4xIKXMDSoASAFQAw%3D%3D" target="_blank" style="text-decoration:none;">
+  <div class="pill">📍 Balagtas Batangas City</div>
+</a>
 </div>
 
 <div class="right">
 <div class="social">
-<a href="#">f</a>
-<a href="#">t</a>
-<a href="#">⌁</a>
+  <a href="https://www.facebook.com/profile.php?id=61586188435663&rdid=oqQWK8JRiLEVB2am&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Bq8FFzvf6%2F#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+  <a href="https://www.instagram.com/zaitrinettewellness.btg/" target="_blank"><i class="fab fa-instagram"></i></a>
+  <a href="https://www.tiktok.com/@zai30526" target="_blank"><i class="fab fa-tiktok"></i></a>
 </div>
 </div>
 </div>
@@ -575,15 +682,25 @@ We combine modern beauty techniques with a relaxing atmosphere
 to ensure every visit becomes a refreshing and luxurious experience.
 </p>
 
-<button class="about-btn">Learn More</button>
-
 </div>
 
 </div>
 
 </section>
 
+<!-- CUSTOMER FEEDBACK -->
 
+<section class="feedback">
+
+<h2>What Our Customers Say</h2>
+
+<div class="feedback-container" id="feedbackContainer">
+
+<!-- Feedback items will load here -->
+
+</div>
+
+</section>
 
 <script>
 
@@ -698,7 +815,130 @@ document.addEventListener("keydown",(e)=>{
 if(e.key==="Escape") closeMenu();
 });
 
+/* ===============================
+LOAD FEEDBACK FROM DATABASE ⭐ (UPDATED)
+================================ */
+async function loadFeedback(){
+
+const container = document.getElementById("feedbackContainer");
+
+if(!container) return;
+
+try{
+
+const res = await fetch("http://localhost:5000/ratings");
+const feedbacks = await res.json();
+
+/* NO DATA */
+if(!feedbacks || feedbacks.length === 0){
+  container.innerHTML = "<p style='text-align:center;'>No feedback yet.</p>";
+  return;
+}
+
+container.innerHTML = "";
+
+/* LOOP */
+feedbacks.forEach(f => {
+
+/* ===============================
+GET SERVICE NAME
+================================ */
+let serviceName = "Service";
+
+if(f.services){
+  try{
+    const parsed = typeof f.services === "string"
+      ? JSON.parse(f.services)
+      : f.services;
+
+    if(Array.isArray(parsed)){
+      serviceName = parsed.map(s => s.name || s.service || "-").join(", ");
+    }
+  }catch{}
+}
+
+/* ===============================
+GET CUSTOMER NAME
+================================ */
+let name = "Customer";
+if(f.email){
+  name = f.email.split("@")[0]; // john@email → john
+}
+
+/* ===============================
+BUILD UI
+================================ */
+container.innerHTML += `
+<div class="feedback-item">
+
+<div class="stars">
+  ${"⭐".repeat(f.stars)} <span style="color:#888;">(${f.stars}/5)</span>
+</div>
+
+<div class="text">
+  "${f.feedback ? f.feedback : "No feedback provided"}"
+</div>
+
+<div style="font-size:12px;color:#888;margin-top:8px;">
+  — ${name} • ${serviceName}
+</div>
+
+</div>
+`;
+
+});
+
+}catch(err){
+console.error("❌ Feedback load error:", err);
+container.innerHTML = "<p style='text-align:center;'>Failed to load feedback.</p>";
+}
+
+}
+
+/* INIT */
+loadFeedback();
+
 </script>
+
+<!-- FOOTER -->
+<footer class="footer">
+
+<div class="footer-container">
+
+<!-- BRAND -->
+<div class="footer-col">
+<h3>Zai Trinette Wellness Spa</h3>
+<p>
+Relax. Refresh. Rejuvenate.  
+Experience premium beauty and wellness services tailored just for you.
+</p>
+</div>
+
+<!-- LINKS -->
+<div class="footer-col">
+<h4>Quick Links</h4>
+<a href="index.html">Home</a>
+<a href="services.html">Services</a>
+<a href="gallery.html">Gallery</a>
+<a href="promo.html">Promos</a>
+</div>
+
+<!-- CONTACT -->
+<div class="footer-col">
+<h4>Contact</h4>
+<p>📞 0936 411 6193</p>
+<p>✉️ trinettebless@gmail.com</p>
+<p>📍 Balagtas, Batangas City</p>
+</div>
+
+</div>
+
+<!-- COPYRIGHT -->
+<div class="footer-bottom">
+© 2026 Zai Trinette Wellness Spa. All rights reserved.
+</div>
+
+</footer>
 
 </body>
 </html>

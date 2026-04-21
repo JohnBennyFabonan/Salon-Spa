@@ -246,38 +246,47 @@
       font-weight: 750;
     }
 
-    /* Service grid */
-    .serviceGrid{
-      display:grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+        /* Service grid */
+      .serviceGrid{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      max-height:400px;
+      overflow-y:auto;
+      padding-right:5px;
     }
     .service{
-      border: 1px solid rgba(15,23,42,.10);
-      border-radius: 14px;
-      padding: 12px;
-      display:flex;
-      gap: 10px;
-      align-items:flex-start;
-      cursor:pointer;
-      transition: .15s;
-      background: linear-gradient(180deg, rgba(47,125,98,.06), #fff);
-      position:relative;
-      min-height: 86px;
-    }
+  border: 1px solid rgba(15,23,42,.10);
+  border-radius: 12px;
+  padding: 8px 10px;
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  cursor:pointer;
+  transition: .15s;
+  background: #fff;
+  position:relative;
+  min-height: auto;
+}
+    
     .service:hover{ transform: translateY(-1px); box-shadow: 0 10px 24px rgba(2,6,23,.06); }
     .service.active{
       border-color: rgba(47,125,98,.45);
       box-shadow: 0 0 0 4px rgba(47,125,98,.12);
     }
     .sIcon{
-      width: 40px; height: 40px; border-radius: 14px;
-      display:grid; place-items:center;
-      background: rgba(47,125,98,.12);
-      border: 1px solid rgba(47,125,98,.18);
-      flex:0 0 auto;
-      font-size: 18px;
-    }
+  width:32px;
+  height:32px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: rgba(47,125,98,.10);
+  border: 1px solid rgba(47,125,98,.15);
+  flex:0 0 auto;
+  font-size:14px;
+}
+    
     .sMeta b{ display:block; font-size: 12.5px; font-weight: 950; }
     .sMeta small{ display:block; color: var(--muted); font-weight: 700; font-size: 12px; margin-top: 2px; }
     .sPrice{
@@ -288,18 +297,24 @@
       white-space: nowrap;
     }
     .sChip{
-      position:absolute;
-      bottom: 10px;
-      right: 10px;
-      font-size: 10px;
-      font-weight: 950;
-      padding: 5px 8px;
-      border-radius: 999px;
-      background: rgba(47,125,98,.12);
-      border: 1px solid rgba(47,125,98,.18);
-      color: var(--green-2);
-      display:none;
-    }
+  position: absolute;
+
+  top: 50%;              /* 🔥 vertical center */
+  left: 50%;             /* 🔥 horizontal center */
+  transform: translate(-50%, -50%); /* 🔥 perfect centering */
+
+  font-size: 11px;
+  font-weight: 900;
+  padding: 6px 10px;
+  border-radius: 999px;
+
+  background: rgba(47,125,98,.15);
+  border: 1px solid rgba(47,125,98,.25);
+  color: var(--green-2);
+
+  display: none;
+  z-index: 2; /* make sure it's above content */
+}
     .service.active .sChip{ display:inline-flex; }
 
     /* Form controls */
@@ -597,59 +612,73 @@ background:white;
     </div>
   </div>
 
-  <main class="container">
-    <div class="pageHead">
-      <div class="titleWrap">
-        <h1>Book an Appointment</h1>
-        <p>Select a service, choose your schedule, and confirm your booking. (Demo UI — saves booking locally for now.)</p>
-      </div>
-      <div class="badge">✨ Fast booking • Green theme</div>
+ <main class="container">
+  <div class="pageHead">
+    <div class="titleWrap">
+      <h1>Book an Appointment</h1>
+      <p>Select a service, choose your schedule, and confirm your booking.</p>
     </div>
+    <div class="badge">✨ Fast booking • Green theme</div>
+  </div>
 
-    <div class="wrap">
-      <!-- LEFT: Booking Form -->
-      <section class="card">
-        <div class="cardPad">
-          <div class="sectionTitle">
-            <h2>1) Choose a service</h2>
-            <div class="muted">Tap a card</div>
-          </div>
+  <div class="wrap">
+    <!-- LEFT: Booking Form -->
+    <section class="card">
 
-          <div class="serviceGrid" id="serviceGrid"></div>
+      <!-- ===== SERVICE SECTION ===== -->
+      <div class="cardPad">
+
+  <div class="sectionTitle">
+    <h2>1) Choose a service</h2>
+    <div class="muted">Select one or more</div>
+  </div>
+
+  <!-- ✅ ADD BUTTON HERE -->
+  <button class="btn btnOutline" id="addServiceBtn" style="margin-bottom:10px;">
+    ➕ Add More Services
+  </button>
+
+  <!-- SERVICE LIST -->
+  <div class="serviceGrid" id="serviceGrid"></div>
+
+</div>
+
+      <!-- ===== SCHEDULE SECTION ===== -->
+      <div class="cardPad" style="border-top:1px solid rgba(15,23,42,.08);">
+        <div class="sectionTitle">
+          <h2>2) Schedule details</h2>
+          <div class="muted">Pick date & time</div>
         </div>
 
-        <div class="cardPad" style="border-top:1px solid rgba(15,23,42,.08);">
-          <div class="sectionTitle">
-            <h2>2) Schedule details</h2>
-            <div class="muted">Pick date + time</div>
+        <div class="grid2">
+          <div class="field">
+            <label for="date">Appointment Date</label>
+            <input class="input" id="date" type="date" />
           </div>
 
-          <div class="grid2">
-            <div class="field">
-              <label for="date">Appointment Date</label>
-              <input class="input" id="date" type="date" />
-            </div>
-
-            <div class="field">
-              <label for="staff">Preferred Specialist (optional)</label>
-              <select id="staff">
+          <div class="field">
+            <label for="staff">Preferred Specialist (optional)</label>
+            <select id="staff">
               <option value="">No preference</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="field" style="margin-top: 10px;">
-            <label>Available Time Slots</label>
-            <div class="slots" id="slots"></div>
-            <div class="footNote">Tip: some slots can be marked unavailable (demo).</div>
-          </div>
-
-          <div class="field" style="margin-top: 10px;">
-            <label for="notes">Notes / Requests (optional)</label>
-            <textarea id="notes" placeholder="Example: Prefer a quiet room, sensitive skin, etc."></textarea>
+            </select>
           </div>
         </div>
-      </section>
+
+        <!-- TIME SLOTS -->
+        <div class="field" style="margin-top: 10px;">
+          <label>Available Time Slots</label>
+          <div class="slots" id="slots"></div>
+          <div class="footNote">Tap a time to select your schedule.</div>
+        </div>
+
+        <!-- NOTES -->
+        <div class="field" style="margin-top: 10px;">
+          <label for="notes">Notes / Requests (optional)</label>
+          <textarea id="notes" placeholder="Example: Prefer a quiet room, sensitive skin, etc."></textarea>
+        </div>
+
+      </div>
+    </section>
 
       <!-- RIGHT: Summary + Confirm -->
       <aside class="card">
@@ -750,137 +779,98 @@ background:white;
 </div>
 
   <script>
-
 /* ===============================
-PROTECT BOOKING PAGE (LOGIN REQUIRED)
+AUTH CHECK
 ================================ */
-
 const session =
-JSON.parse(localStorage.getItem("salonSession")) ||
-JSON.parse(sessionStorage.getItem("salonSession"));
+  JSON.parse(localStorage.getItem("salonSession")) ||
+  JSON.parse(sessionStorage.getItem("salonSession"));
 
-if(!session){
-alert("Please log in first before booking.");
-window.location.href = "log_in.html";
+if (!session) {
+  alert("Please log in first before booking.");
+  window.location.href = "log_in.html";
 }
-
 
 /* ===============================
-LOGIN NAVBAR SWITCH
+CONFIG
 ================================ */
-
-if(session){
-
-document.getElementById("loginLink").style.display="none";
-document.getElementById("signupLink").style.display="none";
-
-document.getElementById("dashboardLink").style.display="inline-block";
-document.getElementById("logoutLink").style.display="inline-block";
-
-document.getElementById("mLogin").style.display="none";
-document.getElementById("mSignup").style.display="none";
-
-document.getElementById("mDashboard").style.display="block";
-document.getElementById("mLogout").style.display="block";
-
-}
-
+const API_URL = "http://localhost:5000";
 
 /* ===============================
-LOGOUT FUNCTION
+NAVBAR / SESSION UI
 ================================ */
+const loginLink = document.getElementById("loginLink");
+const signupLink = document.getElementById("signupLink");
+const dashboardLink = document.getElementById("dashboardLink");
+const logoutLink = document.getElementById("logoutLink");
 
-document.getElementById("logoutLink")?.addEventListener("click",logout);
-document.getElementById("mLogout")?.addEventListener("click",logout);
+const mLogin = document.getElementById("mLogin");
+const mSignup = document.getElementById("mSignup");
+const mDashboard = document.getElementById("mDashboard");
+const mLogout = document.getElementById("mLogout");
 
-function logout(){
+if (session) {
+  if (loginLink) loginLink.style.display = "none";
+  if (signupLink) signupLink.style.display = "none";
+  if (dashboardLink) dashboardLink.style.display = "inline-block";
+  if (logoutLink) logoutLink.style.display = "inline-block";
 
-localStorage.removeItem("salonSession");
-sessionStorage.removeItem("salonSession");
-
-window.location.href="index.html";
-
+  if (mLogin) mLogin.style.display = "none";
+  if (mSignup) mSignup.style.display = "none";
+  if (mDashboard) mDashboard.style.display = "block";
+  if (mLogout) mLogout.style.display = "block";
 }
 
+function logout(e) {
+  e?.preventDefault();
+  localStorage.removeItem("salonSession");
+  sessionStorage.removeItem("salonSession");
+  window.location.href = "log_in.html";
+}
+
+logoutLink?.addEventListener("click", logout);
+mLogout?.addEventListener("click", logout);
 
 /* ===============================
 MOBILE MENU
 ================================ */
-
 const menuBtn = document.getElementById("menuBtn");
 const mobileMenuBack = document.getElementById("mobileMenuBack");
 const menuClose = document.getElementById("menuClose");
 
-function openMenu(){
-mobileMenuBack.style.display="block";
-document.body.style.overflow="hidden";
-}
-
-function closeMenu(){
-mobileMenuBack.style.display="none";
-document.body.style.overflow="";
-}
-
-menuBtn?.addEventListener("click",openMenu);
-menuClose?.addEventListener("click",closeMenu);
-
-mobileMenuBack?.addEventListener("click",(e)=>{
-if(e.target===mobileMenuBack) closeMenu();
+menuBtn?.addEventListener("click", () => {
+  if (mobileMenuBack) mobileMenuBack.style.display = "block";
 });
 
+menuClose?.addEventListener("click", () => {
+  if (mobileMenuBack) mobileMenuBack.style.display = "none";
+});
 
-/* ===============================
-SERVICES DATA
-================================ */
-
-let SERVICES = JSON.parse(localStorage.getItem("services")) || [];
-
-SERVICES = SERVICES.map(s => ({
-id:s.id,
-icon:"💇",
-name:s.name,
-duration:s.duration + " mins",
-price:s.amount
-}));
-
-
-/* ===============================
-TIME SLOTS
-================================ */
-
-const TIME_SLOTS = [
-"9:00 AM",
-"10:00 AM",
-"11:00 AM",
-"12:00 PM",
-"1:00 PM",
-"2:00 PM",
-"3:00 PM",
-"4:00 PM",
-"5:00 PM",
-"6:00 PM"
-];
-
-const UNAVAILABLE = new Set([]);
-
+mobileMenuBack?.addEventListener("click", (e) => {
+  if (e.target === mobileMenuBack) {
+    mobileMenuBack.style.display = "none";
+  }
+});
 
 /* ===============================
 STATE
 ================================ */
-
+let SERVICES = [];
 let selectedServices = [];
 let selectedTime = "";
-
+let receiptUrl = "";
+let isUploading = false;
+let PAYMENT_QRS = {};
 
 /* ===============================
 ELEMENTS
 ================================ */
-
 const serviceGrid = document.getElementById("serviceGrid");
 const dateEl = document.getElementById("date");
 const staffEl = document.getElementById("staff");
 const notesEl = document.getElementById("notes");
 const slotsEl = document.getElementById("slots");
+const confirmBtn = document.getElementById("confirmBtn");
 
 const sumService = document.getElementById("sumService");
 const sumDuration = document.getElementById("sumDuration");
@@ -891,448 +881,401 @@ const sumTotal = document.getElementById("sumTotal");
 const sumDownpayment = document.getElementById("sumDownpayment");
 const sumRemaining = document.getElementById("sumRemaining");
 
-const errBox = document.getElementById("errBox");
-const okBox = document.getElementById("okBox");
-
-const confirmBtn = document.getElementById("confirmBtn");
-const clearBtn = document.getElementById("clearBtn");
-
-
-/* ===============================
-LOAD SPECIALISTS FROM ADMIN PANEL
-================================ */
-
-const specialists = JSON.parse(localStorage.getItem("specialists")) || [];
-
-specialists.forEach(sp=>{
-
-const option=document.createElement("option");
-
-option.value = sp.name;
-
-option.textContent = sp.name + " • " + sp.role;
-
-staffEl.appendChild(option);
-
-});
-
-
-/* ===============================
-HELPERS
-================================ */
-
-function peso(n){
-
-return new Intl.NumberFormat("en-PH",{
-style:"currency",
-currency:"PHP",
-minimumFractionDigits:0
-}).format(n);
-
-}
-
-function showErr(msg){
-
-okBox.style.display="none";
-errBox.textContent=msg;
-errBox.style.display="block";
-
-}
-
-function showOk(msg){
-
-errBox.style.display="none";
-okBox.textContent=msg;
-okBox.style.display="block";
-
-}
-
-function clearMsg(){
-
-errBox.style.display="none";
-okBox.style.display="none";
-
-}
-
-
-/* ===============================
-SET MIN DATE
-================================ */
-
-function setMinDateToday(){
-
-const today=new Date();
-
-const y=today.getFullYear();
-const m=String(today.getMonth()+1).padStart(2,"0");
-const d=String(today.getDate()).padStart(2,"0");
-
-dateEl.min=`${y}-${m}-${d}`;
-dateEl.value=dateEl.min;
-
-}
-
-
-/* ===============================
-RENDER SERVICES
-================================ */
-
-function renderServices(){
-
-serviceGrid.innerHTML="";
-
-SERVICES.forEach(s=>{
-
-const div=document.createElement("div");
-
-div.className="service";
-
-div.innerHTML=`
-<span class="sChip">Selected</span>
-
-<div class="sIcon">${s.icon}</div>
-
-<div class="sMeta">
-<b>${s.name}</b>
-<small>${s.duration}</small>
-</div>
-
-<div class="sPrice">${peso(s.price)}</div>
-`;
-
-div.addEventListener("click",()=>{
-
-const index=selectedServices.findIndex(x=>x.id===s.id);
-
-if(index>-1){
-
-selectedServices.splice(index,1);
-div.classList.remove("active");
-
-}else{
-
-selectedServices.push(s);
-div.classList.add("active");
-
-}
-
-updateSummary();
-clearMsg();
-
-});
-
-serviceGrid.appendChild(div);
-
-});
-
-}
-
-
-/* ===============================
-RENDER TIME SLOTS
-================================ */
-
-function renderSlots(){
-
-slotsEl.innerHTML="";
-
-TIME_SLOTS.forEach(t=>{
-
-const btn=document.createElement("div");
-
-btn.className="slot";
-btn.textContent=t;
-
-if(UNAVAILABLE.has(t)){
-btn.classList.add("disabled");
-}
-
-btn.addEventListener("click",()=>{
-
-if(UNAVAILABLE.has(t)) return;
-
-selectedTime=t;
-
-document.querySelectorAll(".slot").forEach(s=>s.classList.remove("active"));
-
-btn.classList.add("active");
-
-updateSummary();
-
-});
-
-slotsEl.appendChild(btn);
-
-});
-
-}
-
-
-/* ===============================
-UPDATE SUMMARY
-================================ */
-
-function updateSummary(){
-
-if(selectedServices.length===0){
-
-sumService.textContent="—";
-sumDuration.textContent="—";
-sumTotal.textContent="—";
-sumDownpayment.textContent="—";
-sumRemaining.textContent="—";
-
-return;
-
-}
-
-const names = selectedServices.map(s=>s.name).join(", ");
-const durations = selectedServices.map(s=>s.duration).join(", ");
-
-const total = selectedServices.reduce((sum,s)=>sum+Number(s.price),0);
-
-const down = Math.round(total*0.10);
-const remain = total-down;
-
-sumService.textContent=names;
-sumDuration.textContent=durations;
-sumStaff.textContent=staffEl.value || "No preference";
-sumDate.textContent=dateEl.value || "—";
-sumTime.textContent=selectedTime || "—";
-
-sumTotal.textContent=peso(total);
-sumDownpayment.textContent=peso(down);
-sumRemaining.textContent=peso(remain);
-
-}
-
-
-/* ===============================
-CLEAR BOOKING
-================================ */
-
-function clearAll(){
-
-selectedServices=[];
-selectedTime="";
-
-notesEl.value="";
-staffEl.value="";
-
-document.querySelectorAll(".service").forEach(s=>s.classList.remove("active"));
-document.querySelectorAll(".slot").forEach(s=>s.classList.remove("active"));
-
-updateSummary();
-clearMsg();
-
-}
-
-clearBtn.addEventListener("click",clearAll);
-
-staffEl.addEventListener("change",updateSummary);
-dateEl.addEventListener("change",updateSummary);
-
-
-/* ===============================
-CONFIRM BOOKING
-================================ */
-
-confirmBtn.addEventListener("click",()=>{
-
-clearMsg();
-
-if(selectedServices.length===0)
-return showErr("Please select at least one service.");
-
-if(!selectedTime)
-return showErr("Please choose a time slot.");
-
-/* ✅ NEW: Require receipt upload */
-if(!receiptImage){
-return showErr("Please upload proof of payment before confirming your booking.");
-}
-
-const total = selectedServices.reduce((sum,s)=>sum+Number(s.price),0);
-const down = Math.round(total*0.10);
-const remain = total-down;
-
-const booking = {
-
-id:"BK-"+Math.random().toString(16).slice(2,10).toUpperCase(),
-
-customer:session.name || session.email || "Customer",
-
-services:selectedServices,
-
-totalPrice:total,
-downpayment:down,
-remaining:remain,
-
-date:dateEl.value,
-time:selectedTime,
-
-staff:staffEl.value || "No preference",
-
-notes:notesEl.value.trim(),
-
-qr:receiptImage, // ✅ ensured not empty
-
-status:"Pending",
-
-createdAt:Date.now()
-
-};
-
-/* SAVE TEMP BOOKING */
-localStorage.setItem("pendingBooking", JSON.stringify(booking));
-
-/* GO TO CONFIRMATION PAGE */
-window.location = "booking_confirmation.html";
-
-});
-
-/* ===============================
-GCASH QR
-================================ */
-
 const gcashBtn = document.getElementById("gcashBtn");
 const bpiBtn = document.getElementById("bpiBtn");
 const mayaBtn = document.getElementById("mayaBtn");
 
-const gcashModal = document.getElementById("gcashModal");
-const closeQR = document.getElementById("closeQR");
-
+const qrModal = document.getElementById("gcashModal");
 const qrImage = document.getElementById("qrImage");
 const qrTitle = document.getElementById("qrTitle");
 const qrDesc = document.getElementById("qrDesc");
+const closeQR = document.getElementById("closeQR");
 
-/* LOAD QR IMAGES FROM ADMIN */
-const gcashQR = localStorage.getItem("gcashQR") || "gcash_qr.png";
-const bpiQR   = localStorage.getItem("bpiQR")   || "bpi_qr.png";
-const mayaQR  = localStorage.getItem("mayaQR")  || "maya_qr.png";
-
-/* OPEN MODAL FUNCTION */
-function openQR(type){
-
-gcashModal.style.display = "flex";
-
-if(type === "gcash"){
-qrImage.src = gcashQR;
-qrTitle.textContent = "Scan to Pay (GCash)";
-qrDesc.textContent = "Send the 10% downpayment via GCash.";
-}
-
-if(type === "bpi"){
-qrImage.src = bpiQR;
-qrTitle.textContent = "Scan to Pay (BPI)";
-qrDesc.textContent = "Send the 10% downpayment via BPI.";
-}
-
-if(type === "maya"){
-qrImage.src = mayaQR;
-qrTitle.textContent = "Scan to Pay (Maya)";
-qrDesc.textContent = "Send the 10% downpayment via Maya.";
-}
-
-}
-
-/* BUTTON EVENTS */
-gcashBtn.addEventListener("click",()=>openQR("gcash"));
-bpiBtn.addEventListener("click",()=>openQR("bpi"));
-mayaBtn.addEventListener("click",()=>openQR("maya"));
-
-/* CLOSE MODAL */
-closeQR.addEventListener("click",()=>{
-gcashModal.style.display="none";
-});
-
-gcashModal.addEventListener("click",(e)=>{
-if(e.target===gcashModal){
-gcashModal.style.display="none";
-}
-});
-
+const receiptUpload = document.getElementById("receiptUpload");
+const receiptPreview = document.getElementById("receiptPreview");
+const receiptPreviewBox = document.getElementById("receiptPreviewBox");
 
 /* ===============================
-RECEIPT UPLOAD
+HELPERS
 ================================ */
+function peso(n) {
+  return new Intl.NumberFormat("en-PH", {
+    style: "currency",
+    currency: "PHP",
+    minimumFractionDigits: 0
+  }).format(Number(n || 0));
+}
 
-let receiptImage="";
+function safeParse(json, fallback) {
+  try {
+    return JSON.parse(json) ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
 
-const receiptUpload=document.getElementById("receiptUpload");
-const receiptPreview=document.getElementById("receiptPreview");
-const receiptPreviewBox=document.getElementById("receiptPreviewBox");
+function getSelectedServicesFromStorage() {
+  return safeParse(localStorage.getItem("selectedServices"), []);
+}
 
-receiptUpload.addEventListener("change",function(){
+function setConfirmButtonState(disabled, text) {
+  if (!confirmBtn) return;
+  confirmBtn.disabled = disabled;
+  confirmBtn.innerText = text;
+  confirmBtn.style.opacity = disabled ? "0.6" : "1";
+}
 
-const file=this.files[0];
+function computeTotals(services) {
+  const total = services.reduce((sum, s) => sum + Number(s.price || 0), 0);
+  const down = Math.round(total * 0.10);
+  const remain = total - down;
 
-if(!file) return;
-
-const reader=new FileReader();
-
-reader.onload=function(e){
-
-receiptImage=e.target.result;
-
-receiptPreview.src=receiptImage;
-
-receiptPreviewBox.style.display="block";
-
-};
-
-reader.readAsDataURL(file);
-
-});
-
+  return { total, down, remain };
+}
 
 /* ===============================
-LOAD SERVICE FROM SERVICES PAGE
+LOAD PAYMENT QR CODES
 ================================ */
+async function loadPaymentQRCodes() {
+  try {
+    const res = await fetch(`${API_URL}/payment-qrs`);
 
-const savedService=localStorage.getItem("selectedService");
+    if (!res.ok) {
+      throw new Error("Failed to load payment QR codes");
+    }
 
-if(savedService){
-
-const svc=JSON.parse(savedService);
-
-const found=SERVICES.find(s=>s.name===svc.name);
-
-if(found){
-selectedServices.push(found);
+    PAYMENT_QRS = await res.json();
+  } catch (err) {
+    console.error("❌ QR LOAD ERROR:", err);
+    PAYMENT_QRS = {};
+  }
 }
 
-localStorage.removeItem("selectedService");
+function showQR(paymentType, label) {
+  const qrData = PAYMENT_QRS[paymentType];
 
+  if (!qrData || !qrData.image_url) {
+    alert(`${label} QR code is not available yet.`);
+    return;
+  }
+
+  qrTitle.textContent = `${label} QR Code`;
+  qrImage.src = qrData.image_url;
+  qrDesc.textContent = "Send the required 10% downpayment.";
+  qrModal.style.display = "flex";
 }
 
+function closeQRModal() {
+  qrModal.style.display = "none";
+  qrImage.src = "";
+}
+
+/* ===============================
+LOAD SERVICES (MULTI-SERVICE FIXED)
+================================ */
+async function loadServices() {
+  try {
+    const res = await fetch(`${API_URL}/services`);
+    if (!res.ok) throw new Error("Failed to load services");
+
+    const data = await res.json();
+
+    SERVICES = data.map((s) => ({
+      id: s.id,
+      name: s.name,
+      duration: Number(s.duration || 0),
+      price: Number(s.price || 0)
+    }));
+
+    // ✅ Get stored services
+    const stored = getSelectedServicesFromStorage() || [];
+
+    // ✅ Allow MULTIPLE + remove duplicates
+    selectedServices = stored.filter(
+      (v, i, a) => a.findIndex(t => String(t.id) === String(v.id)) === i
+    );
+
+    renderServices();
+    updateSummary();
+
+  } catch (err) {
+    console.error("❌ SERVICE LOAD ERROR:", err);
+  }
+}
+
+/* ===============================
+LOAD SPECIALISTS
+================================ */
+async function loadSpecialists() {
+  try {
+    const res = await fetch(`${API_URL}/specialists`);
+    if (!res.ok) throw new Error("Failed to load specialists");
+
+    const data = await res.json();
+
+    data.forEach((sp) => {
+      const option = document.createElement("option");
+      option.value = sp.name;
+      option.textContent = `${sp.name} • ${sp.role}`;
+      staffEl.appendChild(option);
+    });
+  } catch (err) {
+    console.error("❌ SPECIALIST LOAD ERROR:", err);
+  }
+}
+
+/* ===============================
+RENDER SERVICES (FIXED REMOVE ONE)
+================================ */
+function renderServices() {
+  if (!serviceGrid) return;
+
+  serviceGrid.innerHTML = "";
+
+  if (selectedServices.length === 0) {
+    serviceGrid.innerHTML = "<p>No selected services</p>";
+    return;
+  }
+
+  const displayList = SERVICES.filter((s) =>
+    selectedServices.some((sel) => String(sel.id) === String(s.id))
+  );
+
+  displayList.forEach((s) => {
+    const div = document.createElement("div");
+    div.className = "service active";
+
+    div.innerHTML = `
+      <span class="sChip">Selected</span>
+      <div class="sIcon">💇</div>
+      <div class="sMeta">
+        <b>${s.name}</b>
+        <small>${s.duration} mins</small>
+      </div>
+      <div class="sPrice">${peso(s.price)}</div>
+    `;
+
+    div.onclick = () => {
+      // ✅ REMOVE ONLY THE CLICKED SERVICE
+      selectedServices = selectedServices.filter(
+        (x) => String(x.id) !== String(s.id)
+      );
+
+      // ✅ Update storage
+      localStorage.setItem("selectedServices", JSON.stringify(selectedServices));
+
+      renderServices();
+      updateSummary();
+    };
+
+    serviceGrid.appendChild(div);
+  });
+}
+
+/* ===============================
+TIME SLOTS
+================================ */
+const TIME_SLOTS = [
+  "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
+  "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM", "6:00 PM"
+];
+
+function renderSlots() {
+  if (!slotsEl) return;
+
+  slotsEl.innerHTML = "";
+
+  TIME_SLOTS.forEach((t) => {
+    const btn = document.createElement("div");
+    btn.className = "slot";
+    btn.textContent = t;
+
+    btn.onclick = () => {
+      selectedTime = t;
+      document.querySelectorAll(".slot").forEach((s) => s.classList.remove("active"));
+      btn.classList.add("active");
+      updateSummary();
+    };
+
+    slotsEl.appendChild(btn);
+  });
+}
+
+/* ===============================
+SUMMARY
+================================ */
+function updateSummary() {
+  if (selectedServices.length === 0) {
+    sumService.textContent = "—";
+    sumDuration.textContent = "—";
+    sumStaff.textContent = "—";
+    sumDate.textContent = "—";
+    sumTime.textContent = "—";
+    sumTotal.textContent = "—";
+    sumDownpayment.textContent = "—";
+    sumRemaining.textContent = "—";
+    return;
+  }
+
+  const names = selectedServices.map((s) => s.name).join(", ");
+  const durations = selectedServices.map((s) => `${s.duration} mins`).join(", ");
+  const { total, down, remain } = computeTotals(selectedServices);
+
+  sumService.textContent = names || "—";
+  sumDuration.textContent = durations || "—";
+  sumStaff.textContent = staffEl?.value || "No preference";
+  sumDate.textContent = dateEl?.value || "—";
+  sumTime.textContent = selectedTime || "—";
+  sumTotal.textContent = peso(total);
+  sumDownpayment.textContent = peso(down);
+  sumRemaining.textContent = peso(remain);
+}
+
+/* ===============================
+UPLOAD RECEIPT
+================================ */
+receiptUpload?.addEventListener("change", async function () {
+  const file = this.files?.[0];
+  if (!file) return;
+
+  isUploading = true;
+  setConfirmButtonState(true, "Uploading...");
+
+  const formData = new FormData();
+  formData.append("image", file);
+
+  try {
+    const res = await fetch(`${API_URL}/upload-receipt`, {
+      method: "POST",
+      body: formData
+    });
+
+    if (!res.ok) {
+      throw new Error("Upload failed");
+    }
+
+    const data = await res.json();
+
+    if (!data.imageUrl) {
+      throw new Error("No URL returned");
+    }
+
+    receiptUrl = data.imageUrl;
+    isUploading = false;
+
+    setConfirmButtonState(false, "Confirm Booking");
+
+    if (receiptPreview) receiptPreview.src = receiptUrl;
+    if (receiptPreviewBox) receiptPreviewBox.style.display = "block";
+  } catch (err) {
+    console.error("❌ Upload error:", err);
+    alert("Upload failed. Check server.");
+
+    isUploading = false;
+    setConfirmButtonState(false, "Confirm Booking");
+  }
+});
+
+/* ===============================
+CONFIRM BOOKING
+================================ */
+confirmBtn?.addEventListener("click", async () => {
+  if (selectedServices.length === 0) return alert("Select service");
+  if (!dateEl?.value) return alert("Select date");
+  if (!selectedTime) return alert("Select time");
+  if (isUploading) return alert("Please wait, uploading receipt...");
+  if (!receiptUrl) return alert("Upload receipt first");
+
+  setConfirmButtonState(true, "Saving...");
+
+  const { total, down, remain } = computeTotals(selectedServices);
+
+  const currentSession =
+    JSON.parse(localStorage.getItem("salonSession")) ||
+    JSON.parse(sessionStorage.getItem("salonSession"));
+
+  const booking = {
+    services: selectedServices,
+    totalPrice: total,
+    downpayment: down,
+    remaining: remain,
+    date: dateEl.value,
+    time: selectedTime,
+    staff: staffEl?.value || "",
+    notes: notesEl?.value || "",
+    receipt: receiptUrl,
+    status: "Pending",
+    email: currentSession.email,
+    customer: currentSession.name
+  };
+
+  try {
+    const res = await fetch(`${API_URL}/bookings`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(booking)
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to save booking");
+    }
+
+    /* save real booking response for success page */
+    localStorage.setItem("recentBooking", JSON.stringify(data));
+
+    /* optional cleanup */
+    localStorage.removeItem("selectedServices");
+    localStorage.removeItem("pendingBooking");
+
+    window.location.href = "booking_success_improved.html";
+  } catch (err) {
+    console.error("❌ BOOKING ERROR:", err);
+    alert(err.message || "Failed to save booking");
+    setConfirmButtonState(false, "Confirm Booking");
+  }
+});
 
 /* ===============================
 INIT
 ================================ */
+function setMinDate() {
+  if (!dateEl) return;
 
-setMinDateToday();
-renderServices();
-renderSlots();
-updateSummary();
+  const today = new Date();
+  const todayStr = today.toISOString().split("T")[0];
 
-
-/* ===============================
-LOAD ADMIN GCASH QR
-================================ */
-
-const savedQR=localStorage.getItem("gcashQR");
-
-if(savedQR){
-
-document.getElementById("gcashQRImage").src=savedQR;
-
-}else{
-
-document.getElementById("gcashQRImage").src="gcash_qr.png";
-
+  dateEl.value = todayStr;
+  dateEl.min = todayStr;
 }
 
+dateEl?.addEventListener("change", updateSummary);
+staffEl?.addEventListener("change", updateSummary);
+
+gcashBtn?.addEventListener("click", () => showQR("gcash", "GCash"));
+bpiBtn?.addEventListener("click", () => showQR("bpi", "BPI"));
+mayaBtn?.addEventListener("click", () => showQR("maya", "Maya"));
+
+closeQR?.addEventListener("click", closeQRModal);
+
+qrModal?.addEventListener("click", function (e) {
+  if (e.target === qrModal) {
+    closeQRModal();
+  }
+});
+
+document.getElementById("addServiceBtn")?.addEventListener("click", () => {
+  window.location.href = "services.html";
+});
+
+setMinDate();
+loadServices();
+loadSpecialists();
+renderSlots();
+loadPaymentQRCodes();
 </script>
 </body>
 </html>

@@ -11,6 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
     :root{
@@ -487,13 +488,14 @@
       <div class="pill">📞 0936 411 6193</div>
       <div class="pill">✉️ trinettebless@gmail.com</div>
       <div class="pill">🕘 Mon–Sun: 9:00am–7:00pm</div>
+      <div class="pill">Balagtas Batangas City</div>
     </div>
     <div class="right">
       <div class="social">
-        <a href="#" title="Facebook">f</a>
-        <a href="#" title="Twitter">t</a>
-        <a href="#" title="Instagram">⌁</a>
-      </div>
+  <a href="https://www.facebook.com/profile.php?id=61586188435663&rdid=oqQWK8JRiLEVB2am&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Bq8FFzvf6%2F#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+  <a href="https://www.instagram.com/zaitrinettewellness.btg/" target="_blank"><i class="fab fa-instagram"></i></a>
+  <a href="https://www.tiktok.com/@zai30526" target="_blank"><i class="fab fa-tiktok"></i></a>
+</div>
     </div>
   </div>
 
@@ -602,180 +604,208 @@
   </div>
 
   <script>
-    /* ===============================
+/* ===============================
    LOGIN NAVBAR SWITCH
-      ================================ */
+================================ */
 
-      const session =
-      JSON.parse(localStorage.getItem("salonSession")) ||
-      JSON.parse(sessionStorage.getItem("salonSession"));
+const session =
+JSON.parse(localStorage.getItem("salonSession")) ||
+JSON.parse(sessionStorage.getItem("salonSession"));
 
-      if(session){
+if(session){
+  document.getElementById("loginLink").style.display="none";
+  document.getElementById("signupLink").style.display="none";
 
-      document.getElementById("loginLink").style.display="none";
-      document.getElementById("signupLink").style.display="none";
+  document.getElementById("dashboardLink").style.display="inline-block";
+  document.getElementById("logoutLink").style.display="inline-block";
 
-      document.getElementById("dashboardLink").style.display="inline-block";
-      document.getElementById("logoutLink").style.display="inline-block";
+  document.getElementById("mLogin").style.display="none";
+  document.getElementById("mSignup").style.display="none";
 
-      document.getElementById("mLogin").style.display="none";
-      document.getElementById("mSignup").style.display="none";
+  document.getElementById("mDashboard").style.display="block";
+  document.getElementById("mLogout").style.display="block";
+}
 
-      document.getElementById("mDashboard").style.display="block";
-      document.getElementById("mLogout").style.display="block";
+/* ===============================
+   LOGOUT
+================================ */
+document.getElementById("logoutLink")?.addEventListener("click",logout);
+document.getElementById("mLogout")?.addEventListener("click",logout);
 
-      }
+function logout(){
+  localStorage.removeItem("salonSession");
+  sessionStorage.removeItem("salonSession");
+  window.location.href="index.html";
+}
 
+/* ===============================
+   MOBILE MENU
+================================ */
+const menuBtn = document.getElementById("menuBtn");
+const mobileMenuBack = document.getElementById("mobileMenuBack");
+const menuClose = document.getElementById("menuClose");
 
-      /* ===============================
-        LOGOUT FUNCTION
-      ================================ */
+function openMenu(){
+  mobileMenuBack.style.display = "block";
+  document.body.style.overflow = "hidden";
+}
+function closeMenu(){
+  mobileMenuBack.style.display = "none";
+  document.body.style.overflow = "";
+}
 
-      document.getElementById("logoutLink")?.addEventListener("click",logout);
-      document.getElementById("mLogout")?.addEventListener("click",logout);
+menuBtn?.addEventListener("click", openMenu);
+menuClose?.addEventListener("click", closeMenu);
+mobileMenuBack?.addEventListener("click", (e)=>{
+  if(e.target === mobileMenuBack) closeMenu();
+});
 
-      function logout(){
+/* ===============================
+   API CONFIG
+================================ */
+const API_URL = "http://localhost:5000/specialists";
 
-      localStorage.removeItem("salonSession");
-      sessionStorage.removeItem("salonSession");
+/* ===============================
+   DATA
+================================ */
+let specialists = [];
 
-      window.location.href="index.html";
+/* ===============================
+   LOAD FROM DATABASE
+================================ */
+async function loadSpecialists(){
+  try{
+    const res = await fetch(API_URL);
+    const data = await res.json();
 
-      }
-    // ===== Mobile menu toggle =====
-    const menuBtn = document.getElementById("menuBtn");
-    const mobileMenuBack = document.getElementById("mobileMenuBack");
-    const menuClose = document.getElementById("menuClose");
+    // Convert DB format → UI format
+    specialists = data.map((s)=>({
+      id: "SP" + s.id,
+      name: s.name,
+      role: s.role,
+      specialties: [s.specialty],
+      days: "Mon–Sat",
+      bio: s.bio,
+      img: s.image_url || "https://via.placeholder.com/150"
+    }));
 
-    function openMenu(){
-      mobileMenuBack.style.display = "block";
-      menuBtn.setAttribute("aria-expanded", "true");
-      mobileMenuBack.setAttribute("aria-hidden", "false");
-      document.body.style.overflow = "hidden";
-    }
-    function closeMenu(){
-      mobileMenuBack.style.display = "none";
-      menuBtn.setAttribute("aria-expanded", "false");
-      mobileMenuBack.setAttribute("aria-hidden", "true");
-      document.body.style.overflow = "";
-    }
-
-    menuBtn?.addEventListener("click", openMenu);
-    menuClose?.addEventListener("click", closeMenu);
-    mobileMenuBack?.addEventListener("click", (e) => {
-      if(e.target === mobileMenuBack) closeMenu();
-    });
-    document.addEventListener("keydown", (e) => {
-      if(e.key === "Escape") closeMenu();
-    });
-
-    // ===== Specialists page logic =====
-
-// Load specialists from admin panel
-let specialists = JSON.parse(localStorage.getItem("specialists")) || [];
-
-// Convert admin data to public page format
-specialists = specialists.map((s,i)=>({
- id:"SP"+(i+1),
- name:s.name,
- role:s.role,
- specialties:[s.specialty],
- days:"Mon–Sat",
- bio:s.bio,
- img:s.img || "https://via.placeholder.com/150"
-}));
-
-    const grid = document.getElementById("grid");
-    const countText = document.getElementById("countText");
-    const filterSelect = document.getElementById("filterSelect");
-
-    // modal
-    const modalBack = document.getElementById("modalBack");
-    const closeModal = document.getElementById("closeModal");
-    const closeModal2 = document.getElementById("closeModal2");
-    const bookWith = document.getElementById("bookWith");
-    const modalImg = document.getElementById("modalImg");
-    const modalName = document.getElementById("modalName");
-    const modalRole = document.getElementById("modalRole");
-    const modalBio = document.getElementById("modalBio");
-    const modalKVs = document.getElementById("modalKVs");
-
-    let selected = null;
-
-        function cardHTML(s){
-      const chips = s.specialties.map(x => `<span class="chip">✅ ${x}</span>`).join("");
-
-      return `
-        <article class="card">
-          <div class="cardTop">
-            <div class="avatar"><img src="${s.img}" alt="${s.name}"></div>
-            <div>
-              <h3 class="name">${s.name}</h3>
-              <div class="role">${s.role}</div>
-            </div>
-          </div>
-
-          <div class="chips">${chips}</div>
-
-          <p class="bio">${s.bio}</p>
-
-          <div class="cardBottom">
-            <div class="btnRow">
-              <button class="btn btnOutline" type="button" data-view="${s.id}">
-                View Profile
-              </button>
-            </div>
-          </div>
-        </article>
-      `;
-    }
-
-    function filterList(){
-      const f = filterSelect.value;
-      return specialists.filter(s => (f === "All") ? true : s.specialties.includes(f));
-    }
-
-    function render(){
-      const list = filterList();
-      countText.textContent = `${list.length} specialist${list.length!==1 ? "s" : ""}`;
-      grid.innerHTML = list.map(cardHTML).join("");
-
-      document.querySelectorAll("[data-view],[data-book]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const id = btn.getAttribute("data-view") || btn.getAttribute("data-book");
-          openModal(specialists.find(x => x.id === id));
-        });
-      });
-    }
-
-    function openModal(s){
-      selected = s;
-      modalImg.src = s.img;
-      modalName.textContent = s.name;
-      modalRole.textContent = s.role;
-      modalBio.textContent = s.bio;
-
-      modalKVs.innerHTML = `
-        <div class="kv"><strong>ID:</strong> ${s.id}</div>
-        <div class="kv"><strong>Specialties:</strong> ${s.specialties.join(", ")}</div>
-      `;
-
-      modalBack.style.display = "flex";
-      document.body.style.overflow = "hidden";
-    }
-
-    function closeIt(){
-      modalBack.style.display = "none";
-      selected = null;
-      document.body.style.overflow = "";
-    }
-
-    closeModal.onclick = closeIt;
-    closeModal2.onclick = closeIt;
-    modalBack.addEventListener("click",(e)=>{ if(e.target === modalBack) closeIt(); });
-
-    filterSelect.addEventListener("change", render);
     render();
-  </script>
+
+  }catch(err){
+    console.error("Failed to load specialists:", err);
+  }
+}
+
+/* ===============================
+   UI ELEMENTS
+================================ */
+const grid = document.getElementById("grid");
+const countText = document.getElementById("countText");
+const filterSelect = document.getElementById("filterSelect");
+
+/* ===============================
+   MODAL
+================================ */
+const modalBack = document.getElementById("modalBack");
+const closeModal = document.getElementById("closeModal");
+const closeModal2 = document.getElementById("closeModal2");
+const modalImg = document.getElementById("modalImg");
+const modalName = document.getElementById("modalName");
+const modalRole = document.getElementById("modalRole");
+const modalBio = document.getElementById("modalBio");
+const modalKVs = document.getElementById("modalKVs");
+
+let selected = null;
+
+/* ===============================
+   CARD
+================================ */
+function cardHTML(s){
+  const chips = s.specialties.map(x => `<span class="chip">✅ ${x}</span>`).join("");
+
+  return `
+    <article class="card">
+      <div class="cardTop">
+        <div class="avatar"><img src="${s.img}" alt="${s.name}"></div>
+        <div>
+          <h3 class="name">${s.name}</h3>
+          <div class="role">${s.role}</div>
+        </div>
+      </div>
+
+      <div class="chips">${chips}</div>
+
+      <p class="bio">${s.bio}</p>
+
+      <div class="cardBottom">
+        <button class="btn btnOutline" data-view="${s.id}">
+          View Profile
+        </button>
+      </div>
+    </article>
+  `;
+}
+
+/* ===============================
+   FILTER
+================================ */
+function filterList(){
+  const f = filterSelect.value;
+  return specialists.filter(s => (f === "All") ? true : s.specialties.includes(f));
+}
+
+/* ===============================
+   RENDER
+================================ */
+function render(){
+  const list = filterList();
+  countText.textContent = `${list.length} specialist${list.length!==1 ? "s" : ""}`;
+  grid.innerHTML = list.map(cardHTML).join("");
+
+  document.querySelectorAll("[data-view]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const id = btn.getAttribute("data-view");
+      openModal(specialists.find(x => x.id === id));
+    });
+  });
+}
+
+/* ===============================
+   MODAL
+================================ */
+function openModal(s){
+  selected = s;
+  modalImg.src = s.img;
+  modalName.textContent = s.name;
+  modalRole.textContent = s.role;
+  modalBio.textContent = s.bio;
+
+  modalKVs.innerHTML = `
+    <div class="kv"><strong>ID:</strong> ${s.id}</div>
+    <div class="kv"><strong>Specialties:</strong> ${s.specialties.join(", ")}</div>
+  `;
+
+  modalBack.style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+
+function closeIt(){
+  modalBack.style.display = "none";
+  selected = null;
+  document.body.style.overflow = "";
+}
+
+closeModal.onclick = closeIt;
+closeModal2.onclick = closeIt;
+modalBack.addEventListener("click",(e)=>{
+  if(e.target === modalBack) closeIt();
+});
+
+/* ===============================
+   INIT
+================================ */
+filterSelect.addEventListener("change", render);
+loadSpecialists();
+</script>
 </body>
 </html>
