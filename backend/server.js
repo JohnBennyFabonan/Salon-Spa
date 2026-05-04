@@ -1166,33 +1166,41 @@ app.use((err, req, res, next) => {
 /* ===============================
 START SERVER
 =============================== */
+const PORT = process.env.PORT || 5000;
+
 (async () => {
   try {
-    await pool.query("SELECT 1");
-    console.log("✅ Connected to PostgreSQL");
+    // ✅ SAFE DB CHECK (won’t crash app)
+    try {
+      await pool.query("SELECT 1");
+      console.log("✅ Connected to PostgreSQL");
+    } catch (err) {
+      console.error("⚠️ PostgreSQL connection failed:", err.message);
+    }
 
-    let s3Ready = false;
-
-    // SAFE AWS CHECK (won’t crash app)
+    // ✅ SAFE AWS CHECK (won’t crash app)
     if (process.env.AWS_BUCKET_NAME) {
       try {
         await s3.send(
-          new HeadBucketCommand({ Bucket: process.env.AWS_BUCKET_NAME })
+          new HeadBucketCommand({
+            Bucket: process.env.AWS_BUCKET_NAME,
+          })
         );
         console.log("✅ AWS S3 connected");
-        s3Ready = true;
       } catch (err) {
-        console.log("⚠️ AWS S3 connection failed (continuing anyway)");
+        console.error("⚠️ AWS S3 connection failed:", err.message);
       }
     } else {
       console.log("⚠️ AWS not configured");
     }
 
+    // ✅ START SERVER (REQUIRED FOR RAILWAY)
     app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+
   } catch (error) {
-    console.error("❌ Startup failed:", error.message);
+    console.error("❌ Startup failed:", error);
     process.exit(1);
   }
 })();
