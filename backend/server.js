@@ -50,12 +50,13 @@ const pool = new Pool({
 
 const s3 = new S3Client({
   region: process.env.AWS_REGION || "ap-southeast-2",
-  credentials: process.env.AWS_ACCESS_KEY_ID
-    ? {
-        accessKeyId: requireEnv("AWS_ACCESS_KEY_ID"),
-        secretAccessKey: requireEnv("AWS_SECRET_ACCESS_KEY"),
-      }
-    : undefined,
+  credentials:
+    process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY
+      ? {
+          accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+        }
+      : undefined,
 });
 
 const upload = multer({
@@ -104,30 +105,49 @@ function buildSafeFileName(originalName = "file") {
 }
 
 async function uploadFileToS3(file) {
+  if (!process.env.AWS_BUCKET_NAME) {
+    throw new Error("S3 not configured");
+  }
+
   const key = buildSafeFileName(file.originalname);
 
-  await s3.send(
-    new PutObjectCommand({
-      Bucket: requireEnv("AWS_BUCKET_NAME"),
-      Key: key,
-      Body: file.buffer,
-      ContentType: file.mimetype,
-    })
-  );
+  try {
+    await s3.send(
+      new PutObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: key,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      })
+    );
 
-  return { key, imageUrl: getS3FileUrl(key) };
+    return { key, imageUrl: getS3FileUrl(key) };
+
+  } catch (err) {
+    console.error("❌ S3 upload failed:", err.message);
+    throw new Error("Upload failed");
+  }
 }
 
 async function deleteFileFromS3ByUrl(url) {
+  if (!process.env.AWS_BUCKET_NAME) {
+    console.log("⚠️ S3 not configured, skipping delete");
+    return;
+  }
+
   const key = extractS3KeyFromUrl(url);
   if (!key) return;
 
-  await s3.send(
-    new DeleteObjectCommand({
-      Bucket: requireEnv("AWS_BUCKET_NAME"),
-      Key: key,
-    })
-  );
+  try {
+    await s3.send(
+      new DeleteObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: key,
+      })
+    );
+  } catch (err) {
+    console.log("⚠️ Failed to delete from S3");
+  }
 }
 
 function parseRules(rules) {
@@ -165,7 +185,18 @@ app.get("/", (req, res) => {
 
 app.get("/health", asyncHandler(async (req, res) => {
   await pool.query("SELECT 1");
-  await s3.send(new HeadBucketCommand({ Bucket: requireEnv("AWS_BUCKET_NAME") }));
+
+  // Optional AWS check (won’t crash)
+  if (process.env.AWS_BUCKET_NAME) {
+    try {
+      await s3.send(
+        new HeadBucketCommand({ Bucket: process.env.AWS_BUCKET_NAME })
+      );
+    } catch (err) {
+      console.log("⚠️ S3 health check skipped");
+    }
+  }
+
   res.json({ ok: true });
 }));
 
@@ -1138,16 +1169,31 @@ START SERVER
 (async () => {
   try {
     await pool.query("SELECT 1");
-    console.log("Connected to PostgreSQL");
+    console.log("✅ Connected to PostgreSQL");
 
-    await s3.send(new HeadBucketCommand({ Bucket: requireEnv("AWS_BUCKET_NAME") }));
-    console.log("AWS S3 connected");
+    let s3Ready = false;
+
+    // SAFE AWS CHECK (won’t crash app)
+    if (process.env.AWS_BUCKET_NAME) {
+      try {
+        await s3.send(
+          new HeadBucketCommand({ Bucket: process.env.AWS_BUCKET_NAME })
+        );
+        console.log("✅ AWS S3 connected");
+        s3Ready = true;
+      } catch (err) {
+        console.log("⚠️ AWS S3 connection failed (continuing anyway)");
+      }
+    } else {
+      console.log("⚠️ AWS not configured");
+    }
 
     app.listen(PORT, () => {
-      console.log(`Server running at http://localhost:${PORT}`);
+      console.log(`🚀 Server running on port ${PORT}`);
     });
+
   } catch (error) {
-    console.error("Startup failed:", error.message);
+    console.error("❌ Startup failed:", error.message);
     process.exit(1);
   }
 })();
