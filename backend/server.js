@@ -183,22 +183,28 @@ app.get("/", (req, res) => {
   res.send("Server running");
 });
 
-app.get("/health", asyncHandler(async (req, res) => {
-  await pool.query("SELECT 1");
+app.get("/health", async (req, res) => {
+  // ✅ Safe DB check
+  try {
+    await pool.query("SELECT 1");
+  } catch (err) {
+    console.log("⚠️ DB health check failed:", err.message);
+  }
 
-  // Optional AWS check (won’t crash)
-  if (process.env.AWS_BUCKET_NAME) {
-    try {
+  // ✅ Safe AWS check
+  try {
+    if (process.env.AWS_BUCKET_NAME) {
       await s3.send(
         new HeadBucketCommand({ Bucket: process.env.AWS_BUCKET_NAME })
       );
-    } catch (err) {
-      console.log("⚠️ S3 health check skipped");
     }
+  } catch (err) {
+    console.log("⚠️ S3 health check failed:", err.message);
   }
 
-  res.json({ ok: true });
-}));
+  // ✅ ALWAYS respond (this prevents 502)
+  res.status(200).json({ ok: true });
+});
 
 /* ===============================
 GALLERY
