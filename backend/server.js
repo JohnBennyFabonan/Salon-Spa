@@ -42,11 +42,10 @@ function requireEnv(name) {
 }
 
 const pool = new Pool({
-  user: requireEnv("DB_USER"),
-  host: requireEnv("DB_HOST"),
-  database: requireEnv("DB_NAME"),
-  password: requireEnv("DB_PASSWORD"),
-  port: Number(process.env.DB_PORT || 5432),
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 const s3 = new S3Client({
