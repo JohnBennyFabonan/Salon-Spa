@@ -1100,31 +1100,44 @@ app.post("/send-otp", async (req, res) => {
     const otp = generateOTP();
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
-    // ✅ SAVE TO DATABASE (instead of otpStore)
+    // ✅ Save OTP to database
     await pool.query(
       "INSERT INTO otp_codes (email, otp, expires_at) VALUES ($1, $2, $3)",
       [email, otp, expiresAt]
     );
 
-    // ✅ SEND EMAIL
-    await sendOTP(email, otp);
+    // ✅ Respond immediately (VERY IMPORTANT)
+    res.json({
+      success: true,
+      message: "OTP sent (email may take a few seconds)"
+    });
 
-    res.json({ success: true, message: "OTP sent" });
+    // ✅ Send email in background (non-blocking)
+    sendOTP(email, otp).catch(err => {
+      console.log("⚠️ Email failed:", err.message);
+    });
 
   } catch (err) {
-    console.error(err);
+    console.error("❌ OTP route error:", err);
     res.status(500).json({ error: "Failed to send OTP" });
   }
 });
 
+
 // ✅ Verify OTP
 app.post("/verify-otp", async (req, res) => {
-  const { email, otp } = req.body;
-
   try {
-    // 🔍 Find latest OTP for this email
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({ error: "Email and OTP are required" });
+    }
+
     const result = await pool.query(
-      "SELECT * FROM otp_codes WHERE email=$1 AND otp=$2 ORDER BY id DESC LIMIT 1",
+      `SELECT * FROM otp_codes 
+       WHERE email=$1 AND otp=$2 
+       ORDER BY id DESC 
+       LIMIT 1`,
       [email, otp]
     );
 
@@ -1148,7 +1161,7 @@ app.post("/verify-otp", async (req, res) => {
     res.json({ success: true, message: "Email verified" });
 
   } catch (err) {
-    console.error(err);
+    console.error("❌ Verify OTP error:", err);
     res.status(500).json({ error: "Verification failed" });
   }
 });
