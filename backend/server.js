@@ -1045,16 +1045,10 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: process.env.BREVO_LOGIN,
     pass: process.env.BREVO_SMTP_PASS
-  }
-});
-
-// ✅ Check connection
-transporter.verify((error, success) => {
-  if (error) {
-    console.log("❌ Brevo error:", error);
-  } else {
-    console.log("✅ Brevo connected successfully");
-  }
+  },
+  connectionTimeout: 5000, // ✅ add this
+  greetingTimeout: 5000,
+  socketTimeout: 5000
 });
 
 /* ===============================
@@ -1064,24 +1058,30 @@ function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000);
 }
 
-// temporary storage (for testing)
-const otpStore = {};
+// ❌ remove this (you are using DB already)
+// const otpStore = {};
 
 async function sendOTP(email, otp) {
-  console.log("📧 Sending OTP to:", email);
-  console.log("🔑 OTP:", otp);
+  try {
+    console.log("📧 Sending OTP to:", email);
 
-  await transporter.sendMail({
-    from: `"Zai Wellness Spa" <fabonan2001@gmail.com>`,
-    to: email,
-    subject: "Spa Verification Code",
-    html: `
-      <h2>Email Verification</h2>
-      <h1>${otp}</h1>
-    `
-  });
+    await transporter.sendMail({
+      from: `"Zai Wellness Spa" <${process.env.BREVO_LOGIN}>`, // ✅ use env
+      to: email,
+      subject: "Spa Verification Code",
+      html: `
+        <h2>Email Verification</h2>
+        <h1>${otp}</h1>
+        <p>This code will expire in 5 minutes.</p>
+      `
+    });
 
-  console.log("✅ Email sent successfully");
+    console.log("✅ Email sent successfully");
+
+  } catch (err) {
+    // ✅ VERY IMPORTANT: do NOT crash app
+    console.log("⚠️ Email failed:", err.message);
+  }
 }
 
 /* ===============================
