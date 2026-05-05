@@ -41,11 +41,15 @@ function requireEnv(name) {
   return value.trim();
 }
 
+// ✅ FIX 1: Added connection timeouts to prevent hanging DB calls
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false,
   },
+  connectionTimeoutMillis: 3000,
+  idleTimeoutMillis: 10000,
+  statement_timeout: 5000,
 });
 
 const s3 = new S3Client({
@@ -184,14 +188,12 @@ app.get("/", (req, res) => {
 });
 
 app.get("/health", async (req, res) => {
-  // ✅ Safe DB check
   try {
     await pool.query("SELECT 1");
   } catch (err) {
     console.log("⚠️ DB health check failed:", err.message);
   }
 
-  // ✅ Safe AWS check
   try {
     if (process.env.AWS_BUCKET_NAME) {
       await s3.send(
@@ -202,7 +204,6 @@ app.get("/health", async (req, res) => {
     console.log("⚠️ S3 health check failed:", err.message);
   }
 
-  // ✅ ALWAYS respond (this prevents 502)
   res.status(200).json({ ok: true });
 });
 
@@ -256,7 +257,7 @@ app.delete("/gallery/:id", asyncHandler(async (req, res) => {
 }));
 
 /* ===============================
-GET CATEGORIES (NEW)
+GET CATEGORIES
 =============================== */
 app.get("/categories", asyncHandler(async (req, res) => {
   const result = await pool.query(`
@@ -424,7 +425,7 @@ app.delete("/services/:id", asyncHandler(async (req, res) => {
 }));
 
 /* ===============================
-UPDATE SERVICE (NEW)
+UPDATE SERVICE
 =============================== */
 app.put("/services/:id", upload.single("image"), asyncHandler(async (req, res) => {
 
@@ -443,8 +444,6 @@ app.put("/services/:id", upload.single("image"), asyncHandler(async (req, res) =
   let uploaded = null;
 
   try {
-
-    // Upload new image if provided
     if (req.file) {
       uploaded = await uploadFileToS3(req.file);
     }
@@ -470,7 +469,6 @@ app.put("/services/:id", upload.single("image"), asyncHandler(async (req, res) =
       ]
     );
 
-    // Delete old image if replaced
     if (uploaded?.imageUrl && existing.rows[0].image_url) {
       await deleteFileFromS3ByUrl(existing.rows[0].image_url).catch(() => {});
     }
@@ -478,11 +476,9 @@ app.put("/services/:id", upload.single("image"), asyncHandler(async (req, res) =
     res.json(result.rows[0]);
 
   } catch (error) {
-
     if (uploaded?.imageUrl) {
       await deleteFileFromS3ByUrl(uploaded.imageUrl).catch(() => {});
     }
-
     throw error;
   }
 
@@ -502,7 +498,6 @@ app.post("/register", asyncHandler(async (req, res) => {
     return res.status(400).json({ error: "Invalid email address" });
   }
 
-  // 🔒 ✅ ADD THIS (OTP CHECK)
   const check = await pool.query(
     "SELECT * FROM otp_codes WHERE email=$1 AND verified=true ORDER BY id DESC LIMIT 1",
     [email.trim().toLowerCase()]
@@ -512,7 +507,6 @@ app.post("/register", asyncHandler(async (req, res) => {
     return res.status(400).json({ error: "Email not verified" });
   }
 
-  // ✅ existing user check
   const existing = await pool.query(
     "SELECT id FROM users WHERE email = $1",
     [email.trim().toLowerCase()]
@@ -1046,7 +1040,7 @@ const transporter = nodemailer.createTransport({
     user: process.env.BREVO_LOGIN,
     pass: process.env.BREVO_SMTP_PASS
   },
-  connectionTimeout: 5000, // ✅ add this
+  connectionTimeout: 5000,
   greetingTimeout: 5000,
   socketTimeout: 5000
 });
@@ -1057,9 +1051,6 @@ OTP FUNCTIONS
 function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000);
 }
-
-// ❌ remove this (you are using DB already)
-// const otpStore = {};
 
 async function sendOTP(email, otp) {
   try {
@@ -1094,7 +1085,7 @@ async function sendOTP(email, otp) {
 ROUTES
 =============================== */
 
-// 📤 Send OTP
+// ✅ FIX 2: Respond immediately, then do DB insert + email in background
 app.post("/send-otp", async (req, res) => {
   try {
     const { email } = req.body;
@@ -1103,34 +1094,36 @@ app.post("/send-otp", async (req, res) => {
       return res.status(400).json({ error: "Email is required" });
     }
 
-    const otp = generateOTP();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
-
-    // ✅ Save OTP to database
-    await pool.query(
-      "INSERT INTO otp_codes (email, otp, expires_at) VALUES ($1, $2, $3)",
-      [email, otp, expiresAt]
-    );
-
-    // ✅ Respond immediately (VERY IMPORTANT)
+    // ✅ Respond immediately — never block on DB or email
     res.json({
       success: true,
       message: "OTP sent (email may take a few seconds)"
     });
 
-    // ✅ Send email in background (non-blocking)
-    setTimeout(() => {
-  sendOTP(email, otp).catch(err => {
-    console.log("⚠️ Email failed:", err.message);
-  });
-}, 0);
+    // ✅ Do all heavy work in background after response is sent
+    setTimeout(async () => {
+      try {
+        const otp = generateOTP();
+        const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+
+        await pool.query(
+          "INSERT INTO otp_codes (email, otp, expires_at) VALUES ($1, $2, $3)",
+          [email, otp, expiresAt]
+        );
+
+        await sendOTP(email, otp);
+      } catch (err) {
+        console.error("⚠️ Background OTP error:", err.message);
+      }
+    }, 0);
 
   } catch (err) {
     console.error("❌ OTP route error:", err);
-    res.status(500).json({ error: "Failed to send OTP" });
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Failed to send OTP" });
+    }
   }
 });
-
 
 // ✅ Verify OTP
 app.post("/verify-otp", async (req, res) => {
@@ -1155,12 +1148,10 @@ app.post("/verify-otp", async (req, res) => {
 
     const record = result.rows[0];
 
-    // ⏰ Check expiration
     if (new Date() > record.expires_at) {
       return res.json({ success: false, message: "OTP expired" });
     }
 
-    // ✅ Mark as verified
     await pool.query(
       "UPDATE otp_codes SET verified=true WHERE id=$1",
       [record.id]
