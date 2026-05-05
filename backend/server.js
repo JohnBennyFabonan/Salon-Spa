@@ -1125,6 +1125,11 @@ app.post("/send-otp", async (req, res) => {
   }
 });
 
+app.post("/debug", (req, res) => {
+  console.log("🔥 DEBUG HIT");
+  res.json({ ok: true });
+});
+
 // ✅ Verify OTP
 app.post("/verify-otp", async (req, res) => {
   try {
