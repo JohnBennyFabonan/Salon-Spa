@@ -730,7 +730,7 @@ No services found. Try another category.
 </div>
 
   <script>
-
+const API_BASE = "https://salon-spa.onrender.com";
 /* ===============================
 LOGIN NAVBAR SWITCH
 ================================ */
@@ -778,7 +778,7 @@ let services = [];
 
 async function loadServices(){
   try{
-    const res = await fetch("http://localhost:5000/services");
+    const res = await fetch(`${API_BASE}/services`);
     services = await res.json();
 
     // ✅ EXTRACT UNIQUE CATEGORIES FROM DATABASE

@@ -283,221 +283,235 @@ font-weight:bold;
 <script>
 
 /* ===============================
+CONFIG
+================================ */
+const API_BASE = "https://salon-spa.onrender.com";
+
+/* ===============================
 🔒 ADMIN SESSION SECURITY
-=============================== */
+================================ */
 function checkAdminSession(){
 
-const session =
-JSON.parse(localStorage.getItem("salonSession")) ||
-JSON.parse(sessionStorage.getItem("salonSession"));
+  const session =
+  JSON.parse(localStorage.getItem("salonSession")) ||
+  JSON.parse(sessionStorage.getItem("salonSession"));
 
-if(!session || session.role !== "admin"){
-window.location.replace("../log_in.html");
-}
+  if(!session || session.role !== "admin"){
+    window.location.replace("../log_in.html");
+    return null;
+  }
 
+  return session;
 }
 
 checkAdminSession();
 
-window.addEventListener("pageshow", function(event){
-if(event.persisted){
-location.reload();
-}
-checkAdminSession();
+window.addEventListener("pageshow", (e)=>{
+  if(e.persisted) location.reload();
+  checkAdminSession();
 });
 
-document.addEventListener("visibilitychange", function(){
-if(document.visibilityState === "visible"){
-checkAdminSession();
-}
+document.addEventListener("visibilitychange", ()=>{
+  if(document.visibilityState === "visible"){
+    checkAdminSession();
+  }
 });
 
 /* ===============================
-📦 LOAD DATA
-=============================== */
-let walkIns = JSON.parse(localStorage.getItem("walkIns") || "[]");
-let editIndex = null;
+📦 STATE
+================================ */
+let walkIns = [];
+let editId = null;
+
+/* ===============================
+📥 LOAD WALK-INS (API)
+================================ */
+async function loadWalkIns(){
+  try{
+
+    const res = await fetch(`${API_BASE}/walkins`);
+
+    if(!res.ok){
+      throw new Error("Failed to load walk-ins");
+    }
+
+    walkIns = await res.json();
+    renderTable();
+
+  }catch(err){
+    console.error("❌ Load error:", err);
+  }
+}
 
 /* ===============================
 📊 RENDER TABLE
-=============================== */
+================================ */
 function renderTable(){
 
-const table = document.getElementById("walkTable");
-if(!table) return;
+  const table = document.getElementById("walkTable");
+  if(!table) return;
 
-table.innerHTML = "";
+  table.innerHTML = "";
 
-const searchDate = document.getElementById("searchDate")?.value || "";
-const searchService = document.getElementById("searchService")?.value.toLowerCase() || "";
+  const searchDate = document.getElementById("searchDate")?.value || "";
+  const searchService = document.getElementById("searchService")?.value.toLowerCase() || "";
 
-walkIns.forEach((w, index)=>{
+  walkIns.forEach((w)=>{
 
-if(searchDate && w.date !== searchDate) return;
-if(searchService && !w.service.toLowerCase().includes(searchService)) return;
+    if(searchDate && w.date !== searchDate) return;
+    if(searchService && !w.service.toLowerCase().includes(searchService)) return;
 
-table.innerHTML += `
-<tr>
-<td>${w.date}</td>
-<td>${w.service}</td>
-<td>${w.payment || "-"}</td>
-<td>₱${Number(w.amount).toLocaleString()}</td>
-<td>
-<button class="actionBtn editBtn" onclick="editWalkIn(${index})">Edit</button>
-<button class="actionBtn deleteBtn" onclick="deleteWalkIn(${index})">Delete</button>
-</td>
-</tr>
-`;
+    table.innerHTML += `
+    <tr>
+      <td>${w.date}</td>
+      <td>${w.service}</td>
+      <td>${w.payment || "-"}</td>
+      <td>₱${Number(w.amount).toLocaleString()}</td>
+      <td>
+        <button class="actionBtn editBtn" onclick="editWalkIn(${w.id})">Edit</button>
+        <button class="actionBtn deleteBtn" onclick="deleteWalkIn(${w.id})">Delete</button>
+      </td>
+    </tr>
+    `;
+  });
 
-});
-
-/* Empty state */
-if(table.innerHTML === ""){
-table.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#999;">No data found</td></tr>`;
-}
-
+  if(table.innerHTML === ""){
+    table.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#999;">No data found</td></tr>`;
+  }
 }
 
 /* ===============================
 📂 OPEN MODAL
-=============================== */
+================================ */
 function openModal(){
 
-const modal = document.getElementById("modal");
-modal.style.display = "flex";
+  document.getElementById("modal").style.display = "flex";
+  document.getElementById("modalTitle").innerText = "Add Walk-in";
 
-document.getElementById("modalTitle").innerText = "Add Walk-in";
+  editId = null;
 
-editIndex = null;
-
-document.getElementById("service").value = "";
-document.getElementById("amount").value = "";
-
-const paymentInput = document.getElementById("payment");
-if(paymentInput) paymentInput.value = "";
-
+  document.getElementById("service").value = "";
+  document.getElementById("amount").value = "";
+  document.getElementById("payment").value = "";
 }
 
 /* ===============================
 ❌ CLOSE MODAL
-=============================== */
+================================ */
 function closeModal(){
-document.getElementById("modal").style.display = "none";
+  document.getElementById("modal").style.display = "none";
 }
 
-/* Close when clicking outside */
-window.addEventListener("click", function(e){
-const modal = document.getElementById("modal");
-if(e.target === modal){
-modal.style.display = "none";
-}
+window.addEventListener("click", (e)=>{
+  const modal = document.getElementById("modal");
+  if(e.target === modal){
+    modal.style.display = "none";
+  }
 });
 
 /* ===============================
-💾 SAVE WALK-IN
-=============================== */
-function saveWalkIn(){
+💾 SAVE WALK-IN (API)
+================================ */
+async function saveWalkIn(){
 
-const service = document.getElementById("service").value.trim();
-const amount = parseFloat(document.getElementById("amount").value);
-const payment = document.getElementById("payment")?.value;
+  const service = document.getElementById("service").value.trim();
+  const amount = parseFloat(document.getElementById("amount").value);
+  const payment = document.getElementById("payment").value;
 
-/* Validation */
-if(!service){
-alert("Service is required");
-return;
-}
+  if(!service) return alert("Service is required");
+  if(isNaN(amount) || amount <= 0) return alert("Enter valid amount");
+  if(!payment) return alert("Select payment");
 
-if(isNaN(amount) || amount <= 0){
-alert("Enter a valid amount");
-return;
-}
+  const today = new Date().toISOString().split("T")[0];
 
-if(!payment){
-alert("Select payment method");
-return;
-}
+  try{
 
-const today = new Date().toISOString().split("T")[0];
+    let res;
 
-/* ADD */
-if(editIndex === null){
+    if(editId){
 
-walkIns.push({
-id: "walk_" + Date.now(),
-service,
-amount,
-payment,
-date: today
-});
+      res = await fetch(`${API_BASE}/walkins/${editId}`, {
+        method:"PUT",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ service, amount, payment })
+      });
 
-}
-/* UPDATE */
-else{
+    }else{
 
-walkIns[editIndex].service = service;
-walkIns[editIndex].amount = amount;
-walkIns[editIndex].payment = payment;
+      res = await fetch(`${API_BASE}/walkins`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ service, amount, payment, date: today })
+      });
 
-}
+    }
 
-/* Save */
-localStorage.setItem("walkIns", JSON.stringify(walkIns));
+    if(!res.ok){
+      throw new Error("Save failed");
+    }
 
-/* Close modal */
-closeModal();
+    closeModal();
+    loadWalkIns();
 
-/* Refresh table */
-renderTable();
-
+  }catch(err){
+    console.error("❌ Save error:", err);
+    alert("Failed to save walk-in");
+  }
 }
 
 /* ===============================
 ✏️ EDIT
-=============================== */
-function editWalkIn(index){
+================================ */
+function editWalkIn(id){
 
-openModal();
+  const w = walkIns.find(x => x.id == id);
+  if(!w) return;
 
-document.getElementById("modalTitle").innerText = "Edit Walk-in";
+  openModal();
 
-document.getElementById("service").value = walkIns[index].service;
-document.getElementById("amount").value = walkIns[index].amount;
+  document.getElementById("modalTitle").innerText = "Edit Walk-in";
+  document.getElementById("service").value = w.service;
+  document.getElementById("amount").value = w.amount;
+  document.getElementById("payment").value = w.payment || "";
 
-const paymentInput = document.getElementById("payment");
-if(paymentInput){
-paymentInput.value = walkIns[index].payment || "";
-}
-
-editIndex = index;
-
+  editId = id;
 }
 
 /* ===============================
 🗑 DELETE
-=============================== */
-function deleteWalkIn(index){
+================================ */
+async function deleteWalkIn(id){
 
-if(confirm("Delete this walk-in?")){
+  if(!confirm("Delete this walk-in?")) return;
 
-walkIns.splice(index,1);
-localStorage.setItem("walkIns", JSON.stringify(walkIns));
-renderTable();
+  try{
 
-}
+    const res = await fetch(`${API_BASE}/walkins/${id}`, {
+      method:"DELETE"
+    });
 
+    if(!res.ok){
+      throw new Error("Delete failed");
+    }
+
+    loadWalkIns();
+
+  }catch(err){
+    console.error("❌ Delete error:", err);
+    alert("Failed to delete");
+  }
 }
 
 /* ===============================
 🔎 LIVE SEARCH
-=============================== */
+================================ */
 document.getElementById("searchDate")?.addEventListener("input", renderTable);
 document.getElementById("searchService")?.addEventListener("input", renderTable);
 
 /* ===============================
 🚀 INIT
-=============================== */
-renderTable();
+================================ */
+loadWalkIns();
 
 </script>
 

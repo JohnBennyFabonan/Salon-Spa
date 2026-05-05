@@ -179,26 +179,67 @@ body{flex-direction:column;}
 
 <script>
 
-// ✅ PROTECT PAGE (no access if not admin)
-const session =
-JSON.parse(localStorage.getItem("salonSession")) ||
-JSON.parse(sessionStorage.getItem("salonSession"));
+/* ===============================
+CONFIG
+================================ */
+const API_BASE = "https://salon-spa.onrender.com";
 
-if(!session || session.role !== "admin"){
-  window.location.replace("../log_in.html");
+/* ===============================
+PROTECT PAGE (ADMIN ONLY)
+================================ */
+function checkAdminSession(){
+
+  const session =
+    JSON.parse(localStorage.getItem("salonSession")) ||
+    JSON.parse(sessionStorage.getItem("salonSession"));
+
+  if(!session || session.role !== "admin"){
+    // use replace so user can't go back
+    window.location.replace("../log_in.html");
+    return null;
+  }
+
+  return session;
 }
 
+const currentSession = checkAdminSession();
 
-// ✅ LOGOUT FUNCTION
-function logout(){
+/* Extra protection (back button / tab switch) */
+window.addEventListener("pageshow", (e)=>{
+  if(e.persisted){
+    location.reload();
+  }
+  checkAdminSession();
+});
 
-  // Clear session
-  localStorage.removeItem("salonSession");
-  sessionStorage.removeItem("salonSession");
+document.addEventListener("visibilitychange", ()=>{
+  if(document.visibilityState === "visible"){
+    checkAdminSession();
+  }
+});
 
-  // Redirect (no back button)
+
+/* ===============================
+LOGOUT FUNCTION
+================================ */
+async function logout(){
+
+  try{
+    // OPTIONAL: call backend logout (future use if you add auth tokens)
+    await fetch(`${API_BASE}/logout`, { method: "POST" }).catch(()=>{});
+  }catch(err){
+    console.warn("Logout API skipped:", err);
+  }
+
+  // ✅ Clear ALL stored data (not just session)
+  localStorage.clear();
+  sessionStorage.clear();
+
+  // ✅ Redirect safely (no back navigation)
   window.location.replace("../log_in.html");
 
+  // ✅ Force reload (prevents cached pages)
+  setTimeout(()=> location.reload(), 100);
 }
 
 </script>

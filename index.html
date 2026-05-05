@@ -703,6 +703,7 @@ to ensure every visit becomes a refreshing and luxurious experience.
 </section>
 
 <script>
+  const API_BASE = "https://salon-spa.onrender.com";
 
 /* ===============================
 LOGIN NAVBAR SWITCH
@@ -826,7 +827,7 @@ if(!container) return;
 
 try{
 
-const res = await fetch("http://localhost:5000/ratings");
+const res = await fetch(`${API_BASE}/ratings`);
 const feedbacks = await res.json();
 
 /* NO DATA */

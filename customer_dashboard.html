@@ -745,6 +745,11 @@ RATING MODAL ⭐
 <script>
 
 /* ===============================
+CONFIG
+================================ */
+const API_BASE = "https://salon-spa.onrender.com";
+
+/* ===============================
 FORMAT DATE
 ================================ */
 function formatDate(dateString){
@@ -797,8 +802,16 @@ let bookings = [];
 LOAD BOOKINGS
 ================================ */
 async function loadBookings(){
+
+  upcomingTable.innerHTML = `<tr><td colspan="7">Loading...</td></tr>`;
+
   try{
-    const res = await fetch("http://localhost:5000/bookings");
+    const res = await fetch(`${API_BASE}/bookings`);
+
+    if(!res.ok){
+      throw new Error("Failed to fetch bookings");
+    }
+
     const data = await res.json();
 
     bookings = data.filter(b => b.email === session.email);
@@ -807,45 +820,51 @@ async function loadBookings(){
 
   }catch(err){
     console.error("❌ LOAD ERROR:", err);
+    upcomingTable.innerHTML = `<tr><td colspan="7">Failed to load bookings.</td></tr>`;
   }
 }
 
 /* ===============================
-CANCEL
+CANCEL BOOKING
 ================================ */
 async function cancelBooking(id){
+
   if(!confirm("Are you sure you want to cancel this booking?")) return;
 
   try{
-    await fetch(`http://localhost:5000/bookings/${id}`, {
+    const res = await fetch(`${API_BASE}/bookings/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: "Cancelled" })
     });
+
+    if(!res.ok){
+      throw new Error("Cancel failed");
+    }
 
     alert("Booking cancelled!");
     loadBookings();
 
   }catch(err){
     console.error("❌ Cancel error:", err);
+    alert("Failed to cancel booking.");
   }
 }
 
 /* ===============================
-RATING SYSTEM ⭐ (UPDATED)
+RATING MODAL
 ================================ */
 function openRating(id){
   const modal = document.getElementById("ratingModal");
   modal.style.display = "flex";
   modal.dataset.id = id;
 
-  /* RESET UI EVERY OPEN */
   document.getElementById("feedback").value = "";
   document.querySelectorAll(".star").forEach(s => s.classList.remove("active"));
 }
 
 /* ===============================
-SUBMIT RATING (FULL FIX)
+SUBMIT RATING
 ================================ */
 async function submitRating(){
 
@@ -857,71 +876,48 @@ async function submitRating(){
 
   const submitBtn = document.querySelector("#ratingModal button:last-of-type");
 
-  /* 🔐 GET SESSION SAFELY */
-  const session =
-    JSON.parse(localStorage.getItem("salonSession")) ||
-    JSON.parse(sessionStorage.getItem("salonSession"));
-
-  if(!session){
-    alert("Session expired. Please login again.");
-    window.location.href = "log_in.html";
-    return;
-  }
-
-  /* ✅ VALIDATION */
   if(stars === 0){
-    alert("Please select a star rating.");
-    return;
+    return alert("Please select a star rating.");
   }
 
-  /* 🚫 PREVENT DOUBLE CLICK */
   submitBtn.disabled = true;
   submitBtn.innerText = "Submitting...";
 
   try{
 
-    const res = await fetch("http://localhost:5000/ratings", {
+    const res = await fetch(`${API_BASE}/ratings`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         booking_id: id,
         email: session.email,
-        stars: stars,
-        feedback: feedback
+        stars,
+        feedback
       })
     });
 
     const data = await res.json();
 
-    /* ❌ BACKEND ERROR (like duplicate) */
     if(!res.ok){
-      alert(data.error || "Failed to submit rating");
-      submitBtn.disabled = false;
-      submitBtn.innerText = "Submit Rating";
-      return;
+      throw new Error(data.error || "Failed");
     }
 
-    /* ✅ SUCCESS */
     alert("⭐ Thank you for your feedback!");
-
     modal.style.display = "none";
 
   }catch(err){
     console.error("❌ Rating error:", err);
-    alert("Network error. Try again.");
+    alert("Failed to submit rating.");
   }
 
-  /* RESET BUTTON */
   submitBtn.disabled = false;
   submitBtn.innerText = "Submit Rating";
 }
 
-/* 🔥 VERY IMPORTANT (FIXES YOUR BUTTON ERROR) */
 window.submitRating = submitRating;
 
-
 /* ===============================
-STAR CLICK ⭐
+STAR CLICK
 ================================ */
 document.querySelectorAll(".star").forEach((star, index)=>{
   star.addEventListener("click", ()=>{
@@ -930,7 +926,6 @@ document.querySelectorAll(".star").forEach((star, index)=>{
     });
   });
 });
-
 
 /* ===============================
 CLOSE MODAL
@@ -960,8 +955,8 @@ historyTable.innerHTML="";
 
 bookings.forEach((b)=>{
 
-/* SERVICES */
 let serviceName = "Booking";
+
 if(b.services){
   try{
     const parsed = typeof b.services === "string"
@@ -1000,9 +995,7 @@ if(b.date >= today && status !== "Cancelled" && status !== "Done"){
     <td><button class="cancelBtn">Cancel</button></td>
   `;
 
-  row.querySelector(".cancelBtn").addEventListener("click", () => {
-    cancelBooking(b.id);
-  });
+  row.querySelector(".cancelBtn").onclick = () => cancelBooking(b.id);
 
   upcomingTable.appendChild(row);
 
@@ -1020,22 +1013,20 @@ if(b.date >= today && status !== "Cancelled" && status !== "Done"){
     <td>${status==="Done" ? "Paid" : "₱"+Number(b.remaining||0).toLocaleString()}</td>
     <td>${status}</td>
     <td>
-  ${
-    status === "Done"
-      ? `<button class="rateBtn">Rate</button>`
-      : status === "Cancelled"
-      ? `<span style="color:#c53030; font-weight:600;">Cancelled</span>`
-      : `<span style="color:#64748b;">Not Available</span>`
-  }
-</td>
+      ${
+        status === "Done"
+          ? `<button class="rateBtn">Rate</button>`
+          : status === "Cancelled"
+          ? `<span style="color:#c53030;font-weight:600;">Cancelled</span>`
+          : `<span style="color:#64748b;">Not Available</span>`
+      }
+    </td>
   `;
 
   const rateBtn = row.querySelector(".rateBtn");
-if(rateBtn){
-  rateBtn.addEventListener("click", () => {
-    openRating(b.id);
-  });
-}
+  if(rateBtn){
+    rateBtn.onclick = () => openRating(b.id);
+  }
 
   historyTable.appendChild(row);
 }

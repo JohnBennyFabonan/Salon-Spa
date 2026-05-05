@@ -1153,6 +1153,52 @@ app.post("/verify-otp", async (req, res) => {
 });
 
 /* ===============================
+WALK-INS
+=============================== */
+
+app.get("/walkins", asyncHandler(async (req, res) => {
+  const result = await pool.query(
+    "SELECT * FROM walkins ORDER BY id DESC"
+  );
+  res.json(result.rows);
+}));
+
+app.post("/walkins", asyncHandler(async (req, res) => {
+  const { service, amount, payment, date } = req.body;
+
+  const result = await pool.query(
+    `INSERT INTO walkins (service, amount, payment, date)
+     VALUES ($1,$2,$3,$4)
+     RETURNING *`,
+    [service, toNumber(amount), payment, date]
+  );
+
+  res.status(201).json(result.rows[0]);
+}));
+
+app.put("/walkins/:id", asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { service, amount, payment } = req.body;
+
+  await pool.query(
+    `UPDATE walkins
+     SET service=$1, amount=$2, payment=$3
+     WHERE id=$4`,
+    [service, toNumber(amount), payment, id]
+  );
+
+  res.json({ success: true });
+}));
+
+app.delete("/walkins/:id", asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  await pool.query("DELETE FROM walkins WHERE id=$1", [id]);
+
+  res.json({ success: true });
+}));
+
+/* ===============================
 ERROR HANDLER
 =============================== */
 app.use((err, req, res, next) => {

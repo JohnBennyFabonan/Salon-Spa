@@ -529,7 +529,7 @@
 /* ===============================
    CONFIG (VERY IMPORTANT)
 ================================ */
-const API_BASE = "http://127.0.0.1:5000";
+const API_BASE = "https://salon-spa.onrender.com";
 
 /* ===============================
    LOGIN NAVBAR SWITCH
@@ -669,7 +669,7 @@ async function loadPhotos(){
   }catch(err){
     console.error("❌ Load error:", err);
 
-    alert("Cannot connect to server.\n\nMake sure backend is running on port 5000.");
+    alert("Cannot connect to server. Please try again later.");
   }
 }
 

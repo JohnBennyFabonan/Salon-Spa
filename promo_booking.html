@@ -1015,10 +1015,9 @@
 
   <script>
 document.addEventListener("DOMContentLoaded", function () {
-  const SERVER_URL = "http://localhost:5000";
+  const SERVER_URL = "https://salon-spa.onrender.com";
   const BOOKINGS_API_URL = `${SERVER_URL}/api`;
   const QR_BASE_URL = `${SERVER_URL}/payment-qrs`;
-
   const session =
     JSON.parse(localStorage.getItem("salonSession")) ||
     JSON.parse(sessionStorage.getItem("salonSession"));

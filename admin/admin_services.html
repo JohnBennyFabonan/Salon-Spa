@@ -455,6 +455,11 @@ SERVICE MODAL (CENTERED)
 <script>
 
 /* ===============================
+CONFIG
+================================ */
+const API_BASE = "https://salon-spa.onrender.com";
+
+/* ===============================
 ADMIN SESSION CHECK
 ================================ */
 const session =
@@ -470,19 +475,19 @@ STATE
 ================================ */
 let services = [];
 let editId = null;
-
-/* ===============================
-CATEGORY SYSTEM (DATABASE BASED)
-================================ */
 let categories = [];
 
-/* LOAD CATEGORIES FROM SERVICES */
+/* ===============================
+LOAD CATEGORIES
+================================ */
 async function loadCategories(){
   try{
-    const res = await fetch("http://localhost:5000/services");
+    const res = await fetch(`${API_BASE}/services`);
+
+    if(!res.ok) throw new Error("Failed to load categories");
+
     const data = await res.json();
 
-    // ✅ extract unique categories
     const unique = [
       ...new Set(
         data
@@ -492,8 +497,7 @@ async function loadCategories(){
     ];
 
     categories = unique;
-
-    renderCategories(); // update dropdown
+    renderCategories();
 
   }catch(err){
     console.error("❌ Category load error:", err);
@@ -505,9 +509,13 @@ LOAD SERVICES
 ================================ */
 async function loadServices(){
   try{
-    const res = await fetch("http://localhost:5000/services");
+    const res = await fetch(`${API_BASE}/services`);
+
+    if(!res.ok) throw new Error("Failed to load services");
+
     services = await res.json();
     renderServices();
+
   }catch(err){
     console.error("❌ LOAD ERROR:", err);
   }
@@ -518,7 +526,7 @@ RENDER TABLE
 ================================ */
 function renderServices(){
   const table = document.getElementById("serviceTable");
-  table.innerHTML="";
+  table.innerHTML = "";
 
   services.forEach((service)=>{
     table.innerHTML += `
@@ -551,7 +559,7 @@ function renderCategories(){
 }
 
 /* ===============================
-ADD CATEGORY (AUTO SELECT)
+ADD CATEGORY
 ================================ */
 function addCategory(){
   const input = document.getElementById("newCategory");
@@ -559,18 +567,14 @@ function addCategory(){
 
   if(!value) return;
 
-  // Capitalize first letter
   value = value.charAt(0).toUpperCase() + value.slice(1);
 
   if(!categories.includes(value)){
     categories.push(value);
-    localStorage.setItem("categories", JSON.stringify(categories));
     renderCategories();
   }
 
-  // Auto select newly added
   document.getElementById("serviceCategory").value = value;
-
   input.value = "";
 }
 
@@ -588,7 +592,7 @@ function openModal(){
 }
 
 /* ===============================
-RESET FORM (SAFE)
+RESET FORM
 ================================ */
 function resetForm(){
   renderCategories();
@@ -620,8 +624,7 @@ async function saveService(){
   const file = document.getElementById("serviceImage").files[0];
 
   if(!name || !price || !duration){
-    alert("Please fill all required fields");
-    return;
+    return alert("Please fill all required fields");
   }
 
   const formData = new FormData();
@@ -637,35 +640,35 @@ async function saveService(){
 
   try{
 
-    if(editId !== null){
+    let res;
 
-      await fetch(`http://localhost:5000/services/${editId}`, {
+    if(editId !== null){
+      res = await fetch(`${API_BASE}/services/${editId}`, {
         method: "PUT",
         body: formData
       });
-
-      alert("✅ Service updated!");
-
     }else{
-
       if(!file){
-        alert("Please upload image");
-        return;
+        return alert("Please upload image");
       }
 
-      await fetch("http://localhost:5000/services", {
+      res = await fetch(`${API_BASE}/services`, {
         method: "POST",
         body: formData
       });
-
-      alert("✅ Service added!");
     }
 
+    if(!res.ok){
+      throw new Error("Save failed");
+    }
+
+    alert("✅ Service saved!");
     closeModal();
     loadServices();
 
   }catch(err){
     console.error("❌ SAVE ERROR:", err);
+    alert("Failed to save service");
   }
 }
 
@@ -677,28 +680,31 @@ async function deleteService(id){
   if(!confirm("Delete this service?")) return;
 
   try{
-    await fetch(`http://localhost:5000/services/${id}`, {
+    const res = await fetch(`${API_BASE}/services/${id}`, {
       method: "DELETE"
     });
+
+    if(!res.ok){
+      throw new Error("Delete failed");
+    }
 
     loadServices();
 
   }catch(err){
     console.error("❌ DELETE ERROR:", err);
+    alert("Failed to delete service");
   }
 }
 
 /* ===============================
-EDIT SERVICE (FIXED CATEGORY BUG)
+EDIT SERVICE
 ================================ */
 function editService(id){
 
   const s = services.find(x => x.id == id);
 
-  // Ensure category exists
   if(!categories.includes(s.category)){
     categories.push(s.category);
-    localStorage.setItem("categories", JSON.stringify(categories));
   }
 
   renderCategories();
@@ -718,7 +724,7 @@ function editService(id){
 }
 
 /* ===============================
-IMAGE PREVIEW (NEW)
+IMAGE PREVIEW
 ================================ */
 function previewImage(event){
   const file = event.target.files[0];
@@ -739,7 +745,7 @@ function closeModal(){
   resetForm();
 }
 
-/* CLICK OUTSIDE CLOSE */
+/* CLOSE ON OUTSIDE CLICK */
 window.addEventListener("click", function(e){
   const modal = document.getElementById("serviceModal");
   if(e.target === modal){

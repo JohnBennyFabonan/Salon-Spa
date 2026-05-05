@@ -240,59 +240,82 @@ padding:20px;
 <script>
 
 /* ===============================
-LOAD ADMIN DATA
-=============================== */
+CONFIG
+================================ */
+const API_BASE = "https://salon-spa.onrender.com";
 
-let adminData = JSON.parse(localStorage.getItem("adminAccount"));
+/* ===============================
+LOAD ADMIN DATA (FROM BACKEND)
+================================ */
+async function loadAdmin(){
 
-/* If no admin account exists create default */
+  try{
 
-if(!adminData){
+    const res = await fetch(`${API_BASE}/admin`);
 
-adminData = {
-name:"Admin",
-email:"admin@gmail.com",
-password:"admin123"
-};
+    const data = await res.json();
 
-localStorage.setItem("adminAccount",JSON.stringify(adminData));
+    if(!res.ok){
+      throw new Error(data.error || "Failed to load admin");
+    }
+
+    document.getElementById("adminName").value = data.name || "";
+    document.getElementById("adminEmail").value = data.email || "";
+
+  }catch(err){
+    console.error("❌ Load admin error:", err);
+    alert("Failed to load admin data.");
+  }
 
 }
 
-/* Fill inputs */
-
-document.getElementById("adminName").value = adminData.name;
-document.getElementById("adminEmail").value = adminData.email;
+loadAdmin();
 
 
 /* ===============================
-SAVE SETTINGS
-=============================== */
+SAVE SETTINGS (TO BACKEND)
+================================ */
+document.getElementById("settingsForm").addEventListener("submit", async function(e){
 
-document.getElementById("settingsForm").addEventListener("submit",function(e){
+  e.preventDefault();
 
-e.preventDefault();
+  const newName = document.getElementById("adminName").value.trim();
+  const newEmail = document.getElementById("adminEmail").value.trim();
+  const newPassword = document.getElementById("adminPassword").value.trim();
 
-const newName = document.getElementById("adminName").value.trim();
-const newEmail = document.getElementById("adminEmail").value.trim();
-const newPassword = document.getElementById("adminPassword").value.trim();
+  if(!newName || !newEmail){
+    return alert("Name and email are required.");
+  }
 
-/* Update name and email */
+  try{
 
-adminData.name = newName;
-adminData.email = newEmail;
+    const res = await fetch(`${API_BASE}/admin/update`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: newName,
+        email: newEmail,
+        password: newPassword // can be empty
+      })
+    });
 
-/* Update password only if entered */
+    const data = await res.json();
 
-if(newPassword !== ""){
-adminData.password = newPassword;
-}
+    if(!res.ok){
+      throw new Error(data.error || "Update failed");
+    }
 
-/* Save to localStorage */
+    alert("Account updated successfully!");
 
-localStorage.setItem("adminAccount",JSON.stringify(adminData));
+    // clear password field after save
+    document.getElementById("adminPassword").value = "";
 
-alert("Account updated successfully.");
+  }catch(err){
+    console.error("❌ Update error:", err);
+    alert(err.message || "Failed to update account.");
+  }
 
 });
 
