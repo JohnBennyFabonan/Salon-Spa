@@ -6,7 +6,6 @@ const cors = require("cors");
 const multer = require("multer");
 const bcrypt = require("bcrypt");
 const path = require("path");
-const nodemailer = require("nodemailer");
 
 const {
   S3Client,
@@ -41,7 +40,6 @@ function requireEnv(name) {
   return value.trim();
 }
 
-// ✅ FIX 1: Added connection timeouts to prevent hanging DB calls
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
@@ -1030,23 +1028,7 @@ app.get("/api/payment-qrs", listPaymentQrsHandler);
 app.get("/api/payment-qrs/:paymentType", getSinglePaymentQrHandler);
 
 /* ===============================
-BREVO EMAIL SETUP
-=============================== */
-const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.BREVO_LOGIN,
-    pass: process.env.BREVO_SMTP_PASS
-  },
-  connectionTimeout: 5000,
-  greetingTimeout: 5000,
-  socketTimeout: 5000
-});
-
-/* ===============================
-OTP FUNCTIONS
+OTP — BREVO HTTP API (replaces nodemailer)
 =============================== */
 function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000);
@@ -1056,25 +1038,30 @@ async function sendOTP(email, otp) {
   try {
     console.log("📧 Sending OTP to:", email);
 
-    const send = transporter.sendMail({
-      from: `"Zai Wellness Spa" <${process.env.BREVO_LOGIN}>`,
-      to: email,
-      subject: "Spa Verification Code",
-      html: `
-        <h2>Email Verification</h2>
-        <h1>${otp}</h1>
-        <p>This code will expire in 5 minutes.</p>
-      `
+    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "api-key": process.env.BREVO_API_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        sender: { name: "Zai Wellness Spa", email: process.env.BREVO_LOGIN },
+        to: [{ email }],
+        subject: "Spa Verification Code",
+        htmlContent: `
+          <h2>Email Verification</h2>
+          <h1>${otp}</h1>
+          <p>This code will expire in 5 minutes.</p>
+        `,
+      }),
     });
 
-    await Promise.race([
-      send,
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Email timeout")), 4000)
-      )
-    ]);
-
-    console.log("✅ Email sent");
+    if (res.ok) {
+      console.log("✅ Email sent");
+    } else {
+      const errText = await res.text();
+      console.log("⚠️ Brevo error:", errText);
+    }
 
   } catch (err) {
     console.log("⚠️ Email issue:", err.message);
@@ -1084,8 +1071,6 @@ async function sendOTP(email, otp) {
 /* ===============================
 ROUTES
 =============================== */
-
-// ✅ FIX 2: Respond immediately, then do DB insert + email in background
 app.post("/send-otp", async (req, res) => {
   try {
     const { email } = req.body;
@@ -1094,17 +1079,15 @@ app.post("/send-otp", async (req, res) => {
       return res.status(400).json({ error: "Email is required" });
     }
 
-    // ✅ Respond immediately — never block on DB or email
     res.json({
       success: true,
       message: "OTP sent (email may take a few seconds)"
     });
 
-    // ✅ Do all heavy work in background after response is sent
     setTimeout(async () => {
       try {
         const otp = generateOTP();
-        const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+        const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
         await pool.query(
           "INSERT INTO otp_codes (email, otp, expires_at) VALUES ($1, $2, $3)",
@@ -1130,7 +1113,6 @@ app.post("/debug", (req, res) => {
   res.json({ ok: true });
 });
 
-// ✅ Verify OTP
 app.post("/verify-otp", async (req, res) => {
   try {
     const { email, otp } = req.body;
