@@ -1065,8 +1065,8 @@ async function sendOTP(email, otp) {
   try {
     console.log("📧 Sending OTP to:", email);
 
-    await transporter.sendMail({
-      from: `"Zai Wellness Spa" <${process.env.BREVO_LOGIN}>`, // ✅ use env
+    const send = transporter.sendMail({
+      from: `"Zai Wellness Spa" <${process.env.BREVO_LOGIN}>`,
       to: email,
       subject: "Spa Verification Code",
       html: `
@@ -1076,11 +1076,17 @@ async function sendOTP(email, otp) {
       `
     });
 
-    console.log("✅ Email sent successfully");
+    await Promise.race([
+      send,
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Email timeout")), 4000)
+      )
+    ]);
+
+    console.log("✅ Email sent");
 
   } catch (err) {
-    // ✅ VERY IMPORTANT: do NOT crash app
-    console.log("⚠️ Email failed:", err.message);
+    console.log("⚠️ Email issue:", err.message);
   }
 }
 
