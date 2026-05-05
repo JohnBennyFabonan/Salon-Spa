@@ -1119,9 +1119,11 @@ app.post("/send-otp", async (req, res) => {
     });
 
     // ✅ Send email in background (non-blocking)
-    sendOTP(email, otp).catch(err => {
-      console.log("⚠️ Email failed:", err.message);
-    });
+    setTimeout(() => {
+  sendOTP(email, otp).catch(err => {
+    console.log("⚠️ Email failed:", err.message);
+  });
+}, 0);
 
   } catch (err) {
     console.error("❌ OTP route error:", err);
