@@ -537,34 +537,37 @@
 
         <form id="signupForm" novalidate>
   <div class="grid2">
+
+    <!-- EMAIL FIRST -->
+    <div class="field" style="grid-column: 1 / -1;">
+      <label for="email">Email Address</label>
+      <input class="input" id="email" name="email" type="email" placeholder="you@email.com" autocomplete="email" required />
+    </div>
+
+    <!-- ✅ OTP SECTION -->
+    <div class="field" style="grid-column: 1 / -1;">
+      <label>Verification Code</label>
+
+      <div style="display:flex; gap:10px;">
+        <input class="input" id="otp" type="text" placeholder="Enter OTP" disabled />
+        <button type="button" class="btnOutline" id="sendOtpBtn">Send OTP</button>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:8px;">
+        <button type="button" class="btnOutline" id="verifyOtpBtn" disabled>Verify OTP</button>
+        <span id="otpStatus" style="font-size:12px; font-weight:700;"></span>
+      </div>
+    </div>
+
+    <!-- NAME AFTER OTP -->
     <div class="field" style="grid-column: 1 / -1;">
       <label for="name">Name</label>
       <input class="input" id="name" name="name" type="text" placeholder="Example, Juan Dela Cruz" autocomplete="name" required />
     </div>
 
-    <!-- ✅ OTP SECTION -->
-<div class="field" style="grid-column: 1 / -1;">
-  <label>Verification Code</label>
-
-  <div style="display:flex; gap:10px;">
-    <input class="input" id="otp" type="text" placeholder="Enter OTP" disabled />
-    <button type="button" class="btnOutline" id="sendOtpBtn">Send OTP</button>
-  </div>
-
-  <div style="display:flex; gap:10px; margin-top:8px;">
-    <button type="button" class="btnOutline" id="verifyOtpBtn" disabled>Verify OTP</button>
-    <span id="otpStatus" style="font-size:12px; font-weight:700;"></span>
-  </div>
-</div>
-
     <div class="field">
       <label for="contact">Contact Number</label>
       <input class="input" id="contact" name="contact" type="tel" placeholder="09XXXXXXXXX" autocomplete="tel" inputmode="numeric" required />
-    </div>
-
-    <div class="field">
-      <label for="email">Email Address</label>
-      <input class="input" id="email" name="email" type="email" placeholder="you@email.com" autocomplete="email" required />
     </div>
 
     <div class="field" style="grid-column: 1 / -1;">
