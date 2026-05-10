@@ -363,7 +363,7 @@ function renderTable(){
 
     table.innerHTML += `
     <tr>
-      <td>${w.date}</td>
+      <td>${new Date(w.date).toLocaleDateString("en-GB")}</td>
       <td>${w.service}</td>
       <td>${w.payment || "-"}</td>
       <td>₱${Number(w.amount).toLocaleString()}</td>
