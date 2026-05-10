@@ -245,32 +245,50 @@ CONFIG
 const API_BASE = "https://salon-spa.onrender.com";
 
 /* ===============================
-LOAD ADMIN DATA (FROM BACKEND)
+LOAD ADMIN DATA
 ================================ */
 async function loadAdmin(){
 
   try{
 
+    const session =
+      JSON.parse(localStorage.getItem("salonSession")) ||
+      JSON.parse(sessionStorage.getItem("salonSession"));
+
+    // ✅ LOAD FROM SESSION FIRST
+    if(session){
+
+      document.getElementById("adminName").value =
+      session.name || "";
+
+      document.getElementById("adminEmail").value =
+      session.email || "";
+
+    }
+
+    // ✅ OPTIONAL BACKEND LOAD
     const res = await fetch(`${API_BASE}/admin`);
+
+    // stop if route doesn't exist
+    if(!res.ok){
+      console.warn("⚠️ Admin endpoint not found");
+      return;
+    }
 
     const data = await res.json();
 
-    if(!res.ok){
-      throw new Error(data.error || "Failed to load admin");
-    }
+    document.getElementById("adminName").value =
+    data.name || "";
 
-    document.getElementById("adminName").value = data.name || "";
-    document.getElementById("adminEmail").value = data.email || "";
+    document.getElementById("adminEmail").value =
+    data.email || "";
 
   }catch(err){
+
     console.error("❌ Load admin error:", err);
-    alert("Failed to load admin data.");
+
   }
-
 }
-
-loadAdmin();
-
 
 /* ===============================
 SAVE SETTINGS (TO BACKEND)
