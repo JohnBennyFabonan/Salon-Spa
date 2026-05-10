@@ -353,30 +353,70 @@ function renderTable(){
 
   table.innerHTML = "";
 
-  const searchDate = document.getElementById("searchDate")?.value || "";
-  const searchService = document.getElementById("searchService")?.value.toLowerCase() || "";
+  const searchDate =
+  document.getElementById("searchDate")?.value || "";
+
+  const searchService =
+  document.getElementById("searchService")
+  ?.value.toLowerCase() || "";
 
   walkIns.forEach((w)=>{
 
-    if(searchDate && w.date !== searchDate) return;
-    if(searchService && !w.service.toLowerCase().includes(searchService)) return;
+    // ✅ FIX DATE FORMAT FOR FILTER
+    const formattedDate =
+    new Date(w.date).toISOString().split("T")[0];
 
+    // ✅ DATE FILTER
+    if(searchDate && formattedDate !== searchDate) return;
+
+    // ✅ SERVICE FILTER
+    if(
+      searchService &&
+      !w.service.toLowerCase().includes(searchService)
+    ) return;
+
+    // ✅ DISPLAY ROW
     table.innerHTML += `
     <tr>
-      <td>${new Date(w.date).toLocaleDateString("en-GB")}</td>
-      <td>${w.service}</td>
-      <td>${w.payment || "-"}</td>
-      <td>₱${Number(w.amount).toLocaleString()}</td>
       <td>
-        <button class="actionBtn editBtn" onclick="editWalkIn(${w.id})">Edit</button>
-        <button class="actionBtn deleteBtn" onclick="deleteWalkIn(${w.id})">Delete</button>
+        ${new Date(w.date).toLocaleDateString("en-GB")}
+      </td>
+
+      <td>${w.service}</td>
+
+      <td>${w.payment || "-"}</td>
+
+      <td>
+        ₱${Number(w.amount).toLocaleString()}
+      </td>
+
+      <td>
+        <button
+          class="actionBtn editBtn"
+          onclick="editWalkIn(${w.id})">
+          Edit
+        </button>
+
+        <button
+          class="actionBtn deleteBtn"
+          onclick="deleteWalkIn(${w.id})">
+          Delete
+        </button>
       </td>
     </tr>
     `;
   });
 
+  // ✅ EMPTY STATE
   if(table.innerHTML === ""){
-    table.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#999;">No data found</td></tr>`;
+    table.innerHTML = `
+    <tr>
+      <td colspan="5"
+      style="text-align:center; color:#999;">
+        No data found
+      </td>
+    </tr>
+    `;
   }
 }
 
