@@ -424,7 +424,7 @@ const API_URL = "https://salon-spa.onrender.com";
 STATE
 =============================== */
 let bookings = [];
-let walkIns = JSON.parse(localStorage.getItem("walkIns") || "[]");
+let walkIns = [];
 let revenueByDate = {};
 let serviceCount = {};
 
@@ -447,16 +447,28 @@ function isCancelled(status){
 LOAD DASHBOARD DATA
 =============================== */
 async function loadDashboard(){
+
   try{
-    const res = await fetch(`${API_URL}/bookings`);
-    bookings = await res.json();
 
-    /* reload walk-ins too */
-    walkIns = JSON.parse(localStorage.getItem("walkIns") || "[]");
+    // ✅ LOAD BOOKINGS
+    const bookingRes =
+    await fetch(`${API_URL}/bookings`);
 
+    bookings = await bookingRes.json();
+
+    // ✅ LOAD WALK-INS
+    const walkinRes =
+    await fetch(`${API_URL}/walkins`);
+
+    walkIns = await walkinRes.json();
+
+    // ✅ PROCESS
     processDashboard();
+
   }catch(err){
+
     console.error("❌ Dashboard load error:", err);
+
   }
 }
 
@@ -551,48 +563,66 @@ function processDashboard(){
   });
 
   /* WALK-IN REVENUE */
-  walkIns.forEach(w => {
+walkIns.forEach(w => {
 
-    if(!w.date) return;
+  if(!w.date) return;
 
-    const date = w.date;
-    const walkAmount = Number(w.amount || 0);
-    const walkDate = new Date(w.date);
+  // ✅ FIX DATE FORMAT
+  const date =
+  new Date(w.date).toISOString().split("T")[0];
 
-    /* TOTAL REVENUE */
-    revenue += walkAmount;
+  const walkAmount =
+  Number(w.amount || 0);
 
-    /* TODAY REVENUE */
-    if(date === today){
-      todayRevenue += walkAmount;
-    }
+  const walkDate =
+  new Date(w.date);
 
-    /* MONTHLY REVENUE */
-    if(
-      walkDate.getMonth() === currentMonth &&
-      walkDate.getFullYear() === currentYear
-    ){
-      monthlyRevenue += walkAmount;
-    }
+  /* ✅ TOTAL REVENUE */
+  revenue += walkAmount;
 
-    /* DAILY GROUP */
-    if(!revenueByDate[date]){
-      revenueByDate[date] = { count: 0, total: 0 };
-    }
+  /* ✅ TODAY REVENUE */
+  if(date === today){
+    todayRevenue += walkAmount;
+  }
 
-    revenueByDate[date].count++;
-    revenueByDate[date].total += walkAmount;
+  /* ✅ MONTHLY REVENUE */
+  if(
+    walkDate.getMonth() === currentMonth &&
+    walkDate.getFullYear() === currentYear
+  ){
+    monthlyRevenue += walkAmount;
+  }
 
-    /* OPTIONAL: count walk-in service in Top Services */
-    if(w.service){
-      const serviceName = String(w.service).trim();
-      if(serviceName){
-        if(!serviceCount[serviceName]) serviceCount[serviceName] = 0;
-        serviceCount[serviceName]++;
+  /* ✅ DAILY REVENUE GROUP */
+  if(!revenueByDate[date]){
+
+    revenueByDate[date] = {
+      count: 0,
+      total: 0
+    };
+
+  }
+
+  revenueByDate[date].count++;
+  revenueByDate[date].total += walkAmount;
+
+  /* ✅ TOP SERVICES */
+  if(w.service){
+
+    const serviceName =
+    String(w.service).trim();
+
+    if(serviceName){
+
+      if(!serviceCount[serviceName]){
+        serviceCount[serviceName] = 0;
       }
-    }
 
-  });
+      serviceCount[serviceName]++;
+    }
+  }
+
+});
 
   document.getElementById("totalBookings").textContent = bookings.length;
   document.getElementById("todayBookings").textContent = todayCount;
