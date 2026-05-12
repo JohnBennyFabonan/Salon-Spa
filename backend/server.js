@@ -22,11 +22,15 @@ const ALLOWED_PAYMENT_TYPES = ["gcash", "bpi", "maya"];
 
 app.use(
   cors({
-    origin: (process.env.CORS_ORIGINS || "http://127.0.0.1:5500,http://localhost:5500")
-      .split(",")
-      .map((v) => v.trim())
-      .filter(Boolean),
+    origin: [
+      "http://127.0.0.1:5500",
+      "http://localhost:5500",
+      "https://salon-spa-6x8h.vercel.app",
+      "https://zaitrinettewellnessspa.online",
+      "https://www.zaitrinettewellnessspa.online"
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
   })
 );
 
