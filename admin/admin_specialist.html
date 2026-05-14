@@ -211,6 +211,25 @@ box-shadow:var(--shadow);
 margin-top:0;
 }
 
+.closeBtn{
+  position:absolute;
+  top:15px;
+  right:15px;
+  width:32px;
+  height:32px;
+  border:none;
+  border-radius:8px;
+  background:#f1f5f9;
+  cursor:pointer;
+  font-size:16px;
+  font-weight:700;
+  transition:.15s;
+}
+
+.closeBtn:hover{
+  background:#e2e8f0;
+}
+
 input,select,textarea{
 width:100%;
 padding:10px;
@@ -305,6 +324,8 @@ padding:20px;
 <div class="modal" id="modal">
 
 <div class="modalBox">
+
+<button class="closeBtn" onclick="closeModal()">✕</button>
 
 <h3>Add / Edit Specialist</h3>
 
@@ -661,6 +682,18 @@ specialtyInput?.addEventListener(
 
   }
 );
+
+/* ===============================
+   CLOSE MODAL
+================================ */
+function closeModal(){
+
+  document.getElementById("modal").style.display =
+    "none";
+
+  editId = null;
+
+}
 
 /* ===============================
    INIT
