@@ -104,6 +104,13 @@ box-shadow:var(--shadow);
 border:1px solid var(--line);
 }
 
+.tableWrapper{
+max-height:500px;
+overflow-y:auto;
+overflow-x:auto;
+border-radius:12px;
+}
+
 /* HEADER BAR */
 
 .tableHeader{
@@ -275,6 +282,8 @@ width:100%;
 <button class="addBtn" onclick="openModal()">+ Add Promo</button>
 </div>
 
+<div class="tableWrapper">
+
 <table>
 
 <thead>
@@ -292,6 +301,8 @@ width:100%;
 <tbody id="promoTable"></tbody>
 
 </table>
+
+</div>
 
 </div>
 
