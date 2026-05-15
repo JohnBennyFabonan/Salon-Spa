@@ -478,6 +478,48 @@
   object-fit:cover;
   border-radius:50%;
 }
+
+/* Clickable Image */
+.bigAvatar img{
+  cursor: pointer;
+  transition: .2s;
+}
+
+.bigAvatar img:hover{
+  transform: scale(1.03);
+}
+
+/* Fullscreen Image Viewer */
+.imageViewer{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.imageViewer img{
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.4);
+}
+
+.imageViewer .closeViewer{
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 46px;
+  height: 46px;
+  border: none;
+  border-radius: 50%;
+  background: white;
+  font-size: 22px;
+  cursor: pointer;
+}
   </style>
 </head>
 
@@ -806,6 +848,34 @@ modalBack.addEventListener("click",(e)=>{
 ================================ */
 filterSelect.addEventListener("change", render);
 loadSpecialists();
+
+/* ===============================
+   IMAGE VIEWER
+================================ */
+const imageViewer = document.getElementById("imageViewer");
+const viewerImg = document.getElementById("viewerImg");
+const closeViewer = document.getElementById("closeViewer");
+
+modalImg.addEventListener("click", () => {
+  viewerImg.src = modalImg.src;
+  imageViewer.style.display = "flex";
+});
+
+closeViewer.addEventListener("click", () => {
+  imageViewer.style.display = "none";
+});
+
+imageViewer.addEventListener("click", (e) => {
+  if(e.target === imageViewer){
+    imageViewer.style.display = "none";
+  }
+});
 </script>
+
+<!-- IMAGE VIEWER -->
+<div class="imageViewer" id="imageViewer">
+  <button class="closeViewer" id="closeViewer">✕</button>
+  <img id="viewerImg" src="" alt="Full Image">
+</div>
 </body>
 </html>
