@@ -423,12 +423,16 @@
       margin-top: 10px;
     }
     .kv{
-      border: 1px solid rgba(15,23,42,.10);
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: rgba(15,23,42,.02);
-      font-size: 13px;
-    }
+  border: 1px solid rgba(15,23,42,.10);
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(15,23,42,.02);
+  font-size: 13px;
+
+  max-width: 100%;
+  word-break: break-word;
+  white-space: normal;
+}
 
     .modalFoot{
       padding: 14px 16px;
@@ -828,10 +832,13 @@ function openModal(s){
   modalRole.textContent = s.role;
   modalBio.textContent = s.bio;
 
-  modalKVs.innerHTML = `
-    <div class="kv"><strong>ID:</strong> ${s.id}</div>
-    <div class="kv"><strong>Specialties:</strong> ${s.specialties.join(", ")}</div>
-  `;
+ modalKVs.innerHTML = `
+  <div class="kv"><strong>ID:</strong> ${s.id}</div>
+  <div class="kv" style="width:100%;">
+    <strong>Specialties:</strong><br>
+    ${s.specialties.join(", ")}
+  </div>
+`;
 
   modalBack.style.display = "flex";
   document.body.style.overflow = "hidden";
