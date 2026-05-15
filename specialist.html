@@ -830,7 +830,8 @@ function openModal(s){
   modalImg.src = s.img;
   modalName.textContent = s.name;
   modalRole.textContent = s.role;
-  modalBio.textContent = s.bio;
+  modalBio.innerHTML = s.bio
+  .replace(/\n/g, "<br>");
 
  modalKVs.innerHTML = `
   <div class="kv"><strong>ID:</strong> ${s.id}</div>
