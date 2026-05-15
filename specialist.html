@@ -803,9 +803,35 @@ function cardHTML(s){
 ================================ */
 function filterList(){
   const f = filterSelect.value;
-  return specialists.filter(s => (f === "All") ? true : s.specialties.includes(f));
-}
 
+  return specialists.filter(s => {
+
+    const specs = s.specialties.join(" ").toLowerCase();
+
+    if(f === "All") return true;
+
+    if(f === "Hair"){
+      return specs.includes("hair");
+    }
+
+    if(f === "Nails"){
+      return specs.includes("nail");
+    }
+
+    if(f === "Spa"){
+      return specs.includes("massage") ||
+             specs.includes("spa") ||
+             specs.includes("wellness");
+    }
+
+    if(f === "Makeup"){
+      return specs.includes("pmu") ||
+             specs.includes("makeup");
+    }
+
+    return false;
+  });
+}
 /* ===============================
    RENDER
 ================================ */
