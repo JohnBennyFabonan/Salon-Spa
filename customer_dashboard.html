@@ -817,6 +817,19 @@ if(logoutBtn){
 }
 
 /* ===============================
+MOBILE LOGOUT
+================================ */
+const mLogout = document.getElementById("mLogout");
+
+if(mLogout){
+  mLogout.onclick = () => {
+    localStorage.removeItem("salonSession");
+    sessionStorage.removeItem("salonSession");
+    window.location.href = "log_in.html";
+  };
+}
+
+/* ===============================
 ELEMENTS
 ================================ */
 const upcomingTable = document.getElementById("upcomingTable");
