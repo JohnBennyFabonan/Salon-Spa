@@ -767,6 +767,32 @@ function formatDate(dateString){
 document.addEventListener("DOMContentLoaded", () => {
 
 /* ===============================
+MOBILE MENU
+================================ */
+const menuBtn = document.getElementById("menuBtn");
+const mobileMenuBack = document.getElementById("mobileMenuBack");
+const menuClose = document.getElementById("menuClose");
+
+if(menuBtn){
+  menuBtn.addEventListener("click", () => {
+    mobileMenuBack.style.display = "block";
+  });
+}
+
+if(menuClose){
+  menuClose.addEventListener("click", () => {
+    mobileMenuBack.style.display = "none";
+  });
+}
+
+/* CLOSE WHEN CLICKING OUTSIDE */
+mobileMenuBack.addEventListener("click", (e) => {
+  if(e.target === mobileMenuBack){
+    mobileMenuBack.style.display = "none";
+  }
+});
+
+/* ===============================
 CHECK LOGIN
 ================================ */
 const session =
