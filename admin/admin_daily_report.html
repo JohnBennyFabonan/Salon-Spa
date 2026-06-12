@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Client Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#2f7d62;
+  --green2:#256a52;
+  --bg:#f4fbf7;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#64748b;
+  --line:rgba(15,23,42,.08);
+  --shadow:0 14px 40px rgba(2,6,23,.08);
+  --radius:16px;
+  --greenSoft:rgba(47,125,98,.12);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Poppins;background:var(--bg);display:flex;color:var(--text);}
+
+/* SIDEBAR */
+.sidebar{width:260px;background:linear-gradient(180deg,var(--green),var(--green2));color:white;padding:28px 22px;min-height:100vh;flex-shrink:0;}
+.logo{font-weight:800;font-size:18px;margin-bottom:35px;}
+.nav{display:flex;flex-direction:column;gap:6px;}
+.nav a{display:block;color:white;text-decoration:none;padding:12px 14px;border-radius:12px;font-size:13px;font-weight:600;transition:.15s;}
+.nav a:hover{background:rgba(255,255,255,.15);}
+.nav a.active{background:rgba(255,255,255,.25);}
+
+/* MAIN */
+.main{flex:1;padding:30px;overflow-x:auto;}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:25px;flex-wrap:wrap;gap:12px;}
+.header h1{margin:0;font-size:28px;}
+.header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+
+/* DATE PICKER */
+.datePicker{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-family:Poppins;font-size:13px;font-weight:600;color:var(--text);}
+.datePicker input[type=date]{border:none;outline:none;font-family:Poppins;font-size:13px;font-weight:600;color:var(--text);background:transparent;cursor:pointer;}
+
+/* BUTTONS */
+.addBtn{background:var(--green);color:white;border:none;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s;}
+.addBtn:hover{background:var(--green2);}
+.exportBtn{background:#e7f7ef;color:var(--green2);border:none;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s;}
+.exportBtn:hover{background:#d0f0e2;}
+
+/* SUMMARY PILLS */
+.pills{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+.pill{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 20px;box-shadow:var(--shadow);min-width:130px;}
+.pill .label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.pill .value{font-size:22px;font-weight:800;color:var(--green);margin-top:2px;}
+.pill .sub{font-size:11px;color:var(--muted);}
+
+/* TABLE CARD */
+.tableCard{background:var(--card);padding:22px;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--line);overflow-x:auto;}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:900px;}
+thead{background:var(--greenSoft);}
+th{text-align:left;font-size:11px;color:var(--muted);padding:12px 10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;}
+td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle;}
+tr:hover td{background:#f9fdfb;}
+tr:last-child td{border-bottom:none;}
+.tfoot td{font-weight:700;background:var(--greenSoft);font-size:13px;}
+
+/* BADGES */
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.badge-new{background:#dcfce7;color:#166534;}
+.badge-old{background:#e0f2fe;color:#0369a1;}
+
+/* PAYMENT */
+.pay-cash{color:#166534;font-weight:600;}
+.pay-gcash{color:#7c3aed;font-weight:600;}
+.pay-bank{color:#0369a1;font-weight:600;}
+
+/* ACTION BUTTONS */
+.actionBtn{border:none;padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;margin-right:4px;}
+.edit{background:#e7f7ef;color:var(--green2);}
+.delete{background:#fdeaea;color:#c53030;}
+
+/* MODAL */
+.modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:999;}
+.modalBox{background:white;padding:28px;border-radius:var(--radius);width:520px;max-width:95vw;box-shadow:var(--shadow);position:relative;max-height:90vh;overflow-y:auto;}
+.modalBox h3{margin-top:0;font-size:18px;}
+.closeBtn{position:absolute;top:15px;right:15px;width:32px;height:32px;border:none;border-radius:8px;background:#f1f5f9;cursor:pointer;font-size:16px;font-weight:700;transition:.15s;}
+.closeBtn:hover{background:#e2e8f0;}
+
+/* FORM GRID */
+.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.formGrid .full{grid-column:1/-1;}
+label{font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:3px;}
+input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);font-family:Poppins;font-size:13px;outline:none;transition:.15s;}
+input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(47,125,98,.1);}
+.formGroup{margin-bottom:0;}
+.saveRow{margin-top:16px;text-align:right;}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:50px 20px;color:var(--muted);}
+.empty .icon{font-size:40px;margin-bottom:10px;}
+
+@media(max-width:900px){.sidebar{display:none;}body{flex-direction:column;}.main{padding:16px;}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="logo">🌿 BASIT Admin</div>
+  <div class="nav">
+    <a href="admin_dashboard.html">Dashboard</a>
+    <a href="admin_gallery.html">Manage Gallery</a>
+    <a href="admin_walkins.html">Manage Walk-ins</a>
+    <a href="admin_bookings.html">Manage Bookings</a>
+    <a href="admin_promo.html">Manage Promo</a>
+    <a href="admin_services.html">Manage Services</a>
+    <a href="admin_specialist.html">Manage Specialist</a>
+    <a href="admin_manageaccount.html">Manage Account</a>
+    <a class="active" href="admin_daily_report.html">Daily Report</a>
+    <a href="admin_daily_summary.html">Daily Summary</a>
+    <a href="admin_monthly_summary.html">Monthly Summary</a>
+    <a href="admin_account.html">Account Settings</a>
+    <a href="logout.html">Log Out</a>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <div class="header">
+    <h1>Daily Client Report</h1>
+    <div class="header-right">
+      <div class="datePicker">
+        📅 <input type="date" id="reportDate" onchange="loadReport()">
+      </div>
+      <button class="exportBtn" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="addBtn" onclick="openAdd()">+ Add Entry</button>
+    </div>
+  </div>
+
+  <!-- SUMMARY PILLS -->
+  <div class="pills">
+    <div class="pill">
+      <div class="label">Total Clients</div>
+      <div class="value" id="pillTotal">0</div>
+      <div class="sub" id="pillNewOld">New: 0 | Old: 0</div>
+    </div>
+    <div class="pill">
+      <div class="label">Gross Sales</div>
+      <div class="value" id="pillGross">₱0</div>
+    </div>
+    <div class="pill">
+      <div class="label">Total Commission</div>
+      <div class="value" id="pillComm">₱0</div>
+    </div>
+    <div class="pill">
+      <div class="label">Net Sales</div>
+      <div class="value" id="pillNet">₱0</div>
+    </div>
+    <div class="pill">
+      <div class="label">G-Cash</div>
+      <div class="value" id="pillGcash">₱0</div>
+    </div>
+    <div class="pill">
+      <div class="label">Cash</div>
+      <div class="value" id="pillCash">₱0</div>
+    </div>
+  </div>
+
+  <div class="tableCard">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Client Name</th>
+          <th>Type</th>
+          <th>Service</th>
+          <th>Others</th>
+          <th>ODS</th>
+          <th>Gluta IV</th>
+          <th>Cards/Pkgs</th>
+          <th>Wellness</th>
+          <th>Commission</th>
+          <th>Net Sales</th>
+          <th>Payment</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+      <tfoot id="tableFoot"></tfoot>
+    </table>
+    <div class="empty" id="emptyState" style="display:none;">
+      <div class="icon">📋</div>
+      <div>No entries for this date. Click <strong>+ Add Entry</strong> to start.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modalBox">
+    <button class="closeBtn" onclick="closeModal()">✕</button>
+    <h3 id="modalTitle">Add Client Entry</h3>
+    <div class="formGrid">
+      <div class="formGroup full">
+        <label>Client Name</label>
+        <input id="clientName" placeholder="Full name">
+      </div>
+      <div class="formGroup">
+        <label>Client Type</label>
+        <select id="clientType">
+          <option value="new">New</option>
+          <option value="old">Old / Returning</option>
+        </select>
+      </div>
+      <div class="formGroup">
+        <label>Payment Method</label>
+        <select id="paymentMethod">
+          <option value="cash">Cash</option>
+          <option value="gcash">G-Cash</option>
+          <option value="bank">Bank Transfer</option>
+        </select>
+      </div>
+      <div class="formGroup">
+        <label>Service (₱)</label>
+        <input type="number" id="fService" placeholder="0" min="0" oninput="calcGross()">
+      </div>
+      <div class="formGroup">
+        <label>Others (₱)</label>
+        <input type="number" id="fOthers" placeholder="0" min="0" oninput="calcGross()">
+      </div>
+      <div class="formGroup">
+        <label>ODS (₱)</label>
+        <input type="number" id="fOds" placeholder="0" min="0" oninput="calcGross()">
+      </div>
+      <div class="formGroup">
+        <label>Gluta IV (₱)</label>
+        <input type="number" id="fGluta" placeholder="0" min="0" oninput="calcGross()">
+      </div>
+      <div class="formGroup">
+        <label>Cards / Packages (₱)</label>
+        <input type="number" id="fCards" placeholder="0" min="0" oninput="calcGross()">
+      </div>
+      <div class="formGroup">
+        <label>Wellness (₱)</label>
+        <input type="number" id="fWellness" placeholder="0" min="0" oninput="calcGross()">
+      </div>
+      <div class="formGroup">
+        <label>Commission (₱)</label>
+        <input type="number" id="fCommission" placeholder="0" min="0" oninput="calcGross()">
+      </div>
+      <div class="formGroup">
+        <label>Gross Total (auto)</label>
+        <input type="number" id="fGross" placeholder="0" readonly style="background:#f8fafc;">
+      </div>
+      <div class="formGroup">
+        <label>Net Sales (auto)</label>
+        <input type="number" id="fNet" placeholder="0" readonly style="background:#f8fafc;">
+      </div>
+    </div>
+    <div class="saveRow">
+      <button class="addBtn" onclick="saveEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<script src="session.js"></script>
+<script>
+const API = "https://salon-spa.onrender.com/daily-transactions";
+
+const session = JSON.parse(localStorage.getItem("salonSession")) || JSON.parse(sessionStorage.getItem("salonSession"));
+if(!session || session.role !== "admin") window.location.href = "../log_in.html";
+
+let entries = [];
+let editId = null;
+
+// Set today's date
+const today = new Date().toISOString().split("T")[0];
+document.getElementById("reportDate").value = today;
+
+function peso(n){ return "₱" + Number(n||0).toLocaleString("en-PH", {minimumFractionDigits:2, maximumFractionDigits:2}); }
+
+function calcGross(){
+  const fields = ["fService","fOthers","fOds","fGluta","fCards","fWellness"];
+  const gross = fields.reduce((s,id) => s + (parseFloat(document.getElementById(id).value)||0), 0);
+  const comm = parseFloat(document.getElementById("fCommission").value)||0;
+  document.getElementById("fGross").value = gross.toFixed(2);
+  document.getElementById("fNet").value = (gross - comm).toFixed(2);
+}
+
+async function loadReport(){
+  const date = document.getElementById("reportDate").value;
+  try{
+    const res = await fetch(`${API}?date=${date}`);
+    entries = await res.json();
+  }catch(e){ entries = []; }
+  render();
+}
+
+function render(){
+  const body = document.getElementById("tableBody");
+  const foot = document.getElementById("tableFoot");
+  const empty = document.getElementById("emptyState");
+  body.innerHTML = "";
+
+  if(!entries.length){ empty.style.display="block"; foot.innerHTML=""; updatePills([]); return; }
+  empty.style.display="none";
+
+  let totals = {service:0,others:0,ods:0,gluta:0,cards:0,wellness:0,commission:0,net:0,gcash:0,cash:0,bank:0,newC:0,oldC:0};
+
+  entries.forEach((e,i)=>{
+    const gross = (+e.service||0)+(+e.others||0)+(+e.ods||0)+(+e.gluta_iv||0)+(+e.cards_packages||0)+(+e.wellness||0);
+    const net = gross - (+e.commission||0);
+    totals.service += +e.service||0;
+    totals.others  += +e.others||0;
+    totals.ods     += +e.ods||0;
+    totals.gluta   += +e.gluta_iv||0;
+    totals.cards   += +e.cards_packages||0;
+    totals.wellness+= +e.wellness||0;
+    totals.commission += +e.commission||0;
+    totals.net     += net;
+    if(e.payment_method==="gcash") totals.gcash += net;
+    else if(e.payment_method==="bank") totals.bank += net;
+    else totals.cash += net;
+    if(e.is_new_client) totals.newC++; else totals.oldC++;
+
+    const payLabel = e.payment_method==="gcash"
+      ? `<span class="pay-gcash">G-Cash</span>`
+      : e.payment_method==="bank"
+      ? `<span class="pay-bank">Bank</span>`
+      : `<span class="pay-cash">Cash</span>`;
+
+    body.innerHTML += `<tr>
+      <td>${i+1}</td>
+      <td><strong>${e.client_name}</strong></td>
+      <td><span class="badge ${e.is_new_client?'badge-new':'badge-old'}">${e.is_new_client?'New':'Old'}</span></td>
+      <td>${peso(e.service)}</td>
+      <td>${peso(e.others)}</td>
+      <td>${peso(e.ods)}</td>
+      <td>${peso(e.gluta_iv)}</td>
+      <td>${peso(e.cards_packages)}</td>
+      <td>${peso(e.wellness)}</td>
+      <td>${peso(e.commission)}</td>
+      <td><strong>${peso(net)}</strong></td>
+      <td>${payLabel}</td>
+      <td>
+        <button class="actionBtn edit" onclick="editEntry(${e.id})">Edit</button>
+        <button class="actionBtn delete" onclick="deleteEntry(${e.id})">Delete</button>
+      </td>
+    </tr>`;
+  });
+
+  foot.innerHTML = `<tr class="tfoot">
+    <td colspan="3">TOTALS (${entries.length} clients)</td>
+    <td>${peso(totals.service)}</td>
+    <td>${peso(totals.others)}</td>
+    <td>${peso(totals.ods)}</td>
+    <td>${peso(totals.gluta)}</td>
+    <td>${peso(totals.cards)}</td>
+    <td>${peso(totals.wellness)}</td>
+    <td>${peso(totals.commission)}</td>
+    <td><strong>${peso(totals.net)}</strong></td>
+    <td colspan="2"></td>
+  </tr>`;
+
+  updatePills(totals);
+}
+
+function updatePills(t){
+  document.getElementById("pillTotal").textContent = entries.length;
+  document.getElementById("pillNewOld").textContent = `New: ${t.newC||0} | Old: ${t.oldC||0}`;
+  document.getElementById("pillGross").textContent = peso((t.service||0)+(t.others||0)+(t.ods||0)+(t.gluta||0)+(t.cards||0)+(t.wellness||0));
+  document.getElementById("pillComm").textContent = peso(t.commission||0);
+  document.getElementById("pillNet").textContent = peso(t.net||0);
+  document.getElementById("pillGcash").textContent = peso(t.gcash||0);
+  document.getElementById("pillCash").textContent = peso(t.cash||0);
+}
+
+function openAdd(){
+  editId = null;
+  document.getElementById("modalTitle").textContent = "Add Client Entry";
+  ["clientName","fService","fOthers","fOds","fGluta","fCards","fWellness","fCommission","fGross","fNet"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("clientType").value = "new";
+  document.getElementById("paymentMethod").value = "cash";
+  document.getElementById("modal").style.display = "flex";
+}
+
+function editEntry(id){
+  editId = id;
+  const e = entries.find(x=>x.id===id);
+  document.getElementById("modalTitle").textContent = "Edit Client Entry";
+  document.getElementById("clientName").value = e.client_name;
+  document.getElementById("clientType").value = e.is_new_client ? "new" : "old";
+  document.getElementById("paymentMethod").value = e.payment_method;
+  document.getElementById("fService").value = e.service||0;
+  document.getElementById("fOthers").value = e.others||0;
+  document.getElementById("fOds").value = e.ods||0;
+  document.getElementById("fGluta").value = e.gluta_iv||0;
+  document.getElementById("fCards").value = e.cards_packages||0;
+  document.getElementById("fWellness").value = e.wellness||0;
+  document.getElementById("fCommission").value = e.commission||0;
+  calcGross();
+  document.getElementById("modal").style.display = "flex";
+}
+
+async function saveEntry(){
+  const date = document.getElementById("reportDate").value;
+  const payload = {
+    date,
+    client_name: document.getElementById("clientName").value,
+    is_new_client: document.getElementById("clientType").value === "new",
+    payment_method: document.getElementById("paymentMethod").value,
+    service: parseFloat(document.getElementById("fService").value)||0,
+    others: parseFloat(document.getElementById("fOthers").value)||0,
+    ods: parseFloat(document.getElementById("fOds").value)||0,
+    gluta_iv: parseFloat(document.getElementById("fGluta").value)||0,
+    cards_packages: parseFloat(document.getElementById("fCards").value)||0,
+    wellness: parseFloat(document.getElementById("fWellness").value)||0,
+    commission: parseFloat(document.getElementById("fCommission").value)||0,
+  };
+  try{
+    const url = editId ? `${API}/${editId}` : API;
+    const method = editId ? "PUT" : "POST";
+    await fetch(url, {method, headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload)});
+    closeModal();
+    loadReport();
+  }catch(e){ console.error(e); }
+}
+
+async function deleteEntry(id){
+  if(!confirm("Delete this entry?")) return;
+  try{
+    await fetch(`${API}/${id}`, {method:"DELETE"});
+    loadReport();
+  }catch(e){ console.error(e); }
+}
+
+function closeModal(){ document.getElementById("modal").style.display="none"; editId=null; }
+
+function exportCSV(){
+  const date = document.getElementById("reportDate").value;
+  let csv = "Client Name,Type,Service,Others,ODS,Gluta IV,Cards/Pkgs,Wellness,Commission,Net Sales,Payment\n";
+  entries.forEach(e=>{
+    const net = (+e.service||0)+(+e.others||0)+(+e.ods||0)+(+e.gluta_iv||0)+(+e.cards_packages||0)+(+e.wellness||0)-(+e.commission||0);
+    csv += `"${e.client_name}",${e.is_new_client?'New':'Old'},${e.service},${e.others},${e.ods},${e.gluta_iv},${e.cards_packages},${e.wellness},${e.commission},${net},${e.payment_method}\n`;
+  });
+  const a = document.createElement("a");
+  a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+  a.download = `daily_report_${date}.csv`;
+  a.click();
+}
+
+loadReport();
+</script>
+</body>
+</html>

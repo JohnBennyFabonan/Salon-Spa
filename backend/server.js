@@ -1203,6 +1203,251 @@ app.delete("/walkins/:id", asyncHandler(async (req, res) => {
 }));
 
 /* ===============================
+DAILY TRANSACTIONS (Daily Report)
+=============================== */
+
+// GET - supports ?date=YYYY-MM-DD or ?month=YYYY-MM
+app.get("/daily-transactions", asyncHandler(async (req, res) => {
+  const { date, month } = req.query;
+
+  if (month) {
+    const result = await pool.query(
+      `SELECT * FROM daily_transactions
+       WHERE to_char(date, 'YYYY-MM') = $1
+       ORDER BY date ASC, id ASC`,
+      [month]
+    );
+    return res.json(result.rows);
+  }
+
+  if (date) {
+    const result = await pool.query(
+      `SELECT * FROM daily_transactions WHERE date = $1 ORDER BY id ASC`,
+      [date]
+    );
+    return res.json(result.rows);
+  }
+
+  const result = await pool.query(
+    `SELECT * FROM daily_transactions ORDER BY date DESC, id DESC LIMIT 200`
+  );
+  res.json(result.rows);
+}));
+
+// POST - create new entry
+app.post("/daily-transactions", asyncHandler(async (req, res) => {
+  const {
+    date,
+    client_name,
+    is_new_client,
+    service,
+    others,
+    ods,
+    gluta_iv,
+    cards_packages,
+    wellness,
+    commission,
+    payment_method,
+  } = req.body;
+
+  if (!date || !client_name) {
+    return res.status(400).json({ error: "Date and client name are required" });
+  }
+
+  const s = toNumber(service);
+  const o = toNumber(others);
+  const od = toNumber(ods);
+  const g = toNumber(gluta_iv);
+  const c = toNumber(cards_packages);
+  const w = toNumber(wellness);
+  const comm = toNumber(commission);
+  const gross = s + o + od + g + c + w;
+  const net = gross - comm;
+
+  const safePayment = ["cash", "gcash", "bank"].includes(payment_method)
+    ? payment_method
+    : "cash";
+
+  const result = await pool.query(
+    `INSERT INTO daily_transactions
+     (date, client_name, is_new_client, service, others, ods, gluta_iv, cards_packages, wellness, commission, net_sales, payment_method)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+     RETURNING *`,
+    [
+      date,
+      String(client_name).trim(),
+      Boolean(is_new_client),
+      s, o, od, g, c, w, comm, net,
+      safePayment,
+    ]
+  );
+
+  res.status(201).json(result.rows[0]);
+}));
+
+// PUT - update entry
+app.put("/daily-transactions/:id", asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const {
+    date,
+    client_name,
+    is_new_client,
+    service,
+    others,
+    ods,
+    gluta_iv,
+    cards_packages,
+    wellness,
+    commission,
+    payment_method,
+  } = req.body;
+
+  const s = toNumber(service);
+  const o = toNumber(others);
+  const od = toNumber(ods);
+  const g = toNumber(gluta_iv);
+  const c = toNumber(cards_packages);
+  const w = toNumber(wellness);
+  const comm = toNumber(commission);
+  const gross = s + o + od + g + c + w;
+  const net = gross - comm;
+
+  const safePayment = ["cash", "gcash", "bank"].includes(payment_method)
+    ? payment_method
+    : "cash";
+
+  const result = await pool.query(
+    `UPDATE daily_transactions SET
+       date = COALESCE($1, date),
+       client_name = $2,
+       is_new_client = $3,
+       service = $4,
+       others = $5,
+       ods = $6,
+       gluta_iv = $7,
+       cards_packages = $8,
+       wellness = $9,
+       commission = $10,
+       net_sales = $11,
+       payment_method = $12
+     WHERE id = $13
+     RETURNING *`,
+    [
+      date || null,
+      String(client_name || "").trim(),
+      Boolean(is_new_client),
+      s, o, od, g, c, w, comm, net,
+      safePayment,
+      id,
+    ]
+  );
+
+  if (result.rows.length === 0) {
+    return res.status(404).json({ error: "Entry not found" });
+  }
+
+  res.json(result.rows[0]);
+}));
+
+// DELETE
+app.delete("/daily-transactions/:id", asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  await pool.query("DELETE FROM daily_transactions WHERE id = $1", [id]);
+  res.json({ success: true });
+}));
+
+
+/* ===============================
+DAILY SUMMARY (ION COH)
+=============================== */
+
+// GET - returns summary for a single date (or empty object)
+app.get("/daily-summary", asyncHandler(async (req, res) => {
+  const { date } = req.query;
+
+  if (!date) {
+    return res.status(400).json({ error: "date is required" });
+  }
+
+  const result = await pool.query(
+    "SELECT * FROM daily_summary WHERE date = $1",
+    [date]
+  );
+
+  if (result.rows.length === 0) {
+    return res.json({ date, ion_coh: 0 });
+  }
+
+  res.json(result.rows[0]);
+}));
+
+// POST - upsert (insert or update) ion_coh for a date
+app.post("/daily-summary", asyncHandler(async (req, res) => {
+  const { date, ion_coh } = req.body;
+
+  if (!date) {
+    return res.status(400).json({ error: "date is required" });
+  }
+
+  const result = await pool.query(
+    `INSERT INTO daily_summary (date, ion_coh, updated_at)
+     VALUES ($1, $2, NOW())
+     ON CONFLICT (date)
+     DO UPDATE SET ion_coh = EXCLUDED.ion_coh, updated_at = NOW()
+     RETURNING *`,
+    [date, toNumber(ion_coh)]
+  );
+
+  res.json(result.rows[0]);
+}));
+
+
+/* ===============================
+EXPENSES
+=============================== */
+
+// GET - list expenses for a date
+app.get("/expenses", asyncHandler(async (req, res) => {
+  const { date } = req.query;
+
+  if (!date) {
+    return res.status(400).json({ error: "date is required" });
+  }
+
+  const result = await pool.query(
+    "SELECT * FROM expenses WHERE date = $1 ORDER BY id ASC",
+    [date]
+  );
+
+  res.json(result.rows);
+}));
+
+// POST - add expense
+app.post("/expenses", asyncHandler(async (req, res) => {
+  const { date, description, amount } = req.body;
+
+  if (!date || !description) {
+    return res.status(400).json({ error: "date and description are required" });
+  }
+
+  const result = await pool.query(
+    `INSERT INTO expenses (date, description, amount)
+     VALUES ($1, $2, $3)
+     RETURNING *`,
+    [date, String(description).trim(), toNumber(amount)]
+  );
+
+  res.status(201).json(result.rows[0]);
+}));
+
+// DELETE - remove expense
+app.delete("/expenses/:id", asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  await pool.query("DELETE FROM expenses WHERE id = $1", [id]);
+  res.json({ success: true });
+}));
+
+/* ===============================
 ERROR HANDLER
 =============================== */
 app.use((err, req, res, next) => {

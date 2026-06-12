@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monthly Summary</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#2f7d62;
+  --green2:#256a52;
+  --bg:#f4fbf7;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#64748b;
+  --line:rgba(15,23,42,.08);
+  --shadow:0 14px 40px rgba(2,6,23,.08);
+  --radius:16px;
+  --greenSoft:rgba(47,125,98,.12);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Poppins;background:var(--bg);display:flex;color:var(--text);}
+
+/* SIDEBAR */
+.sidebar{width:260px;background:linear-gradient(180deg,var(--green),var(--green2));color:white;padding:28px 22px;min-height:100vh;flex-shrink:0;}
+.logo{font-weight:800;font-size:18px;margin-bottom:35px;}
+.nav{display:flex;flex-direction:column;gap:6px;}
+.nav a{display:block;color:white;text-decoration:none;padding:12px 14px;border-radius:12px;font-size:13px;font-weight:600;transition:.15s;}
+.nav a:hover{background:rgba(255,255,255,.15);}
+.nav a.active{background:rgba(255,255,255,.25);}
+
+/* MAIN */
+.main{flex:1;padding:30px;overflow-x:auto;}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:25px;flex-wrap:wrap;gap:12px;}
+.header h1{margin:0;font-size:28px;}
+.header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+
+/* MONTH PICKER */
+.monthPicker{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-family:Poppins;font-size:13px;font-weight:600;color:var(--text);}
+.monthPicker input[type=month]{border:none;outline:none;font-family:Poppins;font-size:13px;font-weight:600;color:var(--text);background:transparent;cursor:pointer;}
+
+.addBtn{background:var(--green);color:white;border:none;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s;}
+.addBtn:hover{background:var(--green2);}
+.exportBtn{background:#e7f7ef;color:var(--green2);border:none;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s;}
+.exportBtn:hover{background:#d0f0e2;}
+
+/* TOP KPI PILLS */
+.pills{display:flex;gap:14px;margin-bottom:22px;flex-wrap:wrap;}
+.pill{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 22px;box-shadow:var(--shadow);flex:1;min-width:140px;}
+.pill .p-label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.pill .p-val{font-size:24px;font-weight:800;color:var(--green);margin-top:3px;}
+.pill .p-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* TABLE CARD */
+.tableCard{background:var(--card);padding:22px;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--line);overflow-x:auto;margin-bottom:22px;}
+.tableCard h3{margin:0 0 16px;font-size:15px;display:flex;align-items:center;gap:8px;}
+.tableCard h3 .dot{width:8px;height:8px;border-radius:50%;background:var(--green);}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:860px;}
+thead{background:var(--greenSoft);}
+th{text-align:right;font-size:11px;color:var(--muted);padding:11px 10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;}
+th:first-child{text-align:center;}
+td{padding:10px 10px;border-bottom:1px solid var(--line);text-align:right;font-size:13px;}
+td:first-child{text-align:center;font-weight:700;color:var(--green);}
+tr:hover td{background:#f9fdfb;}
+tr:last-child td{border-bottom:none;}
+
+/* TOTAL ROW */
+.tfoot td{font-weight:800;background:linear-gradient(90deg,var(--greenSoft),rgba(47,125,98,.06));font-size:13px;border-top:2px solid rgba(47,125,98,.2);}
+.tfoot td:first-child{color:var(--text);}
+
+/* ZERO VALUE */
+.zero{color:#cbd5e1;}
+
+/* HIGHLIGHT ROW (today / selected) */
+.today-row td{background:#f0fdf4;}
+
+/* CLIENT COL */
+.clients-cell{display:flex;justify-content:flex-end;gap:6px;}
+.badge-sm{display:inline-block;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:700;}
+.b-new{background:#dcfce7;color:#166534;}
+.b-old{background:#e0f2fe;color:#0369a1;}
+.b-tot{background:var(--greenSoft);color:var(--green2);}
+
+/* CHARTS ROW */
+.chartsRow{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:22px;}
+.chartCard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);}
+.chartCard h3{margin:0 0 16px;font-size:15px;display:flex;align-items:center;gap:8px;}
+.chartCard h3 .dot{width:8px;height:8px;border-radius:50%;background:var(--green);}
+
+/* BAR CHART */
+.barChart{display:flex;align-items:flex-end;gap:5px;height:130px;padding-bottom:20px;position:relative;}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.bar{width:100%;background:var(--green);border-radius:4px 4px 0 0;transition:.4s;min-height:2px;position:relative;}
+.bar:hover{background:var(--green2);}
+.bar-label{font-size:10px;color:var(--muted);font-weight:600;}
+.bar-val{font-size:9px;color:var(--green);font-weight:700;position:absolute;top:-16px;left:50%;transform:translateX(-50%);white-space:nowrap;}
+
+/* DONUT */
+.donutWrap{display:flex;align-items:center;gap:24px;}
+.donut{position:relative;width:120px;height:120px;flex-shrink:0;}
+.donut svg{transform:rotate(-90deg);}
+.donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+.donut-center .dc-val{font-size:16px;font-weight:800;color:var(--text);}
+.donut-center .dc-label{font-size:10px;color:var(--muted);}
+.donut-legend{flex:1;}
+.legend-item{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+.legend-name{font-size:12px;color:var(--muted);flex:1;}
+.legend-val{font-size:12px;font-weight:700;}
+
+/* LOADING */
+.loading{text-align:center;padding:40px;color:var(--muted);}
+.spinner{width:30px;height:30px;border:3px solid var(--greenSoft);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+@media(max-width:1100px){.chartsRow{grid-template-columns:1fr;}}
+@media(max-width:900px){.sidebar{display:none;}body{flex-direction:column;}.main{padding:16px;}}
+@media print{.sidebar,.header-right{display:none;}.main{padding:10px;}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="logo">🌿 BASIT Admin</div>
+  <div class="nav">
+    <a href="admin_dashboard.html">Dashboard</a>
+    <a href="admin_gallery.html">Manage Gallery</a>
+    <a href="admin_walkins.html">Manage Walk-ins</a>
+    <a href="admin_bookings.html">Manage Bookings</a>
+    <a href="admin_promo.html">Manage Promo</a>
+    <a href="admin_services.html">Manage Services</a>
+    <a href="admin_specialist.html">Manage Specialist</a>
+    <a href="admin_manageaccount.html">Manage Account</a>
+    <a href="admin_daily_report.html">Daily Report</a>
+    <a href="admin_daily_summary.html">Daily Summary</a>
+    <a class="active" href="admin_monthly_summary.html">Monthly Summary</a>
+    <a href="admin_account.html">Account Settings</a>
+    <a href="logout.html">Log Out</a>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <div class="header">
+    <h1>Monthly Summary</h1>
+    <div class="header-right">
+      <div class="monthPicker">
+        📅 <input type="month" id="monthPicker" onchange="loadMonth()">
+      </div>
+      <button class="exportBtn" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="exportBtn" onclick="window.print()">🖨 Print</button>
+    </div>
+  </div>
+
+  <!-- KPI PILLS -->
+  <div class="pills">
+    <div class="pill">
+      <div class="p-label">Monthly Revenue</div>
+      <div class="p-val" id="kpiRevenue">₱0.00</div>
+      <div class="p-sub" id="kpiRevenueVs"></div>
+    </div>
+    <div class="pill">
+      <div class="p-label">Total Clients</div>
+      <div class="p-val" id="kpiClients">0</div>
+      <div class="p-sub" id="kpiClientsBreak">New: 0 | Old: 0</div>
+    </div>
+    <div class="pill">
+      <div class="p-label">Best Day</div>
+      <div class="p-val" id="kpiBestDay">—</div>
+      <div class="p-sub" id="kpiBestAmt"></div>
+    </div>
+    <div class="pill">
+      <div class="p-label">Avg / Day</div>
+      <div class="p-val" id="kpiAvg">₱0.00</div>
+      <div class="p-sub">on active days</div>
+    </div>
+    <div class="pill">
+      <div class="p-label">Active Days</div>
+      <div class="p-val" id="kpiDays">0</div>
+      <div class="p-sub" id="kpiDaysSub"></div>
+    </div>
+  </div>
+
+  <!-- CHARTS -->
+  <div class="chartsRow">
+
+    <!-- Daily Revenue Bar Chart -->
+    <div class="chartCard">
+      <h3><span class="dot"></span> Daily Revenue</h3>
+      <div class="barChart" id="barChart">
+        <div class="loading"><div class="spinner"></div>Loading…</div>
+      </div>
+    </div>
+
+    <!-- Sales Mix Donut -->
+    <div class="chartCard">
+      <h3><span class="dot"></span> Sales Mix</h3>
+      <div class="donutWrap">
+        <div class="donut">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="48" fill="none" stroke="#f1f5f9" stroke-width="18"/>
+            <circle id="d1" cx="60" cy="60" r="48" fill="none" stroke="#2f7d62" stroke-width="18" stroke-dasharray="0 302"/>
+            <circle id="d2" cx="60" cy="60" r="48" fill="none" stroke="#34d399" stroke-width="18" stroke-dasharray="0 302"/>
+            <circle id="d3" cx="60" cy="60" r="48" fill="none" stroke="#f59e0b" stroke-width="18" stroke-dasharray="0 302"/>
+            <circle id="d4" cx="60" cy="60" r="48" fill="none" stroke="#3b82f6" stroke-width="18" stroke-dasharray="0 302"/>
+            <circle id="d5" cx="60" cy="60" r="48" fill="none" stroke="#a78bfa" stroke-width="18" stroke-dasharray="0 302"/>
+            <circle id="d6" cx="60" cy="60" r="48" fill="none" stroke="#fb7185" stroke-width="18" stroke-dasharray="0 302"/>
+          </svg>
+          <div class="donut-center">
+            <div class="dc-val" id="donutTotal">₱0</div>
+            <div class="dc-label">Total</div>
+          </div>
+        </div>
+        <div class="donut-legend" id="donutLegend"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MAIN TABLE -->
+  <div class="tableCard">
+    <h3><span class="dot"></span> Day-by-Day Breakdown — <span id="tableMonthLabel"></span></h3>
+    <div id="tableWrap">
+      <div class="loading"><div class="spinner"></div>Loading data…</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="session.js"></script>
+<script>
+const API = "https://salon-spa.onrender.com/daily-transactions";
+
+const session = JSON.parse(localStorage.getItem("salonSession")) || JSON.parse(sessionStorage.getItem("salonSession"));
+if(!session || session.role !== "admin") window.location.href = "../log_in.html";
+
+// Set current month
+const now = new Date();
+document.getElementById("monthPicker").value =
+  now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0");
+
+let monthData = []; // array of {day, service, others, ods, gluta, cards, wellness, newC, oldC, total}
+
+function peso(n){ return "₱" + Number(n||0).toLocaleString("en-PH", {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function pesoShort(n){
+  if(n>=1000) return "₱"+(n/1000).toFixed(1)+"k";
+  return "₱"+Math.round(n);
+}
+
+async function loadMonth(){
+  const val = document.getElementById("monthPicker").value; // "YYYY-MM"
+  const [year, month] = val.split("-");
+  const monthInt = parseInt(month);
+  const yearInt = parseInt(year);
+  const daysInMonth = new Date(yearInt, monthInt, 0).getDate();
+
+  document.getElementById("tableMonthLabel").textContent =
+    new Date(yearInt, monthInt-1, 1).toLocaleString("en-PH",{month:"long",year:"numeric"});
+
+  // Fetch all transactions for this month
+  let allEntries = [];
+  try{
+    const res = await fetch(`${API}?month=${val}`);
+    allEntries = await res.json();
+  }catch(e){ allEntries = []; }
+
+  // Group by day
+  const byDay = {};
+  allEntries.forEach(e=>{
+    const d = new Date(e.date).getDate();
+    if(!byDay[d]) byDay[d] = {service:0,others:0,ods:0,gluta:0,cards:0,wellness:0,newC:0,oldC:0};
+    byDay[d].service  += +e.service||0;
+    byDay[d].others   += +e.others||0;
+    byDay[d].ods      += +e.ods||0;
+    byDay[d].gluta    += +e.gluta_iv||0;
+    byDay[d].cards    += +e.cards_packages||0;
+    byDay[d].wellness += +e.wellness||0;
+    if(e.is_new_client) byDay[d].newC++; else byDay[d].oldC++;
+  });
+
+  // Build full month array
+  monthData = [];
+  for(let d=1; d<=daysInMonth; d++){
+    const r = byDay[d] || {service:0,others:0,ods:0,gluta:0,cards:0,wellness:0,newC:0,oldC:0};
+    const total = r.service+r.others+r.ods+r.gluta+r.cards+r.wellness;
+    monthData.push({day:d, ...r, total});
+  }
+
+  renderKPIs(year, monthInt);
+  renderTable(daysInMonth);
+  renderBarChart();
+  renderDonut();
+}
+
+function renderKPIs(year, month){
+  const totalRev = monthData.reduce((s,r)=>s+r.total,0);
+  const totalNew = monthData.reduce((s,r)=>s+r.newC,0);
+  const totalOld = monthData.reduce((s,r)=>s+r.oldC,0);
+  const activeDays = monthData.filter(r=>r.total>0).length;
+  const avg = activeDays ? totalRev/activeDays : 0;
+  const best = monthData.reduce((b,r)=>r.total>b.total?r:b, {day:0,total:0});
+
+  document.getElementById("kpiRevenue").textContent = peso(totalRev);
+  document.getElementById("kpiClients").textContent = totalNew+totalOld;
+  document.getElementById("kpiClientsBreak").textContent = `New: ${totalNew} | Old: ${totalOld}`;
+  document.getElementById("kpiBestDay").textContent = best.total>0 ? `Day ${best.day}` : "—";
+  document.getElementById("kpiBestAmt").textContent = best.total>0 ? peso(best.total) : "No data yet";
+  document.getElementById("kpiAvg").textContent = peso(avg);
+  document.getElementById("kpiDays").textContent = activeDays;
+  document.getElementById("kpiDaysSub").textContent = `of ${monthData.length} days`;
+}
+
+function renderTable(daysInMonth){
+  const todayDay = new Date().getDate();
+  const curMonth = document.getElementById("monthPicker").value ===
+    new Date().getFullYear()+"-"+String(new Date().getMonth()+1).padStart(2,"0");
+
+  const totals = {service:0,others:0,ods:0,gluta:0,cards:0,wellness:0,total:0,newC:0,oldC:0};
+  monthData.forEach(r=>{
+    totals.service  += r.service;
+    totals.others   += r.others;
+    totals.ods      += r.ods;
+    totals.gluta    += r.gluta;
+    totals.cards    += r.cards;
+    totals.wellness += r.wellness;
+    totals.total    += r.total;
+    totals.newC     += r.newC;
+    totals.oldC     += r.oldC;
+  });
+
+  function cell(val){ return val>0 ? peso(val) : `<span class="zero">—</span>`; }
+
+  let rows = "";
+  monthData.forEach(r=>{
+    const isToday = curMonth && r.day === todayDay;
+    rows += `<tr class="${isToday?'today-row':''}">
+      <td>${r.day}${isToday?' <span style="font-size:10px;color:var(--green);">▶</span>':''}</td>
+      <td>${cell(r.service)}</td>
+      <td>${cell(r.others)}</td>
+      <td>${cell(r.ods)}</td>
+      <td>${cell(r.gluta)}</td>
+      <td>${cell(r.cards)}</td>
+      <td>${cell(r.wellness)}</td>
+      <td><strong>${r.total>0?peso(r.total):'<span class="zero">—</span>'}</strong></td>
+      <td>
+        <div class="clients-cell">
+          ${r.newC>0?`<span class="badge-sm b-new">${r.newC}N</span>`:''}
+          ${r.oldC>0?`<span class="badge-sm b-old">${r.oldC}O</span>`:''}
+          ${(r.newC+r.oldC)>0?`<span class="badge-sm b-tot">${r.newC+r.oldC}</span>`:'<span class="zero">—</span>'}
+        </div>
+      </td>
+    </tr>`;
+  });
+
+  document.getElementById("tableWrap").innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:center;">Day</th>
+          <th>Service</th>
+          <th>Others</th>
+          <th>ODS</th>
+          <th>Gluta IV</th>
+          <th>Cards/Pkgs</th>
+          <th>Wellness</th>
+          <th>Total</th>
+          <th>Clients</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+      <tfoot class="tfoot">
+        <tr>
+          <td style="text-align:center;">TOTAL</td>
+          <td>${peso(totals.service)}</td>
+          <td>${peso(totals.others)}</td>
+          <td>${peso(totals.ods)}</td>
+          <td>${peso(totals.gluta)}</td>
+          <td>${peso(totals.cards)}</td>
+          <td>${peso(totals.wellness)}</td>
+          <td><strong>${peso(totals.total)}</strong></td>
+          <td>
+            <div class="clients-cell">
+              <span class="badge-sm b-new">${totals.newC}N</span>
+              <span class="badge-sm b-old">${totals.oldC}O</span>
+              <span class="badge-sm b-tot">${totals.newC+totals.oldC}</span>
+            </div>
+          </td>
+        </tr>
+      </tfoot>
+    </table>`;
+}
+
+function renderBarChart(){
+  const max = Math.max(...monthData.map(r=>r.total), 1);
+  const active = monthData.filter(r=>r.total>0);
+  // Show all days but compact
+  let html = "";
+  monthData.forEach(r=>{
+    const h = Math.max(r.total/max*110, r.total>0?4:1);
+    html += `<div class="bar-wrap">
+      <div class="bar" style="height:${h}px;${r.total===0?'background:#e2e8f0;':''}">
+        ${r.total>0?`<span class="bar-val">${pesoShort(r.total)}</span>`:''}
+      </div>
+      <div class="bar-label">${r.day}</div>
+    </div>`;
+  });
+  document.getElementById("barChart").innerHTML = html;
+}
+
+function renderDonut(){
+  const totals = {
+    "Service":    monthData.reduce((s,r)=>s+r.service,0),
+    "Others":     monthData.reduce((s,r)=>s+r.others,0),
+    "ODS":        monthData.reduce((s,r)=>s+r.ods,0),
+    "Gluta IV":   monthData.reduce((s,r)=>s+r.gluta,0),
+    "Cards/Pkgs": monthData.reduce((s,r)=>s+r.cards,0),
+    "Wellness":   monthData.reduce((s,r)=>s+r.wellness,0),
+  };
+  const colors = ["#2f7d62","#34d399","#f59e0b","#3b82f6","#a78bfa","#fb7185"];
+  const circumference = 2 * Math.PI * 48; // ~301.6
+  const grandTotal = Object.values(totals).reduce((s,v)=>s+v,0);
+
+  document.getElementById("donutTotal").textContent = grandTotal>0 ? pesoShort(grandTotal) : "₱0";
+
+  const keys = Object.keys(totals);
+  let offset = 0;
+  let legendHTML = "";
+
+  keys.forEach((k,i)=>{
+    const val = totals[k];
+    const frac = grandTotal>0 ? val/grandTotal : 0;
+    const dash = frac * circumference;
+    const el = document.getElementById(`d${i+1}`);
+    el.style.strokeDasharray = `${dash} ${circumference-dash}`;
+    el.style.strokeDashoffset = -offset;
+    offset += dash;
+
+    legendHTML += `<div class="legend-item">
+      <div class="legend-dot" style="background:${colors[i]};"></div>
+      <div class="legend-name">${k}</div>
+      <div class="legend-val">${grandTotal>0?(frac*100).toFixed(1)+'%':'0%'}</div>
+    </div>`;
+  });
+
+  document.getElementById("donutLegend").innerHTML = legendHTML;
+}
+
+function exportCSV(){
+  const val = document.getElementById("monthPicker").value;
+  let csv = "Day,Service,Others,ODS,Gluta IV,Cards/Pkgs,Wellness,Total,New Clients,Old Clients,Total Clients\n";
+  monthData.forEach(r=>{
+    csv += `${r.day},${r.service},${r.others},${r.ods},${r.gluta},${r.cards},${r.wellness},${r.total},${r.newC},${r.oldC},${r.newC+r.oldC}\n`;
+  });
+  // Totals row
+  const t = monthData.reduce((acc,r)=>({
+    service:acc.service+r.service, others:acc.others+r.others,
+    ods:acc.ods+r.ods, gluta:acc.gluta+r.gluta,
+    cards:acc.cards+r.cards, wellness:acc.wellness+r.wellness,
+    total:acc.total+r.total, newC:acc.newC+r.newC, oldC:acc.oldC+r.oldC
+  }), {service:0,others:0,ods:0,gluta:0,cards:0,wellness:0,total:0,newC:0,oldC:0});
+  csv += `TOTAL,${t.service},${t.others},${t.ods},${t.gluta},${t.cards},${t.wellness},${t.total},${t.newC},${t.oldC},${t.newC+t.oldC}\n`;
+
+  const a = document.createElement("a");
+  a.href = "data:text/csv;charset=utf-8,"+encodeURIComponent(csv);
+  a.download = `monthly_summary_${val}.csv`;
+  a.click();
+}
+
+loadMonth();
+</script>
+</body>
+</html>
