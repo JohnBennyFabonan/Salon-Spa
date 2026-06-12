@@ -1448,6 +1448,133 @@ app.delete("/expenses/:id", asyncHandler(async (req, res) => {
 }));
 
 /* ===============================
+INSTALLMENTS
+=============================== */
+
+// GET - list installments. Supports ?email= (customer view) or all (admin view)
+app.get("/installments", asyncHandler(async (req, res) => {
+  const { email } = req.query;
+
+  if (email) {
+    const result = await pool.query(
+      `SELECT * FROM installments WHERE email = $1 ORDER BY created_at DESC`,
+      [String(email).trim().toLowerCase()]
+    );
+    return res.json(result.rows);
+  }
+
+  const result = await pool.query(
+    `SELECT * FROM installments ORDER BY created_at DESC`
+  );
+  res.json(result.rows);
+}));
+
+// POST - create a new installment plan (called at booking time)
+app.post("/installments", asyncHandler(async (req, res) => {
+  const {
+    booking_id,
+    email,
+    client_name,
+    service_id,
+    service_name,
+    category,
+    total_price,
+    downpayment,
+    remaining_balance,
+    months,
+    monthly_payment,
+    start_date, // optional, used to build schedule due dates
+  } = req.body;
+
+  if (!email || !service_name) {
+    return res.status(400).json({ error: "email and service_name are required" });
+  }
+
+  const numMonths = Math.max(Number(months) || 1, 1);
+  const monthly = Number(monthly_payment) || 0;
+
+  // Build payment schedule
+  const baseDate = start_date ? new Date(start_date) : new Date();
+  const schedule = [];
+
+  for (let i = 1; i <= numMonths; i++) {
+    const dueDate = new Date(baseDate);
+    dueDate.setMonth(dueDate.getMonth() + i);
+
+    schedule.push({
+      label: `Month ${i}`,
+      due_date: dueDate.toISOString().split("T")[0],
+      amount: monthly,
+      status: i === 1 ? "due" : "upcoming",
+      paid_date: null,
+    });
+  }
+
+  const result = await pool.query(
+    `INSERT INTO installments
+     (booking_id, email, client_name, service_id, service_name, category,
+      total_price, downpayment, remaining_balance, months, monthly_payment,
+      status, schedule)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+     RETURNING *`,
+    [
+      booking_id || null,
+      String(email).trim().toLowerCase(),
+      client_name?.trim() || "",
+      service_id || null,
+      service_name.trim(),
+      category?.trim() || "",
+      toNumber(total_price),
+      toNumber(downpayment),
+      toNumber(remaining_balance),
+      numMonths,
+      monthly,
+      "active",
+      JSON.stringify(schedule),
+    ]
+  );
+
+  res.status(201).json(result.rows[0]);
+}));
+
+// PUT - update plan status and/or schedule (admin: record payments, edit plan)
+app.put("/installments/:id", asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { status, schedule } = req.body;
+
+  const allowedStatuses = ["active", "overdue", "completed", "cancelled"];
+  const safeStatus = allowedStatuses.includes(status) ? status : null;
+
+  const existing = await pool.query("SELECT * FROM installments WHERE id = $1", [id]);
+  if (existing.rows.length === 0) {
+    return res.status(404).json({ error: "Installment plan not found" });
+  }
+
+  const result = await pool.query(
+    `UPDATE installments SET
+       status = COALESCE($1, status),
+       schedule = COALESCE($2, schedule),
+       updated_at = NOW()
+     WHERE id = $3
+     RETURNING *`,
+    [
+      safeStatus,
+      schedule ? JSON.stringify(schedule) : null,
+      id,
+    ]
+  );
+
+  res.json(result.rows[0]);
+}));
+
+// DELETE - remove plan
+app.delete("/installments/:id", asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  await pool.query("DELETE FROM installments WHERE id = $1", [id]);
+  res.json({ success: true });
+}));
+
+/* ===============================
 ERROR HANDLER
 =============================== */
 app.use((err, req, res, next) => {

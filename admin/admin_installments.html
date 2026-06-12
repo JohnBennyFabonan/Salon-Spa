@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Manage Installments</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+--green:#2f7d62;
+--green2:#256a52;
+--bg:#f4fbf7;
+--card:#ffffff;
+--text:#0f172a;
+--muted:#64748b;
+--line:rgba(15,23,42,.08);
+--shadow:0 14px 40px rgba(2,6,23,.08);
+--radius:16px;
+--greenSoft:rgba(47,125,98,.12);
+}
+
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+font-family:Poppins;
+background:var(--bg);
+display:flex;
+color:var(--text);
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:260px;
+background:linear-gradient(180deg,var(--green),var(--green2));
+color:white;
+padding:28px 22px;
+min-height:100vh;
+flex-shrink:0;
+}
+
+.logo{
+font-weight:800;
+font-size:18px;
+margin-bottom:35px;
+}
+
+.nav{
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.nav a{
+display:block;
+color:white;
+text-decoration:none;
+padding:12px 14px;
+border-radius:12px;
+font-size:13px;
+font-weight:600;
+transition:.15s;
+}
+
+.nav a:hover{
+background:rgba(255,255,255,.15);
+}
+
+.nav a.active{
+background:rgba(255,255,255,.25);
+}
+
+/* MAIN */
+
+.main{
+flex:1;
+padding:30px;
+max-width:1300px;
+overflow-x:auto;
+}
+
+/* HEADER */
+
+.header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-bottom:25px;
+flex-wrap:wrap;
+gap:12px;
+}
+
+.header h1{
+margin:0;
+font-size:28px;
+}
+
+.header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+
+/* KPI PILLS */
+.pills{display:flex;gap:14px;margin-bottom:22px;flex-wrap:wrap;}
+.pill{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 22px;box-shadow:var(--shadow);flex:1;min-width:150px;}
+.pill .p-label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.pill .p-val{font-size:24px;font-weight:800;color:var(--green);margin-top:3px;}
+.pill .p-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* FILTERS */
+.filters{
+display:flex;
+gap:10px;
+margin-bottom:18px;
+flex-wrap:wrap;
+align-items:center;
+}
+
+.filterBtn{
+border:1px solid rgba(47,125,98,.25);
+background:#fff;
+color:var(--green2);
+padding:9px 14px;
+border-radius:999px;
+font-weight:700;
+font-size:12px;
+cursor:pointer;
+transition:.15s;
+}
+.filterBtn:hover{transform:translateY(-1px);}
+.filterBtn.active{background:var(--green);border-color:var(--green);color:#fff;}
+
+.searchBox{
+flex:1;
+min-width:200px;
+max-width:320px;
+position:relative;
+}
+.searchBox input{
+width:100%;
+padding:10px 14px 10px 36px;
+border-radius:999px;
+border:1px solid var(--line);
+font-family:Poppins;
+font-size:13px;
+outline:none;
+background:var(--card);
+}
+.searchBox input:focus{border-color:var(--green);}
+.searchBox .sIcon{
+position:absolute;
+left:12px;
+top:50%;
+transform:translateY(-50%);
+color:var(--muted);
+font-size:13px;
+}
+
+/* TABLE CARD */
+.tableCard{
+background:var(--card);
+padding:22px;
+border-radius:var(--radius);
+box-shadow:var(--shadow);
+border:1px solid var(--line);
+overflow-x:auto;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+font-size:13px;
+min-width:1000px;
+}
+
+thead{
+background:var(--greenSoft);
+}
+
+th{
+text-align:left;
+font-size:11px;
+color:var(--muted);
+padding:12px 10px;
+font-weight:700;
+text-transform:uppercase;
+letter-spacing:.4px;
+white-space:nowrap;
+}
+
+td{
+padding:11px 10px;
+border-bottom:1px solid var(--line);
+vertical-align:middle;
+}
+
+tr:hover td{background:#f9fdfb;}
+tr:last-child td{border-bottom:none;}
+
+/* STATUS TAGS */
+.statusTag{
+display:inline-block;
+font-size:11px;
+font-weight:800;
+padding:5px 12px;
+border-radius:999px;
+white-space:nowrap;
+}
+.status-active{background:var(--greenSoft);color:var(--green2);}
+.status-completed{background:#e0f2fe;color:#0369a1;}
+.status-overdue{background:#fdeaea;color:#c53030;}
+
+/* PROGRESS */
+.miniProgress{width:100px;}
+.miniBar{height:8px;background:rgba(47,125,98,.10);border-radius:999px;overflow:hidden;}
+.miniFill{height:100%;background:linear-gradient(90deg,var(--green),var(--green2));border-radius:999px;}
+.miniLabel{font-size:11px;color:var(--muted);margin-top:4px;}
+
+/* ACTION BUTTONS */
+.actionBtn{
+border:none;
+padding:6px 10px;
+border-radius:8px;
+font-size:12px;
+font-weight:600;
+cursor:pointer;
+margin-right:5px;
+white-space:nowrap;
+}
+.view{background:#eff6ff;color:#2563eb;}
+.edit{background:#e7f7ef;color:var(--green2);}
+.delete{background:#fdeaea;color:#c53030;}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:50px 20px;color:var(--muted);}
+.empty .icon{font-size:40px;margin-bottom:10px;}
+
+/* MODAL */
+.modal{
+position:fixed;
+top:0;
+left:0;
+right:0;
+bottom:0;
+background:rgba(0,0,0,.4);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:999;
+padding:18px;
+}
+
+.modalBox{
+background:white;
+padding:25px;
+border-radius:var(--radius);
+width:680px;
+max-width:100%;
+box-shadow:var(--shadow);
+position:relative;
+max-height:90vh;
+overflow-y:auto;
+}
+
+.modalBox h3{
+margin-top:0;
+font-size:18px;
+}
+
+.closeBtn{
+  position:absolute;
+  top:15px;
+  right:15px;
+  width:32px;
+  height:32px;
+  border:none;
+  border-radius:8px;
+  background:#f1f5f9;
+  cursor:pointer;
+  font-size:16px;
+  font-weight:700;
+  transition:.15s;
+}
+
+.closeBtn:hover{
+  background:#e2e8f0;
+}
+
+input,select,textarea{
+width:100%;
+padding:10px;
+margin-bottom:12px;
+border-radius:8px;
+border:1px solid var(--line);
+font-family:Poppins;
+font-size:13px;
+outline:none;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(47,125,98,.1);}
+
+/* FORM GRID */
+.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.formGrid .full{grid-column:1/-1;}
+.formGrid label{font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:3px;}
+.formGrid input,.formGrid select{margin-bottom:0;}
+
+/* DETAIL ROWS */
+.detailGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
+.detailBox{border:1px solid var(--line);border-radius:12px;padding:12px;background:rgba(15,23,42,.02);}
+.detailBox .dLabel{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;}
+.detailBox .dVal{font-size:16px;font-weight:800;margin-top:3px;}
+
+/* SCHEDULE TABLE IN MODAL */
+.schedTable{width:100%;border-collapse:collapse;font-size:13px;}
+.schedTable th{
+text-align:left;
+font-size:11px;
+color:var(--muted);
+font-weight:700;
+padding:8px;
+background:var(--greenSoft);
+text-transform:uppercase;
+letter-spacing:.4px;
+}
+.schedTable td{padding:9px 8px;border-bottom:1px solid var(--line);}
+.schedTable tr:last-child td{border-bottom:none;}
+.schedTable input[type=date], .schedTable input[type=number]{margin-bottom:0;padding:6px 8px;font-size:12px;}
+.schedTable select{margin-bottom:0;padding:6px 8px;font-size:12px;}
+
+.payTag{font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;display:inline-block;}
+.pay-paid{background:#dcfce7;color:#166534;}
+.pay-due{background:#fef9c3;color:#854d0e;}
+.pay-upcoming{background:#f1f5f9;color:#64748b;}
+.pay-overdue{background:#fdeaea;color:#c53030;}
+
+.saveRow{margin-top:16px;text-align:right;display:flex;justify-content:flex-end;gap:10px;}
+.addBtn{background:var(--green);color:white;border:none;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s;}
+.addBtn:hover{background:var(--green2);}
+.addBtnOutline{background:transparent;border:1px solid rgba(47,125,98,.4);color:var(--green2);padding:9px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;}
+.addBtnOutline:hover{background:rgba(47,125,98,.08);}
+
+.sectionTitle{display:flex;align-items:center;gap:8px;margin:18px 0 10px;}
+.sectionTitle .dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;}
+.sectionTitle h4{margin:0;font-size:14px;}
+
+@media(max-width:1100px){.detailGrid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:900px){.sidebar{display:none;}body{flex-direction:column;}.main{padding:16px;}.formGrid{grid-template-columns:1fr;}}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<div class="logo">🌿 BASIT Admin</div>
+
+<div class="nav">
+
+<a href="admin_dashboard.html">Dashboard</a>
+<a href="admin_gallery.html">Manage Gallery</a>
+<a href="admin_walkins.html">Manage Walk-ins</a>
+<a href="admin_bookings.html">Manage Bookings</a>
+<a href="admin_promo.html">Manage Promo</a>
+<a href="admin_services.html">Manage Services</a>
+<a href="admin_specialist.html">Manage Specialist</a>
+<a href="admin_manageaccount.html">Manage Account</a>
+<a href="admin_daily_report.html">Daily Report</a>
+<a href="admin_daily_summary.html">Daily Summary</a>
+<a href="admin_monthly_summary.html">Monthly Summary</a>
+<a class="active" href="admin_installments.html">Manage Installments</a>
+<a href="admin_account.html">Account Settings</a>
+<a href="logout.html">Log Out</a>
+
+</div>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="header">
+
+<h1>Manage Installments</h1>
+
+<div class="header-right">
+  <button class="addBtnOutline" onclick="loadInstallments()">↻ Refresh</button>
+</div>
+
+</div>
+
+<!-- KPI PILLS -->
+<div class="pills">
+  <div class="pill">
+    <div class="p-label">Active Plans</div>
+    <div class="p-val" id="kpiActive">0</div>
+    <div class="p-sub" id="kpiActiveSub">0 overdue</div>
+  </div>
+  <div class="pill">
+    <div class="p-label">Completed Plans</div>
+    <div class="p-val" id="kpiCompleted">0</div>
+    <div class="p-sub">fully paid</div>
+  </div>
+  <div class="pill">
+    <div class="p-label">Total Outstanding</div>
+    <div class="p-val" id="kpiOutstanding">₱0.00</div>
+    <div class="p-sub">across all active plans</div>
+  </div>
+  <div class="pill">
+    <div class="p-label">Collected This Month</div>
+    <div class="p-val" id="kpiCollected">₱0.00</div>
+    <div class="p-sub" id="kpiCollectedSub"></div>
+  </div>
+</div>
+
+<!-- FILTERS -->
+<div class="filters">
+  <button class="filterBtn active" data-filter="all">All Plans</button>
+  <button class="filterBtn" data-filter="active">Active</button>
+  <button class="filterBtn" data-filter="overdue">Overdue</button>
+  <button class="filterBtn" data-filter="completed">Completed</button>
+
+  <div class="searchBox">
+    <span class="sIcon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search client name or service...">
+  </div>
+</div>
+
+<!-- TABLE -->
+<div class="tableCard">
+  <table>
+    <thead>
+      <tr>
+        <th>Client</th>
+        <th>Service / Package</th>
+        <th>Total Price</th>
+        <th>Downpayment</th>
+        <th>Plan</th>
+        <th>Progress</th>
+        <th>Next Due</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <div class="empty" id="emptyState" style="display:none;">
+    <div class="icon">💳</div>
+    <div>No installment plans found.</div>
+  </div>
+</div>
+
+</div>
+
+<!-- MANAGE PLAN MODAL -->
+<div class="modal" id="modal">
+  <div class="modalBox">
+    <button class="closeBtn" onclick="closeModal()">✕</button>
+    <h3 id="modalTitle">Manage Installment Plan</h3>
+
+    <!-- Plan info -->
+    <div class="detailGrid">
+      <div class="detailBox">
+        <div class="dLabel">Client</div>
+        <div class="dVal" id="dClient" style="font-size:13px;"></div>
+      </div>
+      <div class="detailBox">
+        <div class="dLabel">Total Price</div>
+        <div class="dVal" id="dTotal"></div>
+      </div>
+      <div class="detailBox">
+        <div class="dLabel">Downpayment</div>
+        <div class="dVal" id="dDown"></div>
+      </div>
+      <div class="detailBox">
+        <div class="dLabel">Remaining Balance</div>
+        <div class="dVal" id="dRemaining" style="color:#c53030;"></div>
+      </div>
+    </div>
+
+    <!-- Plan settings -->
+    <div class="sectionTitle"><span class="dot"></span><h4>Plan Settings</h4></div>
+    <div class="formGrid">
+      <div>
+        <label>Status</label>
+        <select id="planStatus">
+          <option value="active">Active</option>
+          <option value="overdue">Overdue</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div>
+        <label>Number of Months</label>
+        <input type="number" id="planMonths" min="1" readonly style="background:#f8fafc;">
+      </div>
+    </div>
+
+    <!-- Payment schedule -->
+    <div class="sectionTitle"><span class="dot"></span><h4>Payment Schedule</h4></div>
+    <div style="overflow-x:auto;">
+      <table class="schedTable">
+        <thead>
+          <tr>
+            <th>Installment</th>
+            <th>Due Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Paid Date</th>
+          </tr>
+        </thead>
+        <tbody id="scheduleBody"></tbody>
+      </table>
+    </div>
+
+    <div class="saveRow">
+      <button class="addBtnOutline" onclick="closeModal()">Cancel</button>
+      <button class="addBtn" onclick="savePlan()">💾 Save Changes</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- DELETE CONFIRM (reuse browser confirm) -->
+
+<script src="session.js"></script>
+<script>
+const API = "https://salon-spa.onrender.com/installments";
+
+const session = JSON.parse(localStorage.getItem("salonSession")) || JSON.parse(sessionStorage.getItem("salonSession"));
+if(!session || session.role !== "admin") window.location.href = "../log_in.html";
+
+let plans = [];
+let activeFilter = "all";
+let editId = null;
+let editSchedule = [];
+
+function peso(n){ return "₱" + Number(n||0).toLocaleString("en-PH", {minimumFractionDigits:2, maximumFractionDigits:2}); }
+
+function parseSchedule(plan){
+  if(Array.isArray(plan.schedule)) return plan.schedule;
+  if(typeof plan.schedule === "string"){
+    try{ return JSON.parse(plan.schedule); }catch(e){ return []; }
+  }
+  return [];
+}
+
+/* ===============================
+LOAD
+================================ */
+async function loadInstallments(){
+  try{
+    const res = await fetch(API);
+    plans = await res.json();
+  }catch(e){
+    console.error("Load error:", e);
+    plans = [];
+  }
+  renderKPIs();
+  render();
+}
+
+/* ===============================
+KPIs
+================================ */
+function renderKPIs(){
+  let active=0, overdue=0, completed=0, outstanding=0, collectedThisMonth=0;
+
+  const now = new Date();
+  const curMonth = now.getMonth();
+  const curYear = now.getFullYear();
+
+  plans.forEach(p=>{
+    const schedule = parseSchedule(p);
+
+    if(p.status === "completed") completed++;
+    else if(p.status === "overdue"){ active++; overdue++; }
+    else if(p.status === "active") active++;
+
+    if(p.status !== "completed" && p.status !== "cancelled"){
+      const totalPaid = (Number(p.downpayment)||0) + schedule.filter(s=>s.status==="paid").reduce((s,x)=>s+Number(x.amount||0),0);
+      const remaining = Math.max(Number(p.total_price||0) - totalPaid, 0);
+      outstanding += remaining;
+    }
+
+    schedule.forEach(s=>{
+      if(s.status === "paid" && s.paid_date){
+        const pd = new Date(s.paid_date);
+        if(pd.getMonth()===curMonth && pd.getFullYear()===curYear){
+          collectedThisMonth += Number(s.amount||0);
+        }
+      }
+    });
+  });
+
+  document.getElementById("kpiActive").textContent = active;
+  document.getElementById("kpiActiveSub").textContent = `${overdue} overdue`;
+  document.getElementById("kpiCompleted").textContent = completed;
+  document.getElementById("kpiOutstanding").textContent = peso(outstanding);
+  document.getElementById("kpiCollected").textContent = peso(collectedThisMonth);
+  document.getElementById("kpiCollectedSub").textContent = now.toLocaleString("en-PH",{month:"long",year:"numeric"});
+}
+
+/* ===============================
+FILTERS
+================================ */
+document.querySelectorAll(".filterBtn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll(".filterBtn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    activeFilter = btn.getAttribute("data-filter");
+    render();
+  });
+});
+
+document.getElementById("searchInput").addEventListener("input", render);
+
+/* ===============================
+RENDER TABLE
+================================ */
+function render(){
+  const body = document.getElementById("tableBody");
+  const empty = document.getElementById("emptyState");
+  const search = document.getElementById("searchInput").value.trim().toLowerCase();
+
+  let filtered = plans.filter(p=>{
+    if(activeFilter !== "all" && p.status !== activeFilter) return false;
+    if(search){
+      const hay = `${p.client_name||""} ${p.email||""} ${p.service_name||""}`.toLowerCase();
+      if(!hay.includes(search)) return false;
+    }
+    return true;
+  });
+
+  body.innerHTML = "";
+
+  if(!filtered.length){
+    empty.style.display = "block";
+    return;
+  }
+  empty.style.display = "none";
+
+  filtered.forEach(p=>{
+    const schedule = parseSchedule(p);
+    const paidCount = schedule.filter(s=>s.status==="paid").length;
+    const totalCount = schedule.length;
+    const pct = totalCount ? Math.round((paidCount/totalCount)*100) : 0;
+
+    // Next due item
+    const nextDue = schedule.find(s=>s.status==="due" || s.status==="overdue" || s.status==="upcoming");
+
+    let statusClass = "status-active";
+    let statusLabel = "Active";
+    if(p.status === "completed"){ statusClass="status-completed"; statusLabel="Completed"; }
+    else if(p.status === "overdue"){ statusClass="status-overdue"; statusLabel="Overdue"; }
+    else if(p.status === "cancelled"){ statusClass="status-overdue"; statusLabel="Cancelled"; }
+
+    body.innerHTML += `<tr>
+      <td>
+        <strong>${p.client_name || "—"}</strong><br>
+        <span style="font-size:11px;color:var(--muted);">${p.email || ""}</span>
+      </td>
+      <td>${p.service_name || "—"}</td>
+      <td>${peso(p.total_price)}</td>
+      <td>${peso(p.downpayment)}</td>
+      <td>${p.months}-month</td>
+      <td>
+        <div class="miniProgress">
+          <div class="miniBar"><div class="miniFill" style="width:${pct}%;"></div></div>
+          <div class="miniLabel">${paidCount}/${totalCount} paid (${pct}%)</div>
+        </div>
+      </td>
+      <td>${nextDue?.due_date ? new Date(nextDue.due_date).toLocaleDateString("en-PH",{year:"numeric",month:"short",day:"numeric"}) : "—"}</td>
+      <td><span class="statusTag ${statusClass}">${statusLabel}</span></td>
+      <td>
+        <button class="actionBtn view" onclick="openManage(${p.id})">Manage</button>
+        <button class="actionBtn delete" onclick="deletePlan(${p.id})">Delete</button>
+      </td>
+    </tr>`;
+  });
+}
+
+/* ===============================
+MANAGE MODAL
+================================ */
+function openManage(id){
+  const p = plans.find(x=>x.id===id);
+  if(!p) return;
+
+  editId = id;
+  editSchedule = parseSchedule(p);
+
+  document.getElementById("modalTitle").textContent = `Manage Plan — ${p.service_name}`;
+  document.getElementById("dClient").textContent = `${p.client_name || "—"} (${p.email || "—"})`;
+  document.getElementById("dTotal").textContent = peso(p.total_price);
+  document.getElementById("dDown").textContent = peso(p.downpayment);
+
+  const totalPaid = (Number(p.downpayment)||0) + editSchedule.filter(s=>s.status==="paid").reduce((s,x)=>s+Number(x.amount||0),0);
+  const remaining = Math.max(Number(p.total_price||0) - totalPaid, 0);
+  document.getElementById("dRemaining").textContent = peso(remaining);
+
+  document.getElementById("planStatus").value = p.status || "active";
+  document.getElementById("planMonths").value = p.months || editSchedule.length;
+
+  renderSchedule();
+
+  document.getElementById("modal").style.display = "flex";
+}
+
+function renderSchedule(){
+  const body = document.getElementById("scheduleBody");
+  body.innerHTML = "";
+
+  editSchedule.forEach((s,i)=>{
+    body.innerHTML += `<tr>
+      <td>${s.label || `Month ${i+1}`}</td>
+      <td><input type="date" value="${s.due_date ? s.due_date.split('T')[0] : ''}" onchange="updateSchedField(${i},'due_date',this.value)"></td>
+      <td><input type="number" step="0.01" value="${Number(s.amount||0)}" onchange="updateSchedField(${i},'amount',this.value)"></td>
+      <td>
+        <select onchange="updateSchedField(${i},'status',this.value)">
+          <option value="upcoming" ${s.status==='upcoming'?'selected':''}>Upcoming</option>
+          <option value="due" ${s.status==='due'?'selected':''}>Due</option>
+          <option value="overdue" ${s.status==='overdue'?'selected':''}>Overdue</option>
+          <option value="paid" ${s.status==='paid'?'selected':''}>Paid</option>
+        </select>
+      </td>
+      <td><input type="date" value="${s.paid_date ? s.paid_date.split('T')[0] : ''}" onchange="updateSchedField(${i},'paid_date',this.value)"></td>
+    </tr>`;
+  });
+}
+
+function updateSchedField(index, field, value){
+  editSchedule[index][field] = value;
+
+  // Auto-set paid_date to today if marking as paid and no date set
+  if(field === "status" && value === "paid" && !editSchedule[index].paid_date){
+    editSchedule[index].paid_date = new Date().toISOString().split("T")[0];
+    renderSchedule();
+  }
+
+  // Clear paid_date if status changes away from paid
+  if(field === "status" && value !== "paid"){
+    editSchedule[index].paid_date = null;
+    renderSchedule();
+  }
+}
+
+async function savePlan(){
+  const status = document.getElementById("planStatus").value;
+
+  // Auto-complete: if all schedule items are paid, mark plan completed
+  const allPaid = editSchedule.length > 0 && editSchedule.every(s=>s.status==="paid");
+  const finalStatus = allPaid ? "completed" : status;
+
+  try{
+    await fetch(`${API}/${editId}`, {
+      method:"PUT",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({
+        status: finalStatus,
+        schedule: editSchedule
+      })
+    });
+
+    closeModal();
+    loadInstallments();
+  }catch(e){
+    console.error("Save error:", e);
+  }
+}
+
+async function deletePlan(id){
+  if(!confirm("Delete this installment plan? This cannot be undone.")) return;
+
+  try{
+    await fetch(`${API}/${id}`, {method:"DELETE"});
+    loadInstallments();
+  }catch(e){
+    console.error("Delete error:", e);
+  }
+}
+
+function closeModal(){
+  document.getElementById("modal").style.display = "none";
+  editId = null;
+  editSchedule = [];
+}
+
+/* ===============================
+INIT
+================================ */
+loadInstallments();
+</script>
+
+</body>
+</html>
