@@ -1502,7 +1502,7 @@ app.post("/installments", asyncHandler(async (req, res) => {
     dueDate.setMonth(dueDate.getMonth() + i);
 
     schedule.push({
-      label: `Month ${i}`,
+      label: `Session ${i}`,
       due_date: dueDate.toISOString().split("T")[0],
       amount: monthly,
       status: i === 1 ? "due" : "upcoming",

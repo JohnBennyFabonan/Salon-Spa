@@ -498,7 +498,7 @@ letter-spacing:.4px;
         </select>
       </div>
       <div>
-        <label>Number of Months</label>
+        <label>Number of Sessions</label>
         <input type="number" id="planMonths" min="1" readonly style="background:#f8fafc;">
       </div>
     </div>
@@ -509,7 +509,7 @@ letter-spacing:.4px;
       <table class="schedTable">
         <thead>
           <tr>
-            <th>Installment</th>
+            <th>Session</th>
             <th>Due Date</th>
             <th>Amount</th>
             <th>Status</th>
@@ -670,7 +670,7 @@ function render(){
       <td>${p.service_name || "—"}</td>
       <td>${peso(p.total_price)}</td>
       <td>${peso(p.downpayment)}</td>
-      <td>${p.months}-month</td>
+      <td>${p.months}-session</td>
       <td>
         <div class="miniProgress">
           <div class="miniBar"><div class="miniFill" style="width:${pct}%;"></div></div>
@@ -720,7 +720,7 @@ function renderSchedule(){
 
   editSchedule.forEach((s,i)=>{
     body.innerHTML += `<tr>
-      <td>${s.label || `Month ${i+1}`}</td>
+      <td>${s.label || `Session ${i+1}`}</td>
       <td><input type="date" value="${s.due_date ? s.due_date.split('T')[0] : ''}" onchange="updateSchedField(${i},'due_date',this.value)"></td>
       <td><input type="number" step="0.01" value="${Number(s.amount||0)}" onchange="updateSchedField(${i},'amount',this.value)"></td>
       <td>

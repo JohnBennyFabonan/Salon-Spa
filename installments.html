@@ -826,7 +826,7 @@
 
 <div class="titleWrap">
 <h1>Installments</h1>
-<p>Book your favorite services and pay in easy monthly installments.</p>
+<p>Book your favorite services and pay per session.</p>
 </div>
 
 <div class="badge">
@@ -904,14 +904,14 @@ No services found. Try another category.
 <div id="planPickerWrap" style="display:none;">
   <h4 style="margin:16px 0 4px;font-size:14px;">Choose Installment Term</h4>
   <p style="margin:0 0 4px;font-size:12px;color:var(--muted);">
-    Select how many months to pay. A 20% downpayment is required upon booking; the remaining balance is split equally across the months you choose.
+    Select how many sessions to pay. A 20% downpayment is required upon booking; the remaining balance is split equally across the sessions you choose.
   </p>
   <div class="planPicker" id="planPicker"></div>
 
   <div class="row" id="planSummary" style="display:none; margin-top:14px;">
     <div class="kv" style="flex:1;">Downpayment (20%)<br><strong id="sumDown">₱0</strong></div>
     <div class="kv" style="flex:1;">Remaining Balance<br><strong id="sumRemaining">₱0</strong></div>
-    <div class="kv" style="flex:1;">Monthly Payment<br><strong id="sumMonthly">₱0</strong></div>
+    <div class="kv" style="flex:1;">Payment per Session<br><strong id="sumMonthly">₱0</strong></div>
   </div>
 </div>
 
@@ -1138,7 +1138,7 @@ function cardHTML(s){
 <div class="cardBottom">
 <div>
 <span class="price">${peso(Number(s.price))}</span>
-<span class="subprice">from ${peso(monthly3)}/mo for 3 mos</span>
+<span class="subprice">from ${peso(monthly3)}/session for 3 sessions</span>
 </div>
 
 <button class="btn" data-id="${s.id}">View Plans</button>
@@ -1189,7 +1189,7 @@ const planPicker = document.getElementById("planPicker");
 const planSummary = document.getElementById("planSummary");
 const confirmBook = document.getElementById("confirmBook");
 
-const INSTALLMENT_TERMS = [3, 6, 12]; // months options
+const INSTALLMENT_TERMS = [3, 6, 12]; // session options
 const DOWNPAYMENT_RATE = 0.20;
 
 let currentService = null;
@@ -1220,10 +1220,10 @@ function openServiceModal(service){
     return `
       <div class="planOption" data-months="${months}">
         <div>
-          <div class="poLeft">${months}-Month Plan</div>
-          <div class="poSub">Downpayment ${peso(down)} + ${months} monthly payments</div>
+          <div class="poLeft">${months}-Session Plan</div>
+          <div class="poSub">Downpayment ${peso(down)} + ${months} session payments</div>
         </div>
-        <div class="poRight">${peso(monthly)}/mo</div>
+        <div class="poRight">${peso(monthly)}/session</div>
       </div>
     `;
   }).join("");
@@ -1386,7 +1386,7 @@ function planCardHTML(plan){
 
     return `
       <tr>
-        <td>${s.label || `Month ${i+1}`}</td>
+        <td>${s.label || `Session ${i+1}`}</td>
         <td>${s.due_date ? new Date(s.due_date).toLocaleDateString("en-PH",{year:"numeric",month:"short",day:"numeric"}) : "—"}</td>
         <td>${peso(Number(s.amount||0))}</td>
         <td><span class="payTag ${tagClass}">${tagLabel}</span></td>
@@ -1403,7 +1403,7 @@ function planCardHTML(plan){
       <div class="planHead">
         <div>
           <h3 class="planTitle">${plan.service_name}</h3>
-          <p class="planSub">Booking #${plan.booking_id || plan.id} · ${plan.months}-Month Plan · Started ${plan.created_at ? new Date(plan.created_at).toLocaleDateString("en-PH",{year:"numeric",month:"short",day:"numeric"}) : "—"}</p>
+          <p class="planSub">Booking #${plan.booking_id || plan.id} · ${plan.months}-Session Plan · Started ${plan.created_at ? new Date(plan.created_at).toLocaleDateString("en-PH",{year:"numeric",month:"short",day:"numeric"}) : "—"}</p>
         </div>
         <span class="statusTag ${statusClass}">${statusLabel}</span>
       </div>
