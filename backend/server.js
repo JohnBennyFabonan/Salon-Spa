@@ -1575,6 +1575,101 @@ app.delete("/installments/:id", asyncHandler(async (req, res) => {
 }));
 
 /* ===============================
+INSTALLMENT SERVICES
+(Add this before the ERROR HANDLER in server.js)
+=============================== */
+
+// GET - all installment services (admin gets all, customer gets visible only)
+app.get("/installment-services", asyncHandler(async (req, res) => {
+  const { visible } = req.query;
+
+  if (visible === "true") {
+    // Customer-facing: only visible ones
+    const result = await pool.query(
+      `SELECT * FROM installment_services WHERE is_visible = true ORDER BY id ASC`
+    );
+    return res.json(result.rows);
+  }
+
+  // Admin: all
+  const result = await pool.query(
+    `SELECT * FROM installment_services ORDER BY id DESC`
+  );
+  res.json(result.rows);
+}));
+
+// POST - add a service to installment list
+app.post("/installment-services", asyncHandler(async (req, res) => {
+  const { service_id, service_name, service_price, session_terms, is_visible } = req.body;
+
+  if (!service_id || !service_name) {
+    return res.status(400).json({ error: "service_id and service_name are required" });
+  }
+
+  if (!Array.isArray(session_terms) || session_terms.length === 0) {
+    return res.status(400).json({ error: "At least one session term is required" });
+  }
+
+  const result = await pool.query(
+    `INSERT INTO installment_services
+     (service_id, service_name, service_price, session_terms, is_visible)
+     VALUES ($1, $2, $3, $4, $5)
+     RETURNING *`,
+    [
+      service_id,
+      String(service_name).trim(),
+      toNumber(service_price),
+      JSON.stringify(session_terms),
+      is_visible !== false,
+    ]
+  );
+
+  res.status(201).json(result.rows[0]);
+}));
+
+// PUT - update session terms, price, or visibility
+app.put("/installment-services/:id", asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { service_name, service_price, session_terms, is_visible } = req.body;
+
+  const existing = await pool.query(
+    "SELECT * FROM installment_services WHERE id = $1", [id]
+  );
+  if (existing.rows.length === 0) {
+    return res.status(404).json({ error: "Not found" });
+  }
+
+  const current = existing.rows[0];
+
+  const result = await pool.query(
+    `UPDATE installment_services SET
+       service_name = COALESCE($1, service_name),
+       service_price = COALESCE($2, service_price),
+       session_terms = COALESCE($3, session_terms),
+       is_visible = COALESCE($4, is_visible),
+       updated_at = NOW()
+     WHERE id = $5
+     RETURNING *`,
+    [
+      service_name ? String(service_name).trim() : null,
+      service_price !== undefined ? toNumber(service_price) : null,
+      session_terms !== undefined ? JSON.stringify(session_terms) : null,
+      is_visible !== undefined ? Boolean(is_visible) : null,
+      id,
+    ]
+  );
+
+  res.json(result.rows[0]);
+}));
+
+// DELETE - remove from installment list
+app.delete("/installment-services/:id", asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  await pool.query("DELETE FROM installment_services WHERE id = $1", [id]);
+  res.json({ success: true });
+}));
+
+/* ===============================
 ERROR HANDLER
 =============================== */
 app.use((err, req, res, next) => {

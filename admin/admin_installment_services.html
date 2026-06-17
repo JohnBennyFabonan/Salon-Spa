@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Installment Services | Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#2f7d62;
+  --green2:#256a52;
+  --bg:#f4fbf7;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#64748b;
+  --line:rgba(15,23,42,.08);
+  --shadow:0 14px 40px rgba(2,6,23,.08);
+  --radius:16px;
+  --greenSoft:rgba(47,125,98,.12);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Poppins;background:var(--bg);display:flex;color:var(--text);}
+
+.sidebar{width:260px;background:linear-gradient(180deg,var(--green),var(--green2));color:white;padding:28px 22px;min-height:100vh;flex-shrink:0;}
+.logo{font-weight:800;font-size:18px;margin-bottom:35px;}
+.nav{display:flex;flex-direction:column;gap:6px;}
+.nav a{display:block;color:white;text-decoration:none;padding:12px 14px;border-radius:12px;font-size:13px;font-weight:600;transition:.15s;}
+.nav a:hover{background:rgba(255,255,255,.15);}
+.nav a.active{background:rgba(255,255,255,.25);}
+
+.main{flex:1;padding:30px;max-width:1200px;overflow-x:auto;}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:25px;flex-wrap:wrap;gap:12px;}
+.header h1{margin:0;font-size:28px;}
+.header-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+
+/* KPI */
+.pills{display:flex;gap:14px;margin-bottom:22px;flex-wrap:wrap;}
+.pill{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 22px;box-shadow:var(--shadow);flex:1;min-width:140px;}
+.pill .p-label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.pill .p-val{font-size:24px;font-weight:800;color:var(--green);margin-top:3px;}
+
+/* TABLE */
+.tableCard{background:var(--card);padding:22px;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--line);overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:700px;}
+thead{background:var(--greenSoft);}
+th{text-align:left;font-size:11px;color:var(--muted);padding:12px 10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;}
+td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle;}
+tr:hover td{background:#f9fdfb;}
+tr:last-child td{border-bottom:none;}
+
+/* SERVICE IMAGE */
+.svcImg{width:46px;height:46px;object-fit:cover;border-radius:10px;}
+
+/* SESSION TERMS TAGS */
+.termTags{display:flex;gap:6px;flex-wrap:wrap;}
+.termTag{background:var(--greenSoft);color:var(--green2);border:1px solid rgba(47,125,98,.2);border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;}
+
+/* TOGGLE SWITCH */
+.toggle{position:relative;display:inline-block;width:44px;height:24px;}
+.toggle input{opacity:0;width:0;height:0;}
+.slider{position:absolute;cursor:pointer;inset:0;background:#cbd5e1;border-radius:999px;transition:.3s;}
+.slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.3s;}
+input:checked + .slider{background:var(--green);}
+input:checked + .slider:before{transform:translateX(20px);}
+
+/* STATUS */
+.statusOn{color:var(--green2);font-weight:700;font-size:12px;}
+.statusOff{color:var(--muted);font-weight:700;font-size:12px;}
+
+/* BTNS */
+.addBtn{background:var(--green);color:white;border:none;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s;}
+.addBtn:hover{background:var(--green2);}
+.actionBtn{border:none;padding:6px 10px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;margin-right:4px;}
+.edit{background:#e7f7ef;color:var(--green2);}
+.delete{background:#fdeaea;color:#c53030;}
+
+/* EMPTY */
+.empty{text-align:center;padding:50px 20px;color:var(--muted);}
+.empty .icon{font-size:40px;margin-bottom:10px;}
+
+/* MODAL */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:999;padding:18px;}
+.modalBox{background:white;padding:26px;border-radius:var(--radius);width:500px;max-width:100%;box-shadow:var(--shadow);position:relative;max-height:90vh;overflow-y:auto;}
+.modalBox h3{margin-top:0;font-size:18px;}
+.closeBtn{position:absolute;top:14px;right:14px;width:32px;height:32px;border:none;border-radius:8px;background:#f1f5f9;cursor:pointer;font-size:16px;font-weight:700;}
+.closeBtn:hover{background:#e2e8f0;}
+
+label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;margin-top:12px;}
+select,input{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--line);font-family:Poppins;font-size:13px;outline:none;margin-bottom:4px;}
+select:focus,input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(47,125,98,.1);}
+
+/* SESSION TERM BUILDER */
+.termBuilder{display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap;}
+.termBuilder input[type=number]{width:90px;margin-bottom:0;}
+.termList{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.termChip{background:var(--greenSoft);color:var(--green2);border:1px solid rgba(47,125,98,.2);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;}
+.termChip button{background:none;border:none;cursor:pointer;font-size:14px;color:var(--green2);line-height:1;padding:0;}
+
+.saveRow{margin-top:18px;display:flex;justify-content:flex-end;gap:10px;}
+.addBtnOutline{background:transparent;border:1px solid rgba(47,125,98,.4);color:var(--green2);padding:9px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;}
+
+/* SERVICE PICKER in modal */
+.servicePicker{max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;padding:6px;}
+.svcOption{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:.12s;}
+.svcOption:hover{background:var(--greenSoft);}
+.svcOption.selected{background:var(--greenSoft);border:1px solid rgba(47,125,98,.25);}
+.svcOption img{width:36px;height:36px;border-radius:8px;object-fit:cover;}
+.svcOption .sName{font-size:13px;font-weight:700;}
+.svcOption .sPrice{font-size:11px;color:var(--muted);}
+
+@media(max-width:900px){.sidebar{display:none;}body{flex-direction:column;}.main{padding:16px;}}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">🌿 BASIT Admin</div>
+  <div class="nav">
+    <a href="admin_dashboard.html">Dashboard</a>
+    <a href="admin_gallery.html">Manage Gallery</a>
+    <a href="admin_walkins.html">Manage Walk-ins</a>
+    <a href="admin_bookings.html">Manage Bookings</a>
+    <a href="admin_promo.html">Manage Promo</a>
+    <a href="admin_services.html">Manage Services</a>
+    <a href="admin_specialist.html">Manage Specialist</a>
+    <a href="admin_manageaccount.html">Manage Account</a>
+    <a href="admin_daily_report.html">Daily Report</a>
+    <a href="admin_daily_summary.html">Daily Summary</a>
+    <a href="admin_monthly_summary.html">Monthly Summary</a>
+    <a href="admin_installments.html">Manage Installments</a>
+    <a class="active" href="admin_installment_services.html">Installment Services</a>
+    <a href="admin_account.html">Account Settings</a>
+    <a href="logout.html">Log Out</a>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="header">
+    <h1>Installment Services</h1>
+    <div class="header-right">
+      <button class="addBtn" onclick="openAdd()">+ Add Service</button>
+    </div>
+  </div>
+
+  <div class="pills">
+    <div class="pill">
+      <div class="p-label">Total Listed</div>
+      <div class="p-val" id="kpiTotal">0</div>
+    </div>
+    <div class="pill">
+      <div class="p-label">Active / Visible</div>
+      <div class="p-val" id="kpiActive">0</div>
+    </div>
+    <div class="pill">
+      <div class="p-label">Hidden</div>
+      <div class="p-val" id="kpiHidden">0</div>
+    </div>
+  </div>
+
+  <div class="tableCard">
+    <table>
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Service Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Session Terms</th>
+          <th>Visible</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <div class="empty" id="emptyState" style="display:none;">
+      <div class="icon">📋</div>
+      <div>No installment services yet. Click <strong>+ Add Service</strong> to get started.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal" id="modal">
+  <div class="modalBox">
+    <button class="closeBtn" onclick="closeModal()">✕</button>
+    <h3 id="modalTitle">Add Installment Service</h3>
+
+    <label>Select a Service</label>
+    <div class="servicePicker" id="servicePicker">
+      <div style="color:var(--muted);font-size:13px;padding:10px;">Loading services...</div>
+    </div>
+
+    <label>Session Terms</label>
+    <p style="margin:0 0 6px;font-size:12px;color:var(--muted);">
+      Enter the number of sessions available for installment (e.g. 3, 6, 12). Add as many as you want.
+    </p>
+    <div class="termBuilder">
+      <input type="number" id="termInput" placeholder="e.g. 6" min="1" max="60">
+      <button class="addBtn" onclick="addTerm()" style="padding:9px 14px;">+ Add</button>
+    </div>
+    <div class="termList" id="termList"></div>
+
+    <label style="margin-top:14px;">Visible on installments page?</label>
+    <select id="isVisible">
+      <option value="true">Yes — show to customers</option>
+      <option value="false">No — hide for now</option>
+    </select>
+
+    <div class="saveRow">
+      <button class="addBtnOutline" onclick="closeModal()">Cancel</button>
+      <button class="addBtn" onclick="saveEntry()">💾 Save</button>
+    </div>
+  </div>
+</div>
+
+<script src="session.js"></script>
+<script>
+const API = "https://salon-spa.onrender.com";
+const API_IS = `${API}/installment-services`;
+
+const session = JSON.parse(localStorage.getItem("salonSession")) || JSON.parse(sessionStorage.getItem("salonSession"));
+if(!session || session.role !== "admin") window.location.href = "../log_in.html";
+
+let allServices = [];   // from /services
+let instServices = [];  // from /installment-services
+let editId = null;
+let selectedServiceId = null;
+let currentTerms = [];
+
+function peso(n){ return "₱" + Number(n||0).toLocaleString("en-PH", {minimumFractionDigits:2, maximumFractionDigits:2}); }
+
+/* ===============================
+LOAD
+================================ */
+async function load(){
+  try{
+    const [sRes, iRes] = await Promise.all([
+      fetch(`${API}/services`),
+      fetch(API_IS)
+    ]);
+    allServices = await sRes.json();
+    instServices = await iRes.json();
+  }catch(e){
+    console.error("Load error:", e);
+    allServices = [];
+    instServices = [];
+  }
+  renderKPIs();
+  renderTable();
+}
+
+function renderKPIs(){
+  document.getElementById("kpiTotal").textContent = instServices.length;
+  document.getElementById("kpiActive").textContent = instServices.filter(s=>s.is_visible).length;
+  document.getElementById("kpiHidden").textContent = instServices.filter(s=>!s.is_visible).length;
+}
+
+/* ===============================
+TABLE
+================================ */
+function renderTable(){
+  const body = document.getElementById("tableBody");
+  const empty = document.getElementById("emptyState");
+  body.innerHTML = "";
+
+  if(!instServices.length){ empty.style.display="block"; return; }
+  empty.style.display="none";
+
+  instServices.forEach(is=>{
+    const svc = allServices.find(s=>String(s.id)===String(is.service_id)) || {};
+    const terms = Array.isArray(is.session_terms) ? is.session_terms
+      : (typeof is.session_terms==="string" ? JSON.parse(is.session_terms||"[]") : []);
+
+    body.innerHTML += `<tr>
+      <td><img class="svcImg" src="${svc.image_url||''}" alt="${svc.name||''}"></td>
+      <td><strong>${is.service_name || svc.name || "—"}</strong></td>
+      <td>${svc.category || "—"}</td>
+      <td>${peso(is.service_price || svc.price || 0)}</td>
+      <td>
+        <div class="termTags">
+          ${terms.map(t=>`<span class="termTag">${t} sessions</span>`).join("") || "<span style='color:var(--muted);font-size:12px;'>None set</span>"}
+        </div>
+      </td>
+      <td>
+        <label class="toggle">
+          <input type="checkbox" ${is.is_visible?'checked':''} onchange="toggleVisible(${is.id}, this.checked)">
+          <span class="slider"></span>
+        </label>
+        <span class="${is.is_visible?'statusOn':'statusOff'}" id="visLabel-${is.id}">
+          ${is.is_visible ? 'Visible' : 'Hidden'}
+        </span>
+      </td>
+      <td>
+        <button class="actionBtn edit" onclick="openEdit(${is.id})">Edit</button>
+        <button class="actionBtn delete" onclick="deleteEntry(${is.id})">Delete</button>
+      </td>
+    </tr>`;
+  });
+}
+
+/* ===============================
+TOGGLE VISIBLE
+================================ */
+async function toggleVisible(id, checked){
+  const label = document.getElementById(`visLabel-${id}`);
+  try{
+    await fetch(`${API_IS}/${id}`, {
+      method:"PUT",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({is_visible: checked})
+    });
+    if(label){
+      label.textContent = checked ? "Visible" : "Hidden";
+      label.className = checked ? "statusOn" : "statusOff";
+    }
+    // update local
+    const item = instServices.find(s=>s.id===id);
+    if(item) item.is_visible = checked;
+    renderKPIs();
+  }catch(e){ console.error("Toggle error:", e); }
+}
+
+/* ===============================
+OPEN ADD
+================================ */
+function openAdd(){
+  editId = null;
+  selectedServiceId = null;
+  currentTerms = [];
+  document.getElementById("modalTitle").textContent = "Add Installment Service";
+  document.getElementById("isVisible").value = "true";
+  document.getElementById("termInput").value = "";
+  renderTermList();
+  renderServicePicker(null);
+  document.getElementById("modal").style.display = "flex";
+}
+
+/* ===============================
+OPEN EDIT
+================================ */
+function openEdit(id){
+  const is = instServices.find(x=>x.id===id);
+  if(!is) return;
+  editId = id;
+  selectedServiceId = String(is.service_id);
+  currentTerms = Array.isArray(is.session_terms) ? [...is.session_terms]
+    : (typeof is.session_terms==="string" ? JSON.parse(is.session_terms||"[]") : []);
+
+  document.getElementById("modalTitle").textContent = "Edit Installment Service";
+  document.getElementById("isVisible").value = is.is_visible ? "true" : "false";
+  document.getElementById("termInput").value = "";
+  renderTermList();
+  renderServicePicker(selectedServiceId);
+  document.getElementById("modal").style.display = "flex";
+}
+
+/* ===============================
+SERVICE PICKER
+================================ */
+function renderServicePicker(selectedId){
+  const picker = document.getElementById("servicePicker");
+
+  // Filter out services already added (except current one being edited)
+  const usedIds = instServices
+    .filter(is => editId ? is.id !== editId : true)
+    .map(is => String(is.service_id));
+
+  const available = allServices.filter(s => !usedIds.includes(String(s.id)));
+
+  if(!available.length){
+    picker.innerHTML = `<div style="color:var(--muted);font-size:13px;padding:10px;">All services have been added already.</div>`;
+    return;
+  }
+
+  picker.innerHTML = available.map(s=>`
+    <div class="svcOption ${String(s.id)===String(selectedId)?'selected':''}" onclick="selectService('${s.id}', this)">
+      <img src="${s.image_url||''}" alt="${s.name}">
+      <div>
+        <div class="sName">${s.name}</div>
+        <div class="sPrice">${peso(s.price)} · ${s.category}</div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function selectService(id, el){
+  selectedServiceId = id;
+  document.querySelectorAll(".svcOption").forEach(o=>o.classList.remove("selected"));
+  el.classList.add("selected");
+}
+
+/* ===============================
+SESSION TERMS
+================================ */
+function addTerm(){
+  const val = parseInt(document.getElementById("termInput").value);
+  if(!val || val < 1){ alert("Enter a valid number of sessions."); return; }
+  if(currentTerms.includes(val)){ alert("That term is already added."); return; }
+  currentTerms.push(val);
+  currentTerms.sort((a,b)=>a-b);
+  document.getElementById("termInput").value = "";
+  renderTermList();
+}
+
+function removeTerm(val){
+  currentTerms = currentTerms.filter(t=>t!==val);
+  renderTermList();
+}
+
+function renderTermList(){
+  const list = document.getElementById("termList");
+  if(!currentTerms.length){
+    list.innerHTML = `<span style="font-size:12px;color:var(--muted);">No terms added yet.</span>`;
+    return;
+  }
+  list.innerHTML = currentTerms.map(t=>`
+    <div class="termChip">
+      ${t} sessions
+      <button onclick="removeTerm(${t})" title="Remove">✕</button>
+    </div>
+  `).join("");
+}
+
+// Allow Enter key to add term
+document.getElementById("termInput").addEventListener("keypress", e=>{
+  if(e.key==="Enter") addTerm();
+});
+
+/* ===============================
+SAVE
+================================ */
+async function saveEntry(){
+  if(!selectedServiceId){ alert("Please select a service."); return; }
+  if(!currentTerms.length){ alert("Please add at least one session term."); return; }
+
+  const svc = allServices.find(s=>String(s.id)===String(selectedServiceId));
+  if(!svc){ alert("Service not found."); return; }
+
+  const payload = {
+    service_id: svc.id,
+    service_name: svc.name,
+    service_price: svc.price,
+    session_terms: currentTerms,
+    is_visible: document.getElementById("isVisible").value === "true"
+  };
+
+  try{
+    if(editId){
+      await fetch(`${API_IS}/${editId}`, {
+        method:"PUT",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify(payload)
+      });
+    } else {
+      await fetch(API_IS, {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify(payload)
+      });
+    }
+    closeModal();
+    load();
+  }catch(e){ console.error("Save error:", e); }
+}
+
+/* ===============================
+DELETE
+================================ */
+async function deleteEntry(id){
+  if(!confirm("Remove this service from the installment list?")) return;
+  try{
+    await fetch(`${API_IS}/${id}`, {method:"DELETE"});
+    load();
+  }catch(e){ console.error("Delete error:", e); }
+}
+
+function closeModal(){
+  document.getElementById("modal").style.display = "none";
+  editId = null;
+  selectedServiceId = null;
+  currentTerms = [];
+}
+
+load();
+</script>
+</body>
+</html>

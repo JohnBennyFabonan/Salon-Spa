@@ -1036,15 +1036,43 @@ const countText=document.getElementById("countText");
 const sortSelect=document.getElementById("sortSelect");
 const pillRow=document.getElementById("pillRow");
 
-const MIN_PRICE_FOR_INSTALLMENT = 1500; // only show packages above this price
-
+// Load only admin-approved installment services
 async function loadServices(){
   try{
-    const res = await fetch(`${API_BASE}/services`);
-    const all = await res.json();
+    const res = await fetch(`${API_BASE}/installment-services?visible=true`);
+    const instList = await res.json();
 
-    // Only services priced enough to qualify for installment
-    services = all.filter(s => Number(s.price) >= MIN_PRICE_FOR_INSTALLMENT);
+    // Map to same shape the rest of the code expects
+    services = instList.map(is => ({
+      id: is.service_id,
+      installment_service_id: is.id,
+      name: is.service_name,
+      price: Number(is.service_price),
+      session_terms: Array.isArray(is.session_terms)
+        ? is.session_terms
+        : JSON.parse(is.session_terms || "[]"),
+      // fetch full service details for image/description/category/duration
+      image_url: "",
+      description: "",
+      category: "",
+      duration: ""
+    }));
+
+    // Enrich with full service data
+    if(services.length){
+      const fullRes = await fetch(`${API_BASE}/services`);
+      const fullServices = await fullRes.json();
+      services = services.map(s => {
+        const full = fullServices.find(f => String(f.id) === String(s.id));
+        return full ? {
+          ...s,
+          image_url: full.image_url,
+          description: full.description,
+          category: full.category,
+          duration: full.duration
+        } : s;
+      });
+    }
 
     const uniqueCategories = [
       ...new Set(
@@ -1189,7 +1217,7 @@ const planPicker = document.getElementById("planPicker");
 const planSummary = document.getElementById("planSummary");
 const confirmBook = document.getElementById("confirmBook");
 
-const INSTALLMENT_TERMS = [3, 6, 12]; // session options
+const INSTALLMENT_TERMS = [3, 6, 12]; // fallback session options (overridden per service)
 const DOWNPAYMENT_RATE = 0.20;
 
 let currentService = null;
@@ -1215,7 +1243,12 @@ function openServiceModal(service){
   const down = total * DOWNPAYMENT_RATE;
   const remaining = total - down;
 
-  planPicker.innerHTML = INSTALLMENT_TERMS.map(months=>{
+  // Use service-specific terms if available, fallback to defaults
+  const terms = (service.session_terms && service.session_terms.length)
+    ? service.session_terms
+    : INSTALLMENT_TERMS;
+
+  planPicker.innerHTML = terms.map(months=>{
     const monthly = remaining / months;
     return `
       <div class="planOption" data-months="${months}">
