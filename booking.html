@@ -36,7 +36,6 @@
       overflow-x:hidden;
     }
 
-    /* ===== Topbar + Navbar ===== */
     .topbar{
       background: var(--green);
       min-height: 40px;
@@ -74,12 +73,7 @@
       color:#fff; font-weight:900; letter-spacing:.6px; text-transform:uppercase;
       user-select:none;
     }
-    .brand .logo{
-  width:44px;
-  height:44px;
-  border-radius:50%;
-  overflow:hidden;
-}
+    .brand .logo{ width:44px; height:44px; border-radius:50%; overflow:hidden; }
     .menu{
       margin-left:auto;
       display:flex;
@@ -168,7 +162,6 @@
       border: 1px solid rgba(47,125,98,.18);
     }
 
-    /* ===== Page ===== */
     .container{
       max-width: 1180px;
       margin: 0 auto;
@@ -211,6 +204,33 @@
       white-space: nowrap;
     }
 
+    /* ===== INSTALLMENT BANNER ===== */
+    .installBanner{
+      display:none;
+      background: linear-gradient(135deg, var(--green), var(--green-2));
+      color:#fff;
+      border-radius: 14px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      gap: 14px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .installBanner.show{ display:flex; }
+    .installBanner .ib-icon{ font-size:26px; }
+    .installBanner .ib-info{ flex:1; }
+    .installBanner .ib-title{ font-weight:800; font-size:14px; }
+    .installBanner .ib-sub{ font-size:12px; opacity:.85; margin-top:2px; }
+    .installBanner .ib-pills{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+    .installBanner .ib-pill{
+      background:rgba(255,255,255,.20);
+      border:1px solid rgba(255,255,255,.30);
+      border-radius:999px;
+      padding:4px 12px;
+      font-size:11px;
+      font-weight:700;
+    }
+
     .wrap{
       display:grid;
       grid-template-columns: 1.08fr .92fr;
@@ -246,8 +266,7 @@
       font-weight: 750;
     }
 
-        /* Service grid */
-      .serviceGrid{
+    .serviceGrid{
       display:flex;
       flex-direction:column;
       gap:8px;
@@ -256,37 +275,35 @@
       padding-right:5px;
     }
     .service{
-  border: 1px solid rgba(15,23,42,.10);
-  border-radius: 12px;
-  padding: 8px 10px;
-  display:flex;
-  align-items:center;
-  gap: 8px;
-  cursor:pointer;
-  transition: .15s;
-  background: #fff;
-  position:relative;
-  min-height: auto;
-}
-    
+      border: 1px solid rgba(15,23,42,.10);
+      border-radius: 12px;
+      padding: 8px 10px;
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      cursor:pointer;
+      transition: .15s;
+      background: #fff;
+      position:relative;
+      min-height: auto;
+    }
     .service:hover{ transform: translateY(-1px); box-shadow: 0 10px 24px rgba(2,6,23,.06); }
     .service.active{
       border-color: rgba(47,125,98,.45);
       box-shadow: 0 0 0 4px rgba(47,125,98,.12);
     }
     .sIcon{
-  width:32px;
-  height:32px;
-  border-radius:10px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background: rgba(47,125,98,.10);
-  border: 1px solid rgba(47,125,98,.15);
-  flex:0 0 auto;
-  font-size:14px;
-}
-    
+      width:32px;
+      height:32px;
+      border-radius:10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: rgba(47,125,98,.10);
+      border: 1px solid rgba(47,125,98,.15);
+      flex:0 0 auto;
+      font-size:14px;
+    }
     .sMeta b{ display:block; font-size: 12.5px; font-weight: 950; }
     .sMeta small{ display:block; color: var(--muted); font-weight: 700; font-size: 12px; margin-top: 2px; }
     .sPrice{
@@ -297,27 +314,22 @@
       white-space: nowrap;
     }
     .sChip{
-  position: absolute;
-
-  top: 50%;              /* 🔥 vertical center */
-  left: 50%;             /* 🔥 horizontal center */
-  transform: translate(-50%, -50%); /* 🔥 perfect centering */
-
-  font-size: 11px;
-  font-weight: 900;
-  padding: 6px 10px;
-  border-radius: 999px;
-
-  background: rgba(47,125,98,.15);
-  border: 1px solid rgba(47,125,98,.25);
-  color: var(--green-2);
-
-  display: none;
-  z-index: 2; /* make sure it's above content */
-}
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 11px;
+      font-weight: 900;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(47,125,98,.15);
+      border: 1px solid rgba(47,125,98,.25);
+      color: var(--green-2);
+      display: none;
+      z-index: 2;
+    }
     .service.active .sChip{ display:inline-flex; }
 
-    /* Form controls */
     .grid2{
       display:grid;
       grid-template-columns: 1fr 1fr;
@@ -346,7 +358,6 @@
     }
     textarea{ min-height: 96px; resize: vertical; }
 
-    /* Time slots */
     .slots{
       display:grid;
       grid-template-columns: repeat(4, 1fr);
@@ -380,7 +391,7 @@
       background: rgba(15,23,42,.03);
     }
 
-    /* Summary card */
+    /* SUMMARY */
     .summaryRow{
       display:flex;
       justify-content:space-between;
@@ -389,16 +400,9 @@
       border-bottom: 1px solid rgba(15,23,42,.08);
     }
     .summaryRow:last-child{ border-bottom:none; padding-bottom: 0; }
-    .k{
-      color: var(--muted);
-      font-weight: 800;
-      font-size: 12px;
-    }
-    .v{
-      font-weight: 950;
-      font-size: 12.5px;
-      text-align:right;
-    }
+    .k{ color: var(--muted); font-weight: 800; font-size: 12px; }
+    .v{ font-weight: 950; font-size: 12.5px; text-align:right; }
+
     .total{
       display:flex;
       align-items:center;
@@ -412,6 +416,33 @@
     .total b{ font-weight: 950; }
     .total span{ font-weight: 950; color: var(--green-2); }
 
+    /* INSTALLMENT SUMMARY BLOCK */
+    .installSummaryBlock{
+      display:none;
+      margin-top: 12px;
+      border: 1px solid rgba(47,125,98,.25);
+      border-radius: 14px;
+      overflow:hidden;
+    }
+    .installSummaryBlock.show{ display:block; }
+    .isb-header{
+      background: var(--green);
+      color:#fff;
+      padding: 10px 14px;
+      font-size:12px;
+      font-weight:800;
+    }
+    .isb-row{
+      display:flex;
+      justify-content:space-between;
+      padding: 9px 14px;
+      font-size:12px;
+      border-bottom: 1px solid rgba(47,125,98,.10);
+    }
+    .isb-row:last-child{ border-bottom:none; }
+    .isb-row .ik{ color:var(--muted); font-weight:700; }
+    .isb-row .iv{ font-weight:800; color:var(--green-2); }
+
     .msg{
       display:none;
       margin-top: 10px;
@@ -424,16 +455,8 @@
       background: rgba(15,23,42,.04);
       color:#0f172a;
     }
-    .msg.err{
-      border-color: rgba(185,28,28,.20);
-      background: rgba(185,28,28,.08);
-      color: var(--danger);
-    }
-    .msg.ok{
-      border-color: rgba(21,128,61,.20);
-      background: rgba(21,128,61,.10);
-      color: var(--ok);
-    }
+    .msg.err{ border-color: rgba(185,28,28,.20); background: rgba(185,28,28,.08); color: var(--danger); }
+    .msg.ok{ border-color: rgba(21,128,61,.20); background: rgba(21,128,61,.10); color: var(--ok); }
 
     .actions{
       display:flex;
@@ -470,10 +493,7 @@
       line-height: 1.6;
     }
 
-    /* Responsive */
-    @media (max-width: 980px){
-      .wrap{ grid-template-columns: 1fr; }
-    }
+    @media (max-width: 980px){ .wrap{ grid-template-columns: 1fr; } }
     @media (max-width: 720px){
       .topbar{ display:none !important; }
       .menu{ display:none !important; }
@@ -484,63 +504,38 @@
       .grid2{ grid-template-columns: 1fr; }
       .slots{ grid-template-columns: repeat(3, 1fr); }
     }
-    @media (max-width: 380px){
-      .slots{ grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 380px){ .slots{ grid-template-columns: repeat(2, 1fr); } }
+
+    .gcashModal{
+      position:fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      background:rgba(0,0,0,0.6);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:1000;
     }
-
-    /* GCash Popup */
-
-.gcashModal{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.6);
-display:none;
-align-items:center;
-justify-content:center;
-z-index:1000;
-}
-
-.gcashCard{
-background:white;
-padding:25px;
-border-radius:16px;
-text-align:center;
-max-width:320px;
-width:90%;
-}
-
-.gcashCard img{
-width:220px;
-margin:15px 0;
-}
-
-.gcashCard button{
-background:#2f7d62;
-color:white;
-border:none;
-padding:10px 16px;
-border-radius:8px;
-cursor:pointer;
-}
-
-#receiptUpload{
-font-size:12px;
-}
-
-#receiptPreview{
-border:1px solid rgba(0,0,0,0.1);
-padding:5px;
-background:white;
-}
-
-.logo img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
+    .gcashCard{
+      background:white;
+      padding:25px;
+      border-radius:16px;
+      text-align:center;
+      max-width:320px;
+      width:90%;
+    }
+    .gcashCard img{ width:220px; margin:15px 0; }
+    .gcashCard button{
+      background:#2f7d62;
+      color:white;
+      border:none;
+      padding:10px 16px;
+      border-radius:8px;
+      cursor:pointer;
+    }
+    #receiptUpload{ font-size:12px; }
+    #receiptPreview{ border:1px solid rgba(0,0,0,0.1); padding:5px; background:white; }
+    .logo img{ width:100%; height:100%; object-fit:cover; }
   </style>
 </head>
 
@@ -558,127 +553,110 @@ background:white;
   </div>
 
   <!-- NAVBAR -->
-<header class="navbar">
-  <div class="brand">
-    <div class="logo">
-      <img src="images/logo.png" alt="Logo">
+  <header class="navbar">
+    <div class="brand">
+      <div class="logo"><img src="images/logo.png" alt="Logo"></div>
+      <span>Zai Trinette Wellness Spa</span>
     </div>
-    <span>Zai Trinette Wellness Spa</span>
-  </div>
-
     <nav class="menu" aria-label="Primary">
-
-<a href="index.html">Home</a>
-<a href="services.html">Services</a>
-<a href="gallery.html">Gallery</a>
-<a href="specialist.html">Specialist</a>
-<a href="promo.html">Promos</a>
-
-<!-- Login state buttons -->
-<a id="loginLink" href="log_in.html">Log in</a>
-<a id="signupLink" href="sign_up.html">Sign up</a>
-
-<a id="dashboardLink" href="customer_dashboard.html" style="display:none;">Dashboard</a>
-<a id="logoutLink" href="#" style="display:none;">Log out</a>
-
-</nav>
-
-    <button class="menuBtn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">☰</button>
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="specialist.html">Specialist</a>
+      <a href="promo.html">Promos</a>
+      <a href="installments.html">Installments</a>
+      <a id="loginLink" href="log_in.html">Log in</a>
+      <a id="signupLink" href="sign_up.html">Sign up</a>
+      <a id="dashboardLink" href="customer_dashboard.html" style="display:none;">Dashboard</a>
+      <a id="logoutLink" href="#" style="display:none;">Log out</a>
+    </nav>
+    <button class="menuBtn" id="menuBtn" aria-label="Open menu">☰</button>
   </header>
 
   <!-- Mobile Menu -->
-  <div class="mobileMenuBack" id="mobileMenuBack" aria-hidden="true">
-    <div class="mobileMenu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Mobile Menu">
+  <div class="mobileMenuBack" id="mobileMenuBack">
+    <div class="mobileMenu" id="mobileMenu">
       <div class="mobileMenuHead">
         <span class="mobileTitle">Menu</span>
-        <button class="menuClose" id="menuClose" aria-label="Close menu">✕</button>
+        <button class="menuClose" id="menuClose">✕</button>
       </div>
-      <nav class="mobileLinks" aria-label="Mobile Primary">
-
-<a href="index.html">Home</a>
-<a href="services.html">Services</a>
-<a href="gallery.html">Gallery</a>
-<a href="specialist.html">Specialist</a>
-<a href="promo.html">Promos</a>
-
-<!-- LOGIN STATE -->
-<a id="mLogin" href="log_in.html">Log in</a>
-<a id="mSignup" href="sign_up.html">Sign up</a>
-
-<a id="mDashboard" href="customer_dashboard.html" style="display:none;">Dashboard</a>
-<a id="mLogout" href="#" style="display:none;">Log out</a>
-
-</nav>
+      <nav class="mobileLinks">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="specialist.html">Specialist</a>
+        <a href="promo.html">Promos</a>
+        <a href="installments.html">Installments</a>
+        <a id="mLogin" href="log_in.html">Log in</a>
+        <a id="mSignup" href="sign_up.html">Sign up</a>
+        <a id="mDashboard" href="customer_dashboard.html" style="display:none;">Dashboard</a>
+        <a id="mLogout" href="#" style="display:none;">Log out</a>
+      </nav>
     </div>
   </div>
 
- <main class="container">
-  <div class="pageHead">
-    <div class="titleWrap">
-      <h1>Book an Appointment</h1>
-      <p>Select a service, choose your schedule, and confirm your booking.</p>
-    </div>
-    <div class="badge">✨ Fast booking • Green theme</div>
-  </div>
-
-  <div class="wrap">
-    <!-- LEFT: Booking Form -->
-    <section class="card">
-
-      <!-- ===== SERVICE SECTION ===== -->
-      <div class="cardPad">
-
-  <div class="sectionTitle">
-    <h2>1) Choose a service</h2>
-    <div class="muted">Select one or more</div>
-  </div>
-
-  <!-- ✅ ADD BUTTON HERE -->
-  <button class="btn btnOutline" id="addServiceBtn" style="margin-bottom:10px;">
-    ➕ Add More Services
-  </button>
-
-  <!-- SERVICE LIST -->
-  <div class="serviceGrid" id="serviceGrid"></div>
-
-</div>
-
-      <!-- ===== SCHEDULE SECTION ===== -->
-      <div class="cardPad" style="border-top:1px solid rgba(15,23,42,.08);">
-        <div class="sectionTitle">
-          <h2>2) Schedule details</h2>
-          <div class="muted">Pick date & time</div>
-        </div>
-
-        <div class="grid2">
-          <div class="field">
-            <label for="date">Appointment Date</label>
-            <input class="input" id="date" type="date" />
-          </div>
-
-          <div class="field">
-            <label for="staff">Preferred Specialist (optional)</label>
-            <select id="staff">
-              <option value="">No preference</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- TIME SLOTS -->
-        <div class="field" style="margin-top: 10px;">
-          <label>Available Time Slots</label>
-          <div class="slots" id="slots"></div>
-          <div class="footNote">Tap a time to select your schedule.</div>
-        </div>
-
-        <!-- NOTES -->
-        <div class="field" style="margin-top: 10px;">
-          <label for="notes">Notes / Requests (optional)</label>
-          <textarea id="notes" placeholder="Example: Prefer a quiet room, sensitive skin, etc."></textarea>
-        </div>
-
+  <main class="container">
+    <div class="pageHead">
+      <div class="titleWrap">
+        <h1 id="pageTitle">Book an Appointment</h1>
+        <p id="pageSubtitle">Select a service, choose your schedule, and confirm your booking.</p>
       </div>
-    </section>
+      <div class="badge" id="pageBadge">✨ Fast booking</div>
+    </div>
+
+    <!-- INSTALLMENT BANNER (shown only on installment flow) -->
+    <div class="installBanner" id="installBanner">
+      <div class="ib-icon">📅</div>
+      <div class="ib-info">
+        <div class="ib-title" id="ibTitle">Installment Booking</div>
+        <div class="ib-sub" id="ibSub">Pay in sessions — downpayment now, rest spread across sessions.</div>
+        <div class="ib-pills" id="ibPills"></div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <!-- LEFT: Booking Form -->
+      <section class="card">
+
+        <div class="cardPad">
+          <div class="sectionTitle">
+            <h2>1) Choose a service</h2>
+            <div class="muted">Select one or more</div>
+          </div>
+          <button class="btn btnOutline" id="addServiceBtn" style="margin-bottom:10px;">
+            ➕ Add More Services
+          </button>
+          <div class="serviceGrid" id="serviceGrid"></div>
+        </div>
+
+        <div class="cardPad" style="border-top:1px solid rgba(15,23,42,.08);">
+          <div class="sectionTitle">
+            <h2>2) Schedule details</h2>
+            <div class="muted">Pick date & time</div>
+          </div>
+          <div class="grid2">
+            <div class="field">
+              <label for="date">Appointment Date</label>
+              <input class="input" id="date" type="date" />
+            </div>
+            <div class="field">
+              <label for="staff">Preferred Specialist (optional)</label>
+              <select id="staff">
+                <option value="">No preference</option>
+              </select>
+            </div>
+          </div>
+          <div class="field" style="margin-top: 10px;">
+            <label>Available Time Slots</label>
+            <div class="slots" id="slots"></div>
+            <div class="footNote">Tap a time to select your schedule.</div>
+          </div>
+          <div class="field" style="margin-top: 10px;">
+            <label for="notes">Notes / Requests (optional)</label>
+            <textarea id="notes" placeholder="Example: Prefer a quiet room, sensitive skin, etc."></textarea>
+          </div>
+        </div>
+      </section>
 
       <!-- RIGHT: Summary + Confirm -->
       <aside class="card">
@@ -709,36 +687,62 @@ background:white;
             <div class="v" id="sumTime">—</div>
           </div>
 
+          <!-- STANDARD PAYMENT ROWS (hidden when installment) -->
+          <div id="standardPayRows">
+            <div class="summaryRow">
+              <div class="k">Total Price</div>
+              <div class="v" id="sumTotal">—</div>
+            </div>
+            <div class="summaryRow">
+              <div class="k">Downpayment (10%)</div>
+              <div class="v" id="sumDownpayment">—</div>
+            </div>
+            <div class="total">
+              <b>Remaining Balance</b>
+              <span id="sumRemaining">—</span>
+            </div>
+          </div>
+
+          <!-- INSTALLMENT PAYMENT ROWS (shown when installment) -->
+          <div class="installSummaryBlock" id="installSummaryBlock">
+            <div class="isb-header">📅 Installment Payment Plan</div>
+            <div class="isb-row">
+              <span class="ik">Total Package Price</span>
+              <span class="iv" id="isbTotal">—</span>
+            </div>
+            <div class="isb-row">
+              <span class="ik">Downpayment Due Now (20%)</span>
+              <span class="iv" id="isbDown">—</span>
+            </div>
+            <div class="isb-row">
+              <span class="ik">Remaining Balance</span>
+              <span class="iv" id="isbRemaining">—</span>
+            </div>
+            <div class="isb-row">
+              <span class="ik">No. of Sessions</span>
+              <span class="iv" id="isbSessions">—</span>
+            </div>
+            <div class="isb-row">
+              <span class="ik">Payment per Session</span>
+              <span class="iv" id="isbPerSession">—</span>
+            </div>
+          </div>
+
+          <div class="summaryRow" style="margin-top:12px;">
+            <div class="k">GCash Number</div>
+            <div class="v">0912-345-6789</div>
+          </div>
+
           <div class="summaryRow">
-          <div class="k">Total Price</div>
-          <div class="v" id="sumTotal">—</div>
-      </div>
+            <div class="k">Upload Proof of Payment</div>
+            <div class="v">
+              <input type="file" id="receiptUpload" accept="image/*">
+            </div>
+          </div>
 
-      <div class="summaryRow">
-          <div class="k">Downpayment (10%)</div>
-          <div class="v" id="sumDownpayment">—</div>
-      </div>
-
-<div class="total">
-  <b>Remaining Balance</b>
-  <span id="sumRemaining">—</span>
-</div>
-
-<div class="summaryRow">
-  <div class="k">GCash Number</div>
-  <div class="v">0912-345-6789</div>
-</div>
-
-<div class="summaryRow">
-  <div class="k">Upload Proof of Payment</div>
-  <div class="v">
-    <input type="file" id="receiptUpload" accept="image/*">
-  </div>
-</div>
-
-<div id="receiptPreviewBox" style="margin-top:10px; display:none;">
-  <img id="receiptPreview" style="width:100%; border-radius:10px;">
-</div>
+          <div id="receiptPreviewBox" style="margin-top:10px; display:none;">
+            <img id="receiptPreview" style="width:100%; border-radius:10px;">
+          </div>
 
           <div class="msg err" id="errBox"></div>
           <div class="msg ok" id="okBox"></div>
@@ -746,15 +750,13 @@ background:white;
           <div class="actions">
             <button class="btn" id="confirmBtn">Confirm Booking</button>
             <button class="btn btnOutline" id="clearBtn" type="button">Clear</button>
-
             <button class="btn btnOutline" id="gcashBtn" type="button">GCash QrCode</button>
             <button class="btn btnOutline" id="bpiBtn" type="button">BPI QrCode</button>
             <button class="btn btnOutline" id="mayaBtn" type="button">Maya QrCode</button>
           </div>
 
-          <div class="footNote">
-            After confirming, your booking will be saved to <b>localStorage</b> as demo data.
-            Later we can connect this to your database.
+          <div class="footNote" id="footNote">
+            A 10% downpayment is required to confirm your booking. The remaining balance is due on the day of your appointment.
           </div>
         </div>
       </aside>
@@ -762,21 +764,14 @@ background:white;
   </main>
 
   <!-- GCash QR Popup -->
-<div id="gcashModal" class="gcashModal">
-
-  <div class="gcashCard">
-
-    <h3 id="qrTitle">Scan to Pay</h3>
-
-<img id="qrImage" src="" alt="QR Code">
-
-<p id="qrDesc">Send the required 10% downpayment.</p>
-
-    <button id="closeQR">Close</button>
-
+  <div id="gcashModal" class="gcashModal">
+    <div class="gcashCard">
+      <h3 id="qrTitle">Scan to Pay</h3>
+      <img id="qrImage" src="" alt="QR Code">
+      <p id="qrDesc">Send the required downpayment.</p>
+      <button id="closeQR">Close</button>
+    </div>
   </div>
-
-</div>
 
   <script>
 /* ===============================
@@ -797,13 +792,75 @@ CONFIG
 const API_URL = "https://salon-spa.onrender.com";
 
 /* ===============================
+DETECT INSTALLMENT FLOW
+================================ */
+const urlParams = new URLSearchParams(window.location.search);
+const isInstallment = urlParams.get("type") === "installment";
+const installmentData = JSON.parse(localStorage.getItem("selectedInstallment") || "null");
+
+// If installment param but no data, redirect back
+if (isInstallment && !installmentData) {
+  window.location.href = "installments.html";
+}
+
+/* ===============================
+UPDATE PAGE FOR INSTALLMENT FLOW
+================================ */
+if (isInstallment && installmentData) {
+  document.getElementById("pageTitle").textContent = "Book Installment Appointment";
+  document.getElementById("pageSubtitle").textContent = "Complete your schedule details to confirm your installment booking.";
+  document.getElementById("pageBadge").textContent = "📅 Installment Plan";
+
+  // Show installment banner
+  const banner = document.getElementById("installBanner");
+  banner.classList.add("show");
+  document.getElementById("ibTitle").textContent = `${installmentData.service_name} — ${installmentData.months}-Session Plan`;
+  document.getElementById("ibSub").textContent = `₱${Number(installmentData.downpayment).toLocaleString("en-PH", {minimumFractionDigits:2})} downpayment due now • ₱${Number(installmentData.monthly_payment).toLocaleString("en-PH", {minimumFractionDigits:2})} per session`;
+
+  // Pill tags
+  const pillsEl = document.getElementById("ibPills");
+  pillsEl.innerHTML = `
+    <span class="ib-pill">Total: ₱${Number(installmentData.total_price).toLocaleString("en-PH", {minimumFractionDigits:2})}</span>
+    <span class="ib-pill">${installmentData.months} Sessions</span>
+    <span class="ib-pill">20% Down</span>
+  `;
+
+  // Hide standard payment rows, show installment rows
+  document.getElementById("standardPayRows").style.display = "none";
+  document.getElementById("installSummaryBlock").classList.add("show");
+
+  // Fill installment summary
+  const fmt = n => "₱" + Number(n).toLocaleString("en-PH", {minimumFractionDigits:2});
+  document.getElementById("isbTotal").textContent = fmt(installmentData.total_price);
+  document.getElementById("isbDown").textContent = fmt(installmentData.downpayment);
+  document.getElementById("isbRemaining").textContent = fmt(installmentData.remaining_balance);
+  document.getElementById("isbSessions").textContent = installmentData.months + " sessions";
+  document.getElementById("isbPerSession").textContent = fmt(installmentData.monthly_payment);
+
+  // Update footnote
+  document.getElementById("footNote").textContent =
+    `A 20% downpayment (${fmt(installmentData.downpayment)}) is required now. The remaining ${fmt(installmentData.remaining_balance)} will be split across ${installmentData.months} sessions.`;
+
+  // Hide "Add More Services" button — installment is for one package
+  document.getElementById("addServiceBtn").style.display = "none";
+
+  // Pre-load the installment service into selectedServices
+  localStorage.setItem("selectedServices", JSON.stringify([{
+    id: installmentData.service_id,
+    name: installmentData.service_name,
+    duration: installmentData.duration || 0,
+    price: installmentData.total_price,
+    category: installmentData.category
+  }]));
+}
+
+/* ===============================
 NAVBAR / SESSION UI
 ================================ */
 const loginLink = document.getElementById("loginLink");
 const signupLink = document.getElementById("signupLink");
 const dashboardLink = document.getElementById("dashboardLink");
 const logoutLink = document.getElementById("logoutLink");
-
 const mLogin = document.getElementById("mLogin");
 const mSignup = document.getElementById("mSignup");
 const mDashboard = document.getElementById("mDashboard");
@@ -814,7 +871,6 @@ if (session) {
   if (signupLink) signupLink.style.display = "none";
   if (dashboardLink) dashboardLink.style.display = "inline-block";
   if (logoutLink) logoutLink.style.display = "inline-block";
-
   if (mLogin) mLogin.style.display = "none";
   if (mSignup) mSignup.style.display = "none";
   if (mDashboard) mDashboard.style.display = "block";
@@ -838,19 +894,9 @@ const menuBtn = document.getElementById("menuBtn");
 const mobileMenuBack = document.getElementById("mobileMenuBack");
 const menuClose = document.getElementById("menuClose");
 
-menuBtn?.addEventListener("click", () => {
-  if (mobileMenuBack) mobileMenuBack.style.display = "block";
-});
-
-menuClose?.addEventListener("click", () => {
-  if (mobileMenuBack) mobileMenuBack.style.display = "none";
-});
-
-mobileMenuBack?.addEventListener("click", (e) => {
-  if (e.target === mobileMenuBack) {
-    mobileMenuBack.style.display = "none";
-  }
-});
+menuBtn?.addEventListener("click", () => { if (mobileMenuBack) mobileMenuBack.style.display = "block"; });
+menuClose?.addEventListener("click", () => { if (mobileMenuBack) mobileMenuBack.style.display = "none"; });
+mobileMenuBack?.addEventListener("click", (e) => { if (e.target === mobileMenuBack) mobileMenuBack.style.display = "none"; });
 
 /* ===============================
 STATE
@@ -871,7 +917,6 @@ const staffEl = document.getElementById("staff");
 const notesEl = document.getElementById("notes");
 const slotsEl = document.getElementById("slots");
 const confirmBtn = document.getElementById("confirmBtn");
-
 const sumService = document.getElementById("sumService");
 const sumDuration = document.getElementById("sumDuration");
 const sumStaff = document.getElementById("sumStaff");
@@ -880,17 +925,14 @@ const sumTime = document.getElementById("sumTime");
 const sumTotal = document.getElementById("sumTotal");
 const sumDownpayment = document.getElementById("sumDownpayment");
 const sumRemaining = document.getElementById("sumRemaining");
-
 const gcashBtn = document.getElementById("gcashBtn");
 const bpiBtn = document.getElementById("bpiBtn");
 const mayaBtn = document.getElementById("mayaBtn");
-
 const qrModal = document.getElementById("gcashModal");
 const qrImage = document.getElementById("qrImage");
 const qrTitle = document.getElementById("qrTitle");
 const qrDesc = document.getElementById("qrDesc");
 const closeQR = document.getElementById("closeQR");
-
 const receiptUpload = document.getElementById("receiptUpload");
 const receiptPreview = document.getElementById("receiptPreview");
 const receiptPreviewBox = document.getElementById("receiptPreviewBox");
@@ -907,11 +949,7 @@ function peso(n) {
 }
 
 function safeParse(json, fallback) {
-  try {
-    return JSON.parse(json) ?? fallback;
-  } catch {
-    return fallback;
-  }
+  try { return JSON.parse(json) ?? fallback; } catch { return fallback; }
 }
 
 function getSelectedServicesFromStorage() {
@@ -927,9 +965,10 @@ function setConfirmButtonState(disabled, text) {
 
 function computeTotals(services) {
   const total = services.reduce((sum, s) => sum + Number(s.price || 0), 0);
-  const down = Math.round(total * 0.10);
+  const down = isInstallment
+    ? Math.round(total * 0.20)   // 20% for installment
+    : Math.round(total * 0.10);  // 10% for regular
   const remain = total - down;
-
   return { total, down, remain };
 }
 
@@ -939,45 +978,33 @@ LOAD PAYMENT QR CODES
 async function loadPaymentQRCodes() {
   try {
     const res = await fetch(`${API_URL}/payment-qrs`);
-
-    if (!res.ok) {
-      throw new Error("Failed to load payment QR codes");
-    }
-
+    if (!res.ok) throw new Error("Failed");
     PAYMENT_QRS = await res.json();
   } catch (err) {
-    console.error("❌ QR LOAD ERROR:", err);
     PAYMENT_QRS = {};
   }
 }
 
 function showQR(paymentType, label) {
   const qrData = PAYMENT_QRS[paymentType];
-
-  if (!qrData || !qrData.image_url) {
-    alert(`${label} QR code is not available yet.`);
-    return;
-  }
-
+  if (!qrData || !qrData.image_url) { alert(`${label} QR code is not available yet.`); return; }
   qrTitle.textContent = `${label} QR Code`;
   qrImage.src = qrData.image_url;
-  qrDesc.textContent = "Send the required 10% downpayment.";
+  qrDesc.textContent = isInstallment
+    ? `Send the 20% downpayment: ${peso(installmentData?.downpayment || 0)}`
+    : "Send the required 10% downpayment.";
   qrModal.style.display = "flex";
 }
 
-function closeQRModal() {
-  qrModal.style.display = "none";
-  qrImage.src = "";
-}
+function closeQRModal() { qrModal.style.display = "none"; qrImage.src = ""; }
 
 /* ===============================
-LOAD SERVICES (MULTI-SERVICE FIXED)
+LOAD SERVICES
 ================================ */
 async function loadServices() {
   try {
     const res = await fetch(`${API_URL}/services`);
-    if (!res.ok) throw new Error("Failed to load services");
-
+    if (!res.ok) throw new Error("Failed");
     const data = await res.json();
 
     SERVICES = data.map((s) => ({
@@ -987,17 +1014,13 @@ async function loadServices() {
       price: Number(s.price || 0)
     }));
 
-    // ✅ Get stored services
     const stored = getSelectedServicesFromStorage() || [];
-
-    // ✅ Allow MULTIPLE + remove duplicates
     selectedServices = stored.filter(
       (v, i, a) => a.findIndex(t => String(t.id) === String(v.id)) === i
     );
 
     renderServices();
     updateSummary();
-
   } catch (err) {
     console.error("❌ SERVICE LOAD ERROR:", err);
   }
@@ -1009,10 +1032,8 @@ LOAD SPECIALISTS
 async function loadSpecialists() {
   try {
     const res = await fetch(`${API_URL}/specialists`);
-    if (!res.ok) throw new Error("Failed to load specialists");
-
+    if (!res.ok) throw new Error("Failed");
     const data = await res.json();
-
     data.forEach((sp) => {
       const option = document.createElement("option");
       option.value = sp.name;
@@ -1025,11 +1046,10 @@ async function loadSpecialists() {
 }
 
 /* ===============================
-RENDER SERVICES (FIXED REMOVE ONE)
+RENDER SERVICES
 ================================ */
 function renderServices() {
   if (!serviceGrid) return;
-
   serviceGrid.innerHTML = "";
 
   if (selectedServices.length === 0) {
@@ -1044,7 +1064,6 @@ function renderServices() {
   displayList.forEach((s) => {
     const div = document.createElement("div");
     div.className = "service active";
-
     div.innerHTML = `
       <span class="sChip">Selected</span>
       <div class="sIcon">💇</div>
@@ -1055,18 +1074,15 @@ function renderServices() {
       <div class="sPrice">${peso(s.price)}</div>
     `;
 
-    div.onclick = () => {
-      // ✅ REMOVE ONLY THE CLICKED SERVICE
-      selectedServices = selectedServices.filter(
-        (x) => String(x.id) !== String(s.id)
-      );
-
-      // ✅ Update storage
-      localStorage.setItem("selectedServices", JSON.stringify(selectedServices));
-
-      renderServices();
-      updateSummary();
-    };
+    if (!isInstallment) {
+      // Only allow removing services in regular flow
+      div.onclick = () => {
+        selectedServices = selectedServices.filter((x) => String(x.id) !== String(s.id));
+        localStorage.setItem("selectedServices", JSON.stringify(selectedServices));
+        renderServices();
+        updateSummary();
+      };
+    }
 
     serviceGrid.appendChild(div);
   });
@@ -1076,33 +1092,29 @@ function renderServices() {
 TIME SLOTS
 ================================ */
 const TIME_SLOTS = [
-  "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
-  "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM", "6:00 PM"
+  "9:00 AM","10:00 AM","11:00 AM","12:00 PM",
+  "1:00 PM","2:00 PM","3:00 PM","4:00 PM","5:00 PM","6:00 PM"
 ];
 
 function renderSlots() {
   if (!slotsEl) return;
-
   slotsEl.innerHTML = "";
-
   TIME_SLOTS.forEach((t) => {
     const btn = document.createElement("div");
     btn.className = "slot";
     btn.textContent = t;
-
     btn.onclick = () => {
       selectedTime = t;
       document.querySelectorAll(".slot").forEach((s) => s.classList.remove("active"));
       btn.classList.add("active");
       updateSummary();
     };
-
     slotsEl.appendChild(btn);
   });
 }
 
 /* ===============================
-SUMMARY
+SUMMARY UPDATE
 ================================ */
 function updateSummary() {
   if (selectedServices.length === 0) {
@@ -1111,24 +1123,29 @@ function updateSummary() {
     sumStaff.textContent = "—";
     sumDate.textContent = "—";
     sumTime.textContent = "—";
-    sumTotal.textContent = "—";
-    sumDownpayment.textContent = "—";
-    sumRemaining.textContent = "—";
+    if (!isInstallment) {
+      sumTotal.textContent = "—";
+      sumDownpayment.textContent = "—";
+      sumRemaining.textContent = "—";
+    }
     return;
   }
 
   const names = selectedServices.map((s) => s.name).join(", ");
   const durations = selectedServices.map((s) => `${s.duration} mins`).join(", ");
-  const { total, down, remain } = computeTotals(selectedServices);
 
   sumService.textContent = names || "—";
   sumDuration.textContent = durations || "—";
   sumStaff.textContent = staffEl?.value || "No preference";
   sumDate.textContent = dateEl?.value || "—";
   sumTime.textContent = selectedTime || "—";
-  sumTotal.textContent = peso(total);
-  sumDownpayment.textContent = peso(down);
-  sumRemaining.textContent = peso(remain);
+
+  if (!isInstallment) {
+    const { total, down, remain } = computeTotals(selectedServices);
+    sumTotal.textContent = peso(total);
+    sumDownpayment.textContent = peso(down);
+    sumRemaining.textContent = peso(remain);
+  }
 }
 
 /* ===============================
@@ -1145,24 +1162,13 @@ receiptUpload?.addEventListener("change", async function () {
   formData.append("image", file);
 
   try {
-    const res = await fetch(`${API_URL}/upload-receipt`, {
-      method: "POST",
-      body: formData
-    });
-
-    if (!res.ok) {
-      throw new Error("Upload failed");
-    }
-
+    const res = await fetch(`${API_URL}/upload-receipt`, { method: "POST", body: formData });
+    if (!res.ok) throw new Error("Upload failed");
     const data = await res.json();
-
-    if (!data.imageUrl) {
-      throw new Error("No URL returned");
-    }
+    if (!data.imageUrl) throw new Error("No URL returned");
 
     receiptUrl = data.imageUrl;
     isUploading = false;
-
     setConfirmButtonState(false, "Confirm Booking");
 
     if (receiptPreview) receiptPreview.src = receiptUrl;
@@ -1170,7 +1176,6 @@ receiptUpload?.addEventListener("change", async function () {
   } catch (err) {
     console.error("❌ Upload error:", err);
     alert("Upload failed. Check server.");
-
     isUploading = false;
     setConfirmButtonState(false, "Confirm Booking");
   }
@@ -1180,58 +1185,101 @@ receiptUpload?.addEventListener("change", async function () {
 CONFIRM BOOKING
 ================================ */
 confirmBtn?.addEventListener("click", async () => {
-  if (selectedServices.length === 0) return alert("Select service");
-  if (!dateEl?.value) return alert("Select date");
-  if (!selectedTime) return alert("Select time");
+  if (selectedServices.length === 0) return alert("Select a service");
+  if (!dateEl?.value) return alert("Select a date");
+  if (!selectedTime) return alert("Select a time slot");
   if (isUploading) return alert("Please wait, uploading receipt...");
-  if (!receiptUrl) return alert("Upload receipt first");
+  if (!receiptUrl) return alert("Upload proof of payment first");
 
   setConfirmButtonState(true, "Saving...");
-
-  const { total, down, remain } = computeTotals(selectedServices);
 
   const currentSession =
     JSON.parse(localStorage.getItem("salonSession")) ||
     JSON.parse(sessionStorage.getItem("salonSession"));
 
-  const booking = {
-    services: selectedServices,
-    totalPrice: total,
-    downpayment: down,
-    remaining: remain,
-    date: dateEl.value,
-    time: selectedTime,
-    staff: staffEl?.value || "",
-    notes: notesEl?.value || "",
-    receipt: receiptUrl,
-    status: "Pending",
-    email: currentSession.email,
-    customer: currentSession.name
-  };
-
   try {
-    const res = await fetch(`${API_URL}/bookings`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(booking)
-    });
+    let bookingPayload;
 
-    const data = await res.json();
+    if (isInstallment && installmentData) {
+      // ===== INSTALLMENT BOOKING =====
+      const down = installmentData.downpayment;
+      const remain = installmentData.remaining_balance;
 
-    if (!res.ok) {
-      throw new Error(data.error || "Failed to save booking");
+      bookingPayload = {
+        services: selectedServices,
+        totalPrice: installmentData.total_price,
+        downpayment: down,
+        remaining: remain,
+        date: dateEl.value,
+        time: selectedTime,
+        staff: staffEl?.value || "",
+        notes: `[INSTALLMENT - ${installmentData.months} Sessions] ${notesEl?.value || ""}`.trim(),
+        receipt: receiptUrl,
+        status: "Pending",
+        email: currentSession.email,
+        customer: currentSession.name
+      };
+    } else {
+      // ===== REGULAR BOOKING =====
+      const { total, down, remain } = computeTotals(selectedServices);
+      bookingPayload = {
+        services: selectedServices,
+        totalPrice: total,
+        downpayment: down,
+        remaining: remain,
+        date: dateEl.value,
+        time: selectedTime,
+        staff: staffEl?.value || "",
+        notes: notesEl?.value || "",
+        receipt: receiptUrl,
+        status: "Pending",
+        email: currentSession.email,
+        customer: currentSession.name
+      };
     }
 
-    /* save real booking response for success page */
-    localStorage.setItem("recentBooking", JSON.stringify(data));
+    // 1. Save the booking
+    const res = await fetch(`${API_URL}/bookings`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(bookingPayload)
+    });
 
-    /* optional cleanup */
+    const bookingResult = await res.json();
+    if (!res.ok) throw new Error(bookingResult.error || "Failed to save booking");
+
+    // 2. If installment flow — create the installment plan
+    if (isInstallment && installmentData) {
+      await fetch(`${API_URL}/installments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          booking_id: bookingResult.id,
+          email: currentSession.email,
+          client_name: currentSession.name,
+          service_id: installmentData.service_id,
+          service_name: installmentData.service_name,
+          category: installmentData.category,
+          total_price: installmentData.total_price,
+          downpayment: installmentData.downpayment,
+          remaining_balance: installmentData.remaining_balance,
+          months: installmentData.months,
+          monthly_payment: installmentData.monthly_payment,
+          start_date: dateEl.value
+        })
+      });
+
+      // Clean up installment data
+      localStorage.removeItem("selectedInstallment");
+    }
+
+    // 3. Save for success page & clean up
+    localStorage.setItem("recentBooking", JSON.stringify(bookingResult));
     localStorage.removeItem("selectedServices");
     localStorage.removeItem("pendingBooking");
 
     window.location.href = "booking_success_improved.html";
+
   } catch (err) {
     console.error("❌ BOOKING ERROR:", err);
     alert(err.message || "Failed to save booking");
@@ -1244,12 +1292,9 @@ INIT
 ================================ */
 function setMinDate() {
   if (!dateEl) return;
-
-  const today = new Date();
-  const todayStr = today.toISOString().split("T")[0];
-
-  dateEl.value = todayStr;
-  dateEl.min = todayStr;
+  const today = new Date().toISOString().split("T")[0];
+  dateEl.value = today;
+  dateEl.min = today;
 }
 
 dateEl?.addEventListener("change", updateSummary);
@@ -1258,14 +1303,8 @@ staffEl?.addEventListener("change", updateSummary);
 gcashBtn?.addEventListener("click", () => showQR("gcash", "GCash"));
 bpiBtn?.addEventListener("click", () => showQR("bpi", "BPI"));
 mayaBtn?.addEventListener("click", () => showQR("maya", "Maya"));
-
 closeQR?.addEventListener("click", closeQRModal);
-
-qrModal?.addEventListener("click", function (e) {
-  if (e.target === qrModal) {
-    closeQRModal();
-  }
-});
+qrModal?.addEventListener("click", (e) => { if (e.target === qrModal) closeQRModal(); });
 
 document.getElementById("addServiceBtn")?.addEventListener("click", () => {
   window.location.href = "services.html";
