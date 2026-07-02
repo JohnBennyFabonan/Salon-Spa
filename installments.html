@@ -397,6 +397,12 @@
       white-space: nowrap;
     }
 
+    /* TYPE BADGES */
+    .typeBadge{display:inline-block;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;white-space:nowrap;}
+    .type-service{background:#dcfce7;color:#166534;}
+    .type-promo{background:#fef9c3;color:#854d0e;}
+    .type-package{background:#e0f2fe;color:#0369a1;}
+
     .desc{
       padding: 0 14px 12px;
       color: #334155;
@@ -1036,43 +1042,27 @@ const countText=document.getElementById("countText");
 const sortSelect=document.getElementById("sortSelect");
 const pillRow=document.getElementById("pillRow");
 
-// Load only admin-approved installment services
+// Load admin-approved installment items (services, promos, packages)
 async function loadServices(){
   try{
     const res = await fetch(`${API_BASE}/installment-services?visible=true`);
     const instList = await res.json();
 
-    // Map to same shape the rest of the code expects
     services = instList.map(is => ({
-      id: is.service_id,
-      installment_service_id: is.id,
-      name: is.service_name,
-      price: Number(is.service_price),
+      // use installment_services.id as unique key so duplicates across types can't collide
+      id: is.id,
+      ref_id: is.ref_id,
+      item_type: is.item_type || "service",
+      name: is.item_name,
+      price: Number(is.item_price),
+      image_url: is.item_image || "",
+      description: is.item_description || "",
+      category: is.item_category || "",
+      duration: is.item_duration || "",
       session_terms: Array.isArray(is.session_terms)
         ? is.session_terms
-        : JSON.parse(is.session_terms || "[]"),
-      // fetch full service details for image/description/category/duration
-      image_url: "",
-      description: "",
-      category: "",
-      duration: ""
+        : JSON.parse(is.session_terms || "[]")
     }));
-
-    // Enrich with full service data
-    if(services.length){
-      const fullRes = await fetch(`${API_BASE}/services`);
-      const fullServices = await fullRes.json();
-      services = services.map(s => {
-        const full = fullServices.find(f => String(f.id) === String(s.id));
-        return full ? {
-          ...s,
-          image_url: full.image_url,
-          description: full.description,
-          category: full.category,
-          duration: full.duration
-        } : s;
-      });
-    }
 
     const uniqueCategories = [
       ...new Set(
@@ -1081,7 +1071,6 @@ async function loadServices(){
           .filter(c => c !== "")
       )
     ];
-
     categories = ["All", ...uniqueCategories];
 
     buildPills();
@@ -1138,14 +1127,26 @@ function filterList(){
   return services.filter(s=>activeCategory==="All"||s.category===activeCategory);
 }
 
+function typeLabel(t){
+  if(t==="promo") return {icon:"🏷️", label:"Promo", cls:"type-promo"};
+  if(t==="package") return {icon:"📦", label:"Package", cls:"type-package"};
+  return {icon:"💇", label:"Service", cls:"type-service"};
+}
+
 function cardHTML(s){
-  const monthly3 = ((Number(s.price)*0.8)/3);
+  const lowestTerm = s.session_terms.length ? Math.min(...s.session_terms) : 3;
+  const lowestMonthly = ((Number(s.price)*0.8)/lowestTerm);
+  const tl = typeLabel(s.item_type);
+  const imgEl = s.image_url
+    ? `<img src="${s.image_url}" alt="${s.name}" class="clickableImage">`
+    : `<div style="width:100%;height:100%;background:var(--green-soft);display:flex;align-items:center;justify-content:center;font-size:48px;">${tl.icon}</div>`;
+
   return `
 <article class="card">
 
 <div class="cardImage">
-<img src="${s.image_url}" alt="${s.name}" class="clickableImage">
-<div class="installBadge">📅 Installment Available</div>
+${imgEl}
+<div class="installBadge">📅 Installment</div>
 </div>
 
 <div class="cardTop">
@@ -1153,20 +1154,23 @@ function cardHTML(s){
 <h3 class="svcTitle">${s.name}</h3>
 
 <div class="svcMeta">
-<span class="chip">⏱️ ${s.duration} mins</span>
-<span class="chip">🆔 ${s.id}</span>
+${s.duration ? `<span class="chip">⏱️ ${s.duration} mins</span>` : ""}
+<span class="chip">${s.session_terms.length ? s.session_terms.join(", ")+" sessions" : "Flexible sessions"}</span>
 </div>
 </div>
 
-<div class="categoryTag">${s.category}</div>
+<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
+  <div class="categoryTag">${s.category || "—"}</div>
+  <span class="typeBadge ${tl.cls}">${tl.icon} ${tl.label}</span>
+</div>
 </div>
 
-<p class="desc">${s.description}</p>
+<p class="desc">${s.description || ""}</p>
 
 <div class="cardBottom">
 <div>
 <span class="price">${peso(Number(s.price))}</span>
-<span class="subprice">from ${peso(monthly3)}/session for 3 sessions</span>
+<span class="subprice">from ${peso(lowestMonthly)}/session for ${lowestTerm} sessions</span>
 </div>
 
 <button class="btn" data-id="${s.id}">View Plans</button>

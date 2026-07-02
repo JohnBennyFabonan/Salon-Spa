@@ -1670,6 +1670,74 @@ app.delete("/installment-services/:id", asyncHandler(async (req, res) => {
 }));
 
 /* ===============================
+INSTALLMENT SERVICES v2
+=============================== */
+
+app.get("/installment-services", asyncHandler(async (req, res) => {
+  const { visible } = req.query;
+  if (visible === "true") {
+    const result = await pool.query(
+      `SELECT * FROM installment_services WHERE is_visible = true ORDER BY item_type ASC, id ASC`
+    );
+    return res.json(result.rows);
+  }
+  const result = await pool.query(
+    `SELECT * FROM installment_services ORDER BY item_type ASC, id DESC`
+  );
+  res.json(result.rows);
+}));
+
+app.post("/installment-services", asyncHandler(async (req, res) => {
+  const { item_type, ref_id, item_name, item_price, item_image, item_description, item_category, session_terms, is_visible } = req.body;
+  const allowedTypes = ["service", "promo", "package"];
+  if (!allowedTypes.includes(item_type)) return res.status(400).json({ error: "Invalid item_type" });
+  if (!ref_id || !item_name) return res.status(400).json({ error: "ref_id and item_name are required" });
+  if (!Array.isArray(session_terms) || session_terms.length === 0) return res.status(400).json({ error: "At least one session term is required" });
+  const result = await pool.query(
+    `INSERT INTO installment_services (item_type, ref_id, item_name, item_price, item_image, item_description, item_category, session_terms, is_visible)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
+    [item_type, String(ref_id), String(item_name).trim(), toNumber(item_price), item_image?.trim()||null, item_description?.trim()||null, item_category?.trim()||null, JSON.stringify(session_terms), is_visible !== false]
+  );
+  res.status(201).json(result.rows[0]);
+}));
+
+app.put("/installment-services/:id", asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { item_name, item_price, item_image, item_description, item_category, session_terms, is_visible } = req.body;
+  const existing = await pool.query("SELECT * FROM installment_services WHERE id = $1", [id]);
+  if (existing.rows.length === 0) return res.status(404).json({ error: "Not found" });
+  const result = await pool.query(
+    `UPDATE installment_services SET
+       item_name        = COALESCE($1, item_name),
+       item_price       = COALESCE($2, item_price),
+       item_image       = COALESCE($3, item_image),
+       item_description = COALESCE($4, item_description),
+       item_category    = COALESCE($5, item_category),
+       session_terms    = COALESCE($6, session_terms),
+       is_visible       = COALESCE($7, is_visible),
+       updated_at       = NOW()
+     WHERE id = $8 RETURNING *`,
+    [
+      item_name ? String(item_name).trim() : null,
+      item_price !== undefined ? toNumber(item_price) : null,
+      item_image !== undefined ? item_image?.trim()||null : null,
+      item_description !== undefined ? item_description?.trim()||null : null,
+      item_category !== undefined ? item_category?.trim()||null : null,
+      session_terms !== undefined ? JSON.stringify(session_terms) : null,
+      is_visible !== undefined ? Boolean(is_visible) : null,
+      id,
+    ]
+  );
+  res.json(result.rows[0]);
+}));
+
+app.delete("/installment-services/:id", asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  await pool.query("DELETE FROM installment_services WHERE id = $1", [id]);
+  res.json({ success: true });
+}));
+
+/* ===============================
 ERROR HANDLER
 =============================== */
 app.use((err, req, res, next) => {

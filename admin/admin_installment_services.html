@@ -36,35 +36,44 @@ body{margin:0;font-family:Poppins;background:var(--bg);display:flex;color:var(--
 
 /* KPI */
 .pills{display:flex;gap:14px;margin-bottom:22px;flex-wrap:wrap;}
-.pill{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 22px;box-shadow:var(--shadow);flex:1;min-width:140px;}
+.pill{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 22px;box-shadow:var(--shadow);flex:1;min-width:130px;}
 .pill .p-label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
 .pill .p-val{font-size:24px;font-weight:800;color:var(--green);margin-top:3px;}
 
+/* FILTER TABS */
+.filterRow{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.filterBtn{border:1px solid rgba(47,125,98,.25);background:#fff;color:var(--green2);padding:9px 16px;border-radius:999px;font-weight:700;font-size:12px;cursor:pointer;transition:.15s;}
+.filterBtn:hover{transform:translateY(-1px);}
+.filterBtn.active{background:var(--green);border-color:var(--green);color:#fff;}
+
 /* TABLE */
 .tableCard{background:var(--card);padding:22px;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--line);overflow-x:auto;}
-table{width:100%;border-collapse:collapse;font-size:13px;min-width:700px;}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:780px;}
 thead{background:var(--greenSoft);}
 th{text-align:left;font-size:11px;color:var(--muted);padding:12px 10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;}
 td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle;}
 tr:hover td{background:#f9fdfb;}
 tr:last-child td{border-bottom:none;}
 
-/* SERVICE IMAGE */
 .svcImg{width:46px;height:46px;object-fit:cover;border-radius:10px;}
 
-/* SESSION TERMS TAGS */
-.termTags{display:flex;gap:6px;flex-wrap:wrap;}
+/* TYPE BADGE */
+.typeBadge{display:inline-block;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;white-space:nowrap;}
+.type-service{background:#dcfce7;color:#166534;}
+.type-promo{background:#fef9c3;color:#854d0e;}
+.type-package{background:#e0f2fe;color:#0369a1;}
+
+/* TERM TAGS */
+.termTags{display:flex;gap:5px;flex-wrap:wrap;}
 .termTag{background:var(--greenSoft);color:var(--green2);border:1px solid rgba(47,125,98,.2);border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;}
 
-/* TOGGLE SWITCH */
-.toggle{position:relative;display:inline-block;width:44px;height:24px;}
+/* TOGGLE */
+.toggle{position:relative;display:inline-block;width:44px;height:24px;vertical-align:middle;margin-right:6px;}
 .toggle input{opacity:0;width:0;height:0;}
 .slider{position:absolute;cursor:pointer;inset:0;background:#cbd5e1;border-radius:999px;transition:.3s;}
 .slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.3s;}
 input:checked + .slider{background:var(--green);}
 input:checked + .slider:before{transform:translateX(20px);}
-
-/* STATUS */
 .statusOn{color:var(--green2);font-weight:700;font-size:12px;}
 .statusOff{color:var(--muted);font-weight:700;font-size:12px;}
 
@@ -81,33 +90,43 @@ input:checked + .slider:before{transform:translateX(20px);}
 
 /* MODAL */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:999;padding:18px;}
-.modalBox{background:white;padding:26px;border-radius:var(--radius);width:500px;max-width:100%;box-shadow:var(--shadow);position:relative;max-height:90vh;overflow-y:auto;}
+.modalBox{background:white;padding:26px;border-radius:var(--radius);width:540px;max-width:100%;box-shadow:var(--shadow);position:relative;max-height:92vh;overflow-y:auto;}
 .modalBox h3{margin-top:0;font-size:18px;}
 .closeBtn{position:absolute;top:14px;right:14px;width:32px;height:32px;border:none;border-radius:8px;background:#f1f5f9;cursor:pointer;font-size:16px;font-weight:700;}
 .closeBtn:hover{background:#e2e8f0;}
 
+/* TYPE SELECTOR */
+.typeRow{display:flex;gap:8px;margin-bottom:14px;}
+.typeOpt{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center;cursor:pointer;transition:.15s;}
+.typeOpt:hover{border-color:rgba(47,125,98,.4);}
+.typeOpt.active{border-color:var(--green);background:var(--greenSoft);}
+.typeOpt .to-icon{font-size:20px;}
+.typeOpt .to-label{font-size:12px;font-weight:700;margin-top:4px;}
+
 label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;margin-top:12px;}
-select,input{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--line);font-family:Poppins;font-size:13px;outline:none;margin-bottom:4px;}
-select:focus,input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(47,125,98,.1);}
+select,input,textarea{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--line);font-family:Poppins;font-size:13px;outline:none;margin-bottom:4px;}
+select:focus,input:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(47,125,98,.1);}
+textarea{min-height:70px;resize:vertical;}
 
-/* SESSION TERM BUILDER */
-.termBuilder{display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap;}
-.termBuilder input[type=number]{width:90px;margin-bottom:0;}
-.termList{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+/* ITEM PICKER */
+.itemPicker{max-height:200px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;padding:6px;}
+.itemOption{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:.12s;}
+.itemOption:hover{background:var(--greenSoft);}
+.itemOption.selected{background:var(--greenSoft);border:1px solid rgba(47,125,98,.3);}
+.itemOption img{width:38px;height:38px;border-radius:8px;object-fit:cover;flex-shrink:0;}
+.itemOption .iName{font-size:13px;font-weight:700;}
+.itemOption .iSub{font-size:11px;color:var(--muted);}
+
+/* TERM BUILDER */
+.termBuilder{display:flex;gap:8px;align-items:center;margin-top:6px;}
+.termBuilder input[type=number]{width:100px;margin-bottom:0;}
+.termList{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;min-height:28px;}
 .termChip{background:var(--greenSoft);color:var(--green2);border:1px solid rgba(47,125,98,.2);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;}
-.termChip button{background:none;border:none;cursor:pointer;font-size:14px;color:var(--green2);line-height:1;padding:0;}
+.termChip button{background:none;border:none;cursor:pointer;font-size:14px;color:var(--green2);padding:0;line-height:1;}
 
+.divider{border:none;border-top:1px solid var(--line);margin:14px 0;}
 .saveRow{margin-top:18px;display:flex;justify-content:flex-end;gap:10px;}
 .addBtnOutline{background:transparent;border:1px solid rgba(47,125,98,.4);color:var(--green2);padding:9px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;}
-
-/* SERVICE PICKER in modal */
-.servicePicker{max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;padding:6px;}
-.svcOption{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:.12s;}
-.svcOption:hover{background:var(--greenSoft);}
-.svcOption.selected{background:var(--greenSoft);border:1px solid rgba(47,125,98,.25);}
-.svcOption img{width:36px;height:36px;border-radius:8px;object-fit:cover;}
-.svcOption .sName{font-size:13px;font-weight:700;}
-.svcOption .sPrice{font-size:11px;color:var(--muted);}
 
 @media(max-width:900px){.sidebar{display:none;}body{flex-direction:column;}.main{padding:16px;}}
 </style>
@@ -140,23 +159,25 @@ select:focus,input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(47,
   <div class="header">
     <h1>Installment Services</h1>
     <div class="header-right">
-      <button class="addBtn" onclick="openAdd()">+ Add Service</button>
+      <button class="addBtn" onclick="openAdd()">+ Add Item</button>
     </div>
   </div>
 
+  <!-- KPI -->
   <div class="pills">
-    <div class="pill">
-      <div class="p-label">Total Listed</div>
-      <div class="p-val" id="kpiTotal">0</div>
-    </div>
-    <div class="pill">
-      <div class="p-label">Active / Visible</div>
-      <div class="p-val" id="kpiActive">0</div>
-    </div>
-    <div class="pill">
-      <div class="p-label">Hidden</div>
-      <div class="p-val" id="kpiHidden">0</div>
-    </div>
+    <div class="pill"><div class="p-label">Total Listed</div><div class="p-val" id="kpiTotal">0</div></div>
+    <div class="pill"><div class="p-label">Services</div><div class="p-val" id="kpiSvc">0</div></div>
+    <div class="pill"><div class="p-label">Promos</div><div class="p-val" id="kpiPromo">0</div></div>
+    <div class="pill"><div class="p-label">Packages</div><div class="p-val" id="kpiPkg">0</div></div>
+    <div class="pill"><div class="p-label">Visible</div><div class="p-val" id="kpiVisible">0</div></div>
+  </div>
+
+  <!-- FILTER -->
+  <div class="filterRow">
+    <button class="filterBtn active" data-filter="all">All</button>
+    <button class="filterBtn" data-filter="service">Services</button>
+    <button class="filterBtn" data-filter="promo">Promos</button>
+    <button class="filterBtn" data-filter="package">Packages</button>
   </div>
 
   <div class="tableCard">
@@ -164,9 +185,9 @@ select:focus,input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(47,
       <thead>
         <tr>
           <th>Image</th>
-          <th>Service Name</th>
-          <th>Category</th>
-          <th>Price</th>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Price <span style="font-size:10px;font-weight:500;color:var(--muted);">(click to edit)</span></th>
           <th>Session Terms</th>
           <th>Visible</th>
           <th>Actions</th>
@@ -176,35 +197,80 @@ select:focus,input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(47,
     </table>
     <div class="empty" id="emptyState" style="display:none;">
       <div class="icon">📋</div>
-      <div>No installment services yet. Click <strong>+ Add Service</strong> to get started.</div>
+      <div>No items yet. Click <strong>+ Add Item</strong> to get started.</div>
     </div>
   </div>
 </div>
 
-<!-- ADD / EDIT MODAL -->
+<!-- MODAL -->
 <div class="modal" id="modal">
   <div class="modalBox">
     <button class="closeBtn" onclick="closeModal()">✕</button>
-    <h3 id="modalTitle">Add Installment Service</h3>
+    <h3 id="modalTitle">Add Installment Item</h3>
 
-    <label>Select a Service</label>
-    <div class="servicePicker" id="servicePicker">
-      <div style="color:var(--muted);font-size:13px;padding:10px;">Loading services...</div>
+    <!-- TYPE SELECTOR -->
+    <label>Item Type</label>
+    <div class="typeRow" id="typeRow">
+      <div class="typeOpt active" data-type="service" onclick="selectType('service', this)">
+        <div class="to-icon">💇</div>
+        <div class="to-label">Service</div>
+      </div>
+      <div class="typeOpt" data-type="promo" onclick="selectType('promo', this)">
+        <div class="to-icon">🏷️</div>
+        <div class="to-label">Promo</div>
+      </div>
+      <div class="typeOpt" data-type="package" onclick="selectType('package', this)">
+        <div class="to-icon">📦</div>
+        <div class="to-label">Package</div>
+      </div>
     </div>
 
+    <!-- PICKER (services/promos) -->
+    <div id="pickerWrap">
+      <label id="pickerLabel">Select a Service</label>
+      <div class="itemPicker" id="itemPicker">
+        <div style="color:var(--muted);font-size:13px;padding:8px;">Loading...</div>
+      </div>
+    </div>
+
+    <!-- MANUAL ENTRY (package) -->
+    <div id="manualWrap" style="display:none;">
+      <label>Package Name</label>
+      <input id="pkgName" placeholder="e.g. Glow & Relax Package">
+      <label>Price (₱)</label>
+      <input type="number" id="pkgPrice" placeholder="0" min="0">
+      <label>Category</label>
+      <input id="pkgCategory" placeholder="e.g. Skin Care">
+      <label>Description</label>
+      <textarea id="pkgDesc" placeholder="Describe what's included in this package..."></textarea>
+      <label>Image URL (optional)</label>
+      <input id="pkgImage" placeholder="https://...">
+    </div>
+
+    <!-- INSTALLMENT PRICE (editable for all types) -->
+    <div id="priceOverrideWrap">
+      <hr class="divider">
+      <label>Installment Price (₱) <span style="font-weight:500;color:var(--muted);">— you can override the original price here</span></label>
+      <input type="number" id="instPrice" placeholder="e.g. 3500" min="0" step="0.01">
+      <p style="margin:4px 0 0;font-size:11px;color:var(--muted);" id="origPriceHint"></p>
+    </div>
+
+    <hr class="divider">
+
+    <!-- SESSION TERMS -->
     <label>Session Terms</label>
-    <p style="margin:0 0 6px;font-size:12px;color:var(--muted);">
-      Enter the number of sessions available for installment (e.g. 3, 6, 12). Add as many as you want.
-    </p>
+    <p style="margin:0 0 6px;font-size:12px;color:var(--muted);">Type a number and click Add (e.g. 3, 6, 12 sessions).</p>
     <div class="termBuilder">
-      <input type="number" id="termInput" placeholder="e.g. 6" min="1" max="60">
-      <button class="addBtn" onclick="addTerm()" style="padding:9px 14px;">+ Add</button>
+      <input type="number" id="termInput" placeholder="e.g. 6" min="1" max="120">
+      <button class="addBtn" onclick="addTerm()" style="padding:9px 14px;white-space:nowrap;">+ Add</button>
     </div>
     <div class="termList" id="termList"></div>
 
-    <label style="margin-top:14px;">Visible on installments page?</label>
+    <hr class="divider">
+
+    <label>Visible to customers?</label>
     <select id="isVisible">
-      <option value="true">Yes — show to customers</option>
+      <option value="true">Yes — show on installments page</option>
       <option value="false">No — hide for now</option>
     </select>
 
@@ -223,39 +289,59 @@ const API_IS = `${API}/installment-services`;
 const session = JSON.parse(localStorage.getItem("salonSession")) || JSON.parse(sessionStorage.getItem("salonSession"));
 if(!session || session.role !== "admin") window.location.href = "../log_in.html";
 
-let allServices = [];   // from /services
-let instServices = [];  // from /installment-services
+let allServices = [];
+let allPromos = [];
+let instItems = [];
 let editId = null;
-let selectedServiceId = null;
+let selectedType = "service";
+let selectedRefId = null;
+let selectedItem = null;
 let currentTerms = [];
+let activeFilter = "all";
 
-function peso(n){ return "₱" + Number(n||0).toLocaleString("en-PH", {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function peso(n){ return "₱" + Number(n||0).toLocaleString("en-PH",{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function parseTerms(t){ return Array.isArray(t)?t:(typeof t==="string"?JSON.parse(t||"[]"):[]); }
 
 /* ===============================
 LOAD
 ================================ */
 async function load(){
   try{
-    const [sRes, iRes] = await Promise.all([
+    const [sRes, pRes, iRes] = await Promise.all([
       fetch(`${API}/services`),
+      fetch(`${API}/api/promos`),
       fetch(API_IS)
     ]);
     allServices = await sRes.json();
-    instServices = await iRes.json();
+    allPromos = await pRes.json();
+    instItems = await iRes.json();
   }catch(e){
     console.error("Load error:", e);
-    allServices = [];
-    instServices = [];
+    allServices=[]; allPromos=[]; instItems=[];
   }
   renderKPIs();
   renderTable();
 }
 
 function renderKPIs(){
-  document.getElementById("kpiTotal").textContent = instServices.length;
-  document.getElementById("kpiActive").textContent = instServices.filter(s=>s.is_visible).length;
-  document.getElementById("kpiHidden").textContent = instServices.filter(s=>!s.is_visible).length;
+  document.getElementById("kpiTotal").textContent = instItems.length;
+  document.getElementById("kpiSvc").textContent = instItems.filter(i=>i.item_type==="service").length;
+  document.getElementById("kpiPromo").textContent = instItems.filter(i=>i.item_type==="promo").length;
+  document.getElementById("kpiPkg").textContent = instItems.filter(i=>i.item_type==="package").length;
+  document.getElementById("kpiVisible").textContent = instItems.filter(i=>i.is_visible).length;
 }
+
+/* ===============================
+FILTER
+================================ */
+document.querySelectorAll(".filterBtn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".filterBtn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    activeFilter = btn.getAttribute("data-filter");
+    renderTable();
+  });
+});
 
 /* ===============================
 TABLE
@@ -265,36 +351,59 @@ function renderTable(){
   const empty = document.getElementById("emptyState");
   body.innerHTML = "";
 
-  if(!instServices.length){ empty.style.display="block"; return; }
+  const filtered = activeFilter==="all"
+    ? instItems
+    : instItems.filter(i=>i.item_type===activeFilter);
+
+  if(!filtered.length){ empty.style.display="block"; return; }
   empty.style.display="none";
 
-  instServices.forEach(is=>{
-    const svc = allServices.find(s=>String(s.id)===String(is.service_id)) || {};
-    const terms = Array.isArray(is.session_terms) ? is.session_terms
-      : (typeof is.session_terms==="string" ? JSON.parse(is.session_terms||"[]") : []);
+  filtered.forEach(item=>{
+    const terms = parseTerms(item.session_terms);
+    const typeLabel = item.item_type==="service"?"Service":item.item_type==="promo"?"Promo":"Package";
+    const typeClass = `type-${item.item_type}`;
 
     body.innerHTML += `<tr>
-      <td><img class="svcImg" src="${svc.image_url||''}" alt="${svc.name||''}"></td>
-      <td><strong>${is.service_name || svc.name || "—"}</strong></td>
-      <td>${svc.category || "—"}</td>
-      <td>${peso(is.service_price || svc.price || 0)}</td>
+      <td>
+        ${item.item_image
+          ? `<img class="svcImg" src="${item.item_image}" alt="${item.item_name}">`
+          : `<div class="svcImg" style="background:var(--greenSoft);display:flex;align-items:center;justify-content:center;font-size:20px;">
+              ${item.item_type==="service"?"💇":item.item_type==="promo"?"🏷️":"📦"}
+            </div>`
+        }
+      </td>
+      <td>
+        <strong>${item.item_name}</strong>
+        ${item.item_category?`<br><span style="font-size:11px;color:var(--muted);">${item.item_category}</span>`:""}
+      </td>
+      <td><span class="typeBadge ${typeClass}">${typeLabel}</span></td>
+      <td>
+        <span class="priceDisplay" id="price-${item.id}"
+          onclick="inlineEditPrice(${item.id}, ${item.item_price})"
+          title="Click to edit price"
+          style="cursor:pointer;font-weight:700;border-bottom:1px dashed var(--green2);">
+          ${peso(item.item_price)}
+        </span>
+      </td>
       <td>
         <div class="termTags">
-          ${terms.map(t=>`<span class="termTag">${t} sessions</span>`).join("") || "<span style='color:var(--muted);font-size:12px;'>None set</span>"}
+          ${terms.length
+            ? terms.map(t=>`<span class="termTag">${t} sessions</span>`).join("")
+            : `<span style="color:var(--muted);font-size:12px;">None</span>`}
         </div>
       </td>
       <td>
         <label class="toggle">
-          <input type="checkbox" ${is.is_visible?'checked':''} onchange="toggleVisible(${is.id}, this.checked)">
+          <input type="checkbox" ${item.is_visible?"checked":""} onchange="toggleVisible(${item.id},this.checked)">
           <span class="slider"></span>
         </label>
-        <span class="${is.is_visible?'statusOn':'statusOff'}" id="visLabel-${is.id}">
-          ${is.is_visible ? 'Visible' : 'Hidden'}
+        <span class="${item.is_visible?"statusOn":"statusOff"}" id="visLabel-${item.id}">
+          ${item.is_visible?"Visible":"Hidden"}
         </span>
       </td>
       <td>
-        <button class="actionBtn edit" onclick="openEdit(${is.id})">Edit</button>
-        <button class="actionBtn delete" onclick="deleteEntry(${is.id})">Delete</button>
+        <button class="actionBtn edit" onclick="openEdit(${item.id})">Edit</button>
+        <button class="actionBtn delete" onclick="deleteEntry(${item.id})">Delete</button>
       </td>
     </tr>`;
   });
@@ -304,91 +413,166 @@ function renderTable(){
 TOGGLE VISIBLE
 ================================ */
 async function toggleVisible(id, checked){
-  const label = document.getElementById(`visLabel-${id}`);
   try{
-    await fetch(`${API_IS}/${id}`, {
+    await fetch(`${API_IS}/${id}`,{
       method:"PUT",
       headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({is_visible: checked})
+      body:JSON.stringify({is_visible:checked})
     });
-    if(label){
-      label.textContent = checked ? "Visible" : "Hidden";
-      label.className = checked ? "statusOn" : "statusOff";
-    }
-    // update local
-    const item = instServices.find(s=>s.id===id);
-    if(item) item.is_visible = checked;
+    const label = document.getElementById(`visLabel-${id}`);
+    if(label){ label.textContent=checked?"Visible":"Hidden"; label.className=checked?"statusOn":"statusOff"; }
+    const item = instItems.find(i=>i.id===id);
+    if(item) item.is_visible=checked;
     renderKPIs();
-  }catch(e){ console.error("Toggle error:", e); }
+  }catch(e){ console.error(e); }
 }
 
 /* ===============================
 OPEN ADD
 ================================ */
 function openAdd(){
-  editId = null;
-  selectedServiceId = null;
-  currentTerms = [];
-  document.getElementById("modalTitle").textContent = "Add Installment Service";
-  document.getElementById("isVisible").value = "true";
-  document.getElementById("termInput").value = "";
+  editId=null; selectedRefId=null; selectedItem=null; currentTerms=[];
+  document.getElementById("modalTitle").textContent="Add Installment Item";
+  document.getElementById("isVisible").value="true";
+  document.getElementById("termInput").value="";
+  document.getElementById("pkgName").value="";
+  document.getElementById("pkgPrice").value="";
+  document.getElementById("pkgCategory").value="";
+  document.getElementById("pkgDesc").value="";
+  document.getElementById("pkgImage").value="";
+  document.getElementById("instPrice").value="";
+  document.getElementById("origPriceHint").textContent="";
+  // reset type to service
+  selectedType="service";
+  document.querySelectorAll(".typeOpt").forEach(o=>o.classList.remove("active"));
+  document.querySelector('[data-type="service"]').classList.add("active");
+  showTypeSection("service");
   renderTermList();
-  renderServicePicker(null);
-  document.getElementById("modal").style.display = "flex";
+  renderItemPicker();
+  document.getElementById("modal").style.display="flex";
 }
 
 /* ===============================
 OPEN EDIT
 ================================ */
 function openEdit(id){
-  const is = instServices.find(x=>x.id===id);
-  if(!is) return;
-  editId = id;
-  selectedServiceId = String(is.service_id);
-  currentTerms = Array.isArray(is.session_terms) ? [...is.session_terms]
-    : (typeof is.session_terms==="string" ? JSON.parse(is.session_terms||"[]") : []);
+  const item = instItems.find(x=>x.id===id);
+  if(!item) return;
+  editId=id;
+  selectedType=item.item_type;
+  selectedRefId=String(item.ref_id);
+  currentTerms=[...parseTerms(item.session_terms)];
 
-  document.getElementById("modalTitle").textContent = "Edit Installment Service";
-  document.getElementById("isVisible").value = is.is_visible ? "true" : "false";
-  document.getElementById("termInput").value = "";
+  document.getElementById("modalTitle").textContent="Edit Installment Item";
+  document.getElementById("isVisible").value=item.is_visible?"true":"false";
+  document.getElementById("termInput").value="";
+
+  // Set type buttons
+  document.querySelectorAll(".typeOpt").forEach(o=>{
+    o.classList.toggle("active", o.getAttribute("data-type")===item.item_type);
+  });
+
+  // Disable type change on edit (to avoid confusion)
+  document.querySelectorAll(".typeOpt").forEach(o=>o.style.pointerEvents="none");
+
+  showTypeSection(item.item_type);
+
+  if(item.item_type==="package"){
+    document.getElementById("pkgName").value=item.item_name||"";
+    document.getElementById("pkgPrice").value=item.item_price||"";
+    document.getElementById("pkgCategory").value=item.item_category||"";
+    document.getElementById("pkgDesc").value=item.item_description||"";
+    document.getElementById("pkgImage").value=item.item_image||"";
+  } else {
+    renderItemPicker(selectedRefId);
+  }
+  // Always populate installment price override
+  document.getElementById("instPrice").value = item.item_price || "";
+  document.getElementById("origPriceHint").textContent = "";
+
   renderTermList();
-  renderServicePicker(selectedServiceId);
-  document.getElementById("modal").style.display = "flex";
+  document.getElementById("modal").style.display="flex";
 }
 
 /* ===============================
-SERVICE PICKER
+TYPE SELECTOR
 ================================ */
-function renderServicePicker(selectedId){
-  const picker = document.getElementById("servicePicker");
+function selectType(type, el){
+  selectedType=type;
+  selectedRefId=null;
+  selectedItem=null;
+  document.querySelectorAll(".typeOpt").forEach(o=>o.classList.remove("active"));
+  el.classList.add("active");
+  showTypeSection(type);
+  renderItemPicker();
+}
 
-  // Filter out services already added (except current one being edited)
-  const usedIds = instServices
-    .filter(is => editId ? is.id !== editId : true)
-    .map(is => String(is.service_id));
+function showTypeSection(type){
+  const pickerWrap = document.getElementById("pickerWrap");
+  const manualWrap = document.getElementById("manualWrap");
+  const pickerLabel = document.getElementById("pickerLabel");
 
-  const available = allServices.filter(s => !usedIds.includes(String(s.id)));
+  if(type==="package"){
+    pickerWrap.style.display="none";
+    manualWrap.style.display="block";
+  } else {
+    pickerWrap.style.display="block";
+    manualWrap.style.display="none";
+    pickerLabel.textContent = type==="service" ? "Select a Service" : "Select a Promo";
+  }
+}
+
+/* ===============================
+ITEM PICKER
+================================ */
+function renderItemPicker(selectedId){
+  const picker = document.getElementById("itemPicker");
+  const sourceList = selectedType==="service" ? allServices : allPromos;
+
+  // Filter out already-added items (except current edit)
+  const usedRefs = instItems
+    .filter(i=>i.item_type===selectedType && (editId?i.id!==editId:true))
+    .map(i=>String(i.ref_id));
+
+  const available = sourceList.filter(s=>!usedRefs.includes(String(s.id)));
 
   if(!available.length){
-    picker.innerHTML = `<div style="color:var(--muted);font-size:13px;padding:10px;">All services have been added already.</div>`;
+    picker.innerHTML=`<div style="color:var(--muted);font-size:13px;padding:10px;">
+      All ${selectedType==="service"?"services":"promos"} have been added already.
+    </div>`;
     return;
   }
 
-  picker.innerHTML = available.map(s=>`
-    <div class="svcOption ${String(s.id)===String(selectedId)?'selected':''}" onclick="selectService('${s.id}', this)">
-      <img src="${s.image_url||''}" alt="${s.name}">
-      <div>
-        <div class="sName">${s.name}</div>
-        <div class="sPrice">${peso(s.price)} · ${s.category}</div>
-      </div>
-    </div>
-  `).join("");
+  picker.innerHTML = available.map(s=>{
+    const price = s.price || s.deal_price || 0;
+    const img = s.image_url || "";
+    const cat = s.category || s.type || "";
+    return `
+      <div class="itemOption ${String(s.id)===String(selectedId)?"selected":""}"
+           onclick="selectItem('${s.id}', this, ${JSON.stringify(s).replace(/"/g,'&quot;')})">
+        ${img?`<img src="${img}" alt="${s.name||s.title}">`
+              :`<div style="width:38px;height:38px;border-radius:8px;background:var(--greenSoft);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">
+                ${selectedType==="promo"?"🏷️":"💇"}
+               </div>`}
+        <div>
+          <div class="iName">${s.name||s.title||"—"}</div>
+          <div class="iSub">${peso(price)}${cat?" · "+cat:""}</div>
+        </div>
+      </div>`;
+  }).join("");
 }
 
-function selectService(id, el){
-  selectedServiceId = id;
-  document.querySelectorAll(".svcOption").forEach(o=>o.classList.remove("selected"));
+function selectItem(id, el, data){
+  selectedRefId = String(id);
+  selectedItem = typeof data==="string" ? JSON.parse(data) : data;
+  document.querySelectorAll(".itemOption").forEach(o=>o.classList.remove("selected"));
   el.classList.add("selected");
+  // Pre-fill installment price with original price
+  const origPrice = selectedItem.price || selectedItem.deal_price || 0;
+  const instPriceEl = document.getElementById("instPrice");
+  if(!instPriceEl.value) instPriceEl.value = origPrice;
+  document.getElementById("origPriceHint").textContent =
+    `Original price: ${peso(origPrice)} — edit above to set a different installment price.`;
 }
 
 /* ===============================
@@ -396,26 +580,26 @@ SESSION TERMS
 ================================ */
 function addTerm(){
   const val = parseInt(document.getElementById("termInput").value);
-  if(!val || val < 1){ alert("Enter a valid number of sessions."); return; }
-  if(currentTerms.includes(val)){ alert("That term is already added."); return; }
+  if(!val||val<1){ alert("Enter a valid number of sessions."); return; }
+  if(currentTerms.includes(val)){ alert("Already added."); return; }
   currentTerms.push(val);
   currentTerms.sort((a,b)=>a-b);
-  document.getElementById("termInput").value = "";
+  document.getElementById("termInput").value="";
   renderTermList();
 }
 
 function removeTerm(val){
-  currentTerms = currentTerms.filter(t=>t!==val);
+  currentTerms=currentTerms.filter(t=>t!==val);
   renderTermList();
 }
 
 function renderTermList(){
   const list = document.getElementById("termList");
   if(!currentTerms.length){
-    list.innerHTML = `<span style="font-size:12px;color:var(--muted);">No terms added yet.</span>`;
+    list.innerHTML=`<span style="font-size:12px;color:var(--muted);">No terms added yet.</span>`;
     return;
   }
-  list.innerHTML = currentTerms.map(t=>`
+  list.innerHTML=currentTerms.map(t=>`
     <div class="termChip">
       ${t} sessions
       <button onclick="removeTerm(${t})" title="Remove">✕</button>
@@ -423,64 +607,128 @@ function renderTermList(){
   `).join("");
 }
 
-// Allow Enter key to add term
-document.getElementById("termInput").addEventListener("keypress", e=>{
-  if(e.key==="Enter") addTerm();
-});
+document.getElementById("termInput").addEventListener("keypress",e=>{ if(e.key==="Enter") addTerm(); });
 
 /* ===============================
 SAVE
 ================================ */
 async function saveEntry(){
-  if(!selectedServiceId){ alert("Please select a service."); return; }
-  if(!currentTerms.length){ alert("Please add at least one session term."); return; }
+  if(!currentTerms.length){ alert("Add at least one session term."); return; }
 
-  const svc = allServices.find(s=>String(s.id)===String(selectedServiceId));
-  if(!svc){ alert("Service not found."); return; }
-
-  const payload = {
-    service_id: svc.id,
-    service_name: svc.name,
-    service_price: svc.price,
+  let payload = {
     session_terms: currentTerms,
-    is_visible: document.getElementById("isVisible").value === "true"
+    is_visible: document.getElementById("isVisible").value==="true"
   };
+
+  if(selectedType==="package"){
+    const name = document.getElementById("pkgName").value.trim();
+    const price = parseFloat(document.getElementById("pkgPrice").value)||0;
+    if(!name){ alert("Enter a package name."); return; }
+    if(!price){ alert("Enter a package price."); return; }
+    const instPriceVal = parseFloat(document.getElementById("instPrice").value) || price;
+    payload = {
+      ...payload,
+      item_type: "package",
+      ref_id: editId ? instItems.find(i=>i.id===editId)?.ref_id : `pkg-${Date.now()}`,
+      item_name: name,
+      item_price: instPriceVal,
+      item_category: document.getElementById("pkgCategory").value.trim(),
+      item_description: document.getElementById("pkgDesc").value.trim(),
+      item_image: document.getElementById("pkgImage").value.trim()||null
+    };
+  } else {
+    if(!selectedRefId||!selectedItem){ alert("Please select an item."); return; }
+    const price = selectedItem.price||selectedItem.deal_price||0;
+    const name = selectedItem.name||selectedItem.title||"";
+    const img = selectedItem.image_url||null;
+    const cat = selectedItem.category||selectedItem.type||null;
+    const desc = selectedItem.description||selectedItem.desc||null;
+    const instOverridePrice = parseFloat(document.getElementById("instPrice").value) || price;
+    payload = {
+      ...payload,
+      item_type: selectedType,
+      ref_id: selectedRefId,
+      item_name: name,
+      item_price: instOverridePrice,
+      item_image: img,
+      item_category: cat,
+      item_description: desc
+    };
+  }
 
   try{
     if(editId){
-      await fetch(`${API_IS}/${editId}`, {
-        method:"PUT",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify(payload)
-      });
+      await fetch(`${API_IS}/${editId}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
     } else {
-      await fetch(API_IS, {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify(payload)
-      });
+      await fetch(API_IS,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
     }
     closeModal();
     load();
-  }catch(e){ console.error("Save error:", e); }
+  }catch(e){ console.error("Save error:",e); alert("Save failed. Check console."); }
 }
 
 /* ===============================
 DELETE
 ================================ */
 async function deleteEntry(id){
-  if(!confirm("Remove this service from the installment list?")) return;
+  if(!confirm("Remove this item from the installment list?")) return;
   try{
-    await fetch(`${API_IS}/${id}`, {method:"DELETE"});
+    await fetch(`${API_IS}/${id}`,{method:"DELETE"});
     load();
-  }catch(e){ console.error("Delete error:", e); }
+  }catch(e){ console.error(e); }
 }
 
 function closeModal(){
-  document.getElementById("modal").style.display = "none";
-  editId = null;
-  selectedServiceId = null;
-  currentTerms = [];
+  document.getElementById("modal").style.display="none";
+  document.querySelectorAll(".typeOpt").forEach(o=>o.style.pointerEvents="");
+  editId=null; selectedRefId=null; selectedItem=null; currentTerms=[];
+}
+
+/* ===============================
+INLINE PRICE EDIT
+================================ */
+async function inlineEditPrice(id, currentPrice){
+  const span = document.getElementById(`price-${id}`);
+  if(!span) return;
+
+  // Replace span with input
+  const input = document.createElement("input");
+  input.type = "number";
+  input.value = currentPrice;
+  input.min = "0";
+  input.step = "0.01";
+  input.style.cssText = "width:100px;padding:4px 8px;border-radius:6px;border:1px solid var(--green);font-family:Poppins;font-size:13px;font-weight:700;outline:none;";
+  span.replaceWith(input);
+  input.focus();
+  input.select();
+
+  async function commit(){
+    const newPrice = parseFloat(input.value);
+    if(isNaN(newPrice) || newPrice < 0){
+      input.style.borderColor = "#c53030";
+      return;
+    }
+    try{
+      await fetch(`${API_IS}/${id}`, {
+        method:"PUT",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ item_price: newPrice })
+      });
+      // Update local data
+      const item = instItems.find(i=>i.id===id);
+      if(item) item.item_price = newPrice;
+      renderTable();
+    }catch(e){
+      console.error("Price update error:", e);
+      renderTable();
+    }
+  }
+
+  input.addEventListener("blur", commit);
+  input.addEventListener("keydown", e=>{
+    if(e.key==="Enter") input.blur();
+    if(e.key==="Escape"){ renderTable(); } // cancel
+  });
 }
 
 load();
